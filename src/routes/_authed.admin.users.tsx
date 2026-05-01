@@ -311,6 +311,14 @@ function InviteSheet({
             </Select>
             <p className="text-xs text-ink-muted">{ROLE_META[role].description}</p>
           </div>
+
+          <div className="rounded-xl border bg-surface/60 p-3 text-xs text-ink-muted">
+            <div className="mb-1 flex items-center gap-1.5 font-medium text-foreground">
+              <Send className="size-3.5" /> What happens next
+            </div>
+            They receive an email invite. Once accepted, you can grant permissions
+            from the user profile or apply a preset.
+          </div>
         </div>
         <SheetFooter className="mt-6 flex flex-row justify-end gap-2">
           <button
