@@ -33,6 +33,8 @@ function UserDetail() {
   const u = findUser(data, id);
   const { user: actor } = useAuth();
   const [tab, setTab] = useState<Tab>("overview");
+  const [banOpen, setBanOpen] = useState(false);
+  const [banReason, setBanReason] = useState("");
 
   if (!u) throw notFound();
 
@@ -58,14 +60,32 @@ function UserDetail() {
     toast.success(`Applied ${preset.label}`);
   }
 
-  function setStatus(next: "invited" | "pending" | "active" | "suspended" | "deactivated") {
+  function setStatus(next: "invited" | "pending" | "active" | "suspended" | "deactivated" | "banned") {
     update((d) => {
       const x = d.users.find((y) => y.id === id);
       if (!x) return;
       x.status = next;
+      if (next !== "banned") x.banReason = undefined;
       pushAudit(d, "user", id, actor.fullName, `Status set to ${next}`);
     });
     toast.success(`User ${next}`);
+  }
+
+  function confirmBan() {
+    if (!banReason.trim()) {
+      toast.error("Reason is required");
+      return;
+    }
+    update((d) => {
+      const x = d.users.find((y) => y.id === id);
+      if (!x) return;
+      x.status = "banned";
+      x.banReason = banReason.trim();
+      pushAudit(d, "user", id, actor.fullName, "Banned user", banReason.trim());
+    });
+    toast.success("User banned");
+    setBanReason("");
+    setBanOpen(false);
   }
 
   return (
