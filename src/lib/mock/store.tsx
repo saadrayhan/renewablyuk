@@ -68,7 +68,10 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    return subscribe(() => setTick((t) => t + 1));
+    const unsub = subscribe(() => setTick((t) => t + 1));
+    return () => {
+      unsub();
+    };
   }, []);
 
   const value = useMemo(() => ({ data: DATA, tick }), [tick]);
