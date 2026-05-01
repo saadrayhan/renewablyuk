@@ -11,6 +11,8 @@ import type {
   ManagedUser,
   OnboardingApplication,
   FundingMatch,
+  PermissionRequest,
+  Integration,
 } from "./types";
 
 const now = 1746115200000; // 2026-05-01 stable
@@ -512,6 +514,50 @@ export function seed() {
     },
   ];
 
+  const permissionRequests: PermissionRequest[] = [
+    {
+      id: "preq_001",
+      userId: "usr_002",
+      permission: "ibg.issue",
+      reason: "Need to issue IBGs for the Manchester pilot batch this week.",
+      state: "pending",
+      requestedAt: now - 1 * day,
+    },
+    {
+      id: "preq_002",
+      userId: "usr_002",
+      permission: "funding.submit",
+      reason: "Picking up funding submissions while Priya is on leave.",
+      state: "pending",
+      requestedAt: now - 2 * day,
+    },
+    {
+      id: "preq_003",
+      userId: "usr_003",
+      permission: "users.invite",
+      reason: "Need to bring a new compliance reviewer onboard.",
+      state: "pending",
+      requestedAt: now - 4 * 3600 * 1000,
+    },
+    {
+      id: "preq_004",
+      userId: "usr_007",
+      permission: "customers.read",
+      reason: "First day — need access to customer directory to shadow.",
+      state: "pending",
+      requestedAt: now - 30 * 60 * 1000,
+    },
+  ];
+
+  const integrations: Integration[] = [
+    { key: "zapier", name: "Zapier", category: "Automation", description: "Trigger 6,000+ apps from IBG, job and submission events.", connected: true, account: "renewably-uk", connectedAt: now - 40 * day },
+    { key: "make", name: "Make", category: "Automation", description: "Build visual scenarios from platform webhooks.", connected: false },
+    { key: "hubspot", name: "HubSpot", category: "CRM", description: "Sync customers and jobs into your HubSpot pipeline.", connected: true, account: "renewably-marketing", connectedAt: now - 14 * day },
+    { key: "salesforce", name: "Salesforce", category: "CRM", description: "Two-way sync of customers and opportunities.", connected: false },
+    { key: "slack", name: "Slack", category: "Comms", description: "Post submissions, amendments and onboarding events to channels.", connected: true, account: "#ops-renewably", connectedAt: now - 7 * day },
+    { key: "webhooks", name: "Webhooks", category: "Developer", description: "Receive HTTP callbacks for every record-chain event.", connected: false },
+  ];
+
   return {
     customers,
     properties,
@@ -525,6 +571,8 @@ export function seed() {
     users,
     onboarding,
     fundingMatches,
+    permissionRequests,
+    integrations,
   };
 }
 
