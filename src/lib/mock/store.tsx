@@ -20,16 +20,24 @@ const KEY = "renewably:mock-store:v1";
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
-let DATA: SeedData = (() => {
-  if (typeof window === "undefined") return seed();
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw) as SeedData;
-  } catch {
-    /* ignore */
+let DATA: SeedData | null = null;
+
+function loadData(): SeedData {
+  if (DATA) return DATA;
+  if (typeof window !== "undefined") {
+    try {
+      const raw = window.localStorage.getItem(KEY);
+      if (raw) {
+        DATA = JSON.parse(raw) as SeedData;
+        return DATA;
+      }
+    } catch {
+      /* ignore */
+    }
   }
-  return seed();
-})();
+  DATA = seed();
+  return DATA;
+}
 
 function persist() {
   if (typeof window === "undefined") return;
