@@ -551,7 +551,7 @@ export function seed() {
 
   const integrations: Integration[] = [
     { key: "zapier", name: "Zapier", category: "Automation", description: "Trigger 6,000+ apps from IBG, job and submission events.", connected: true, account: "renewably-uk", connectedAt: now - 40 * day },
-    { key: "make", name: "Make", category: "Automation", description: "Build visual scenarios from platform webhooks.", connected: false, description2: undefined as unknown as undefined } as unknown as Integration,
+    { key: "make", name: "Make", category: "Automation", description: "Build visual scenarios from platform webhooks.", connected: false },
     { key: "hubspot", name: "HubSpot", category: "CRM", description: "Sync customers and jobs into your HubSpot pipeline.", connected: true, account: "renewably-marketing", connectedAt: now - 14 * day },
     { key: "salesforce", name: "Salesforce", category: "CRM", description: "Two-way sync of customers and opportunities.", connected: false },
     { key: "slack", name: "Slack", category: "Comms", description: "Post submissions, amendments and onboarding events to channels.", connected: true, account: "#ops-renewably", connectedAt: now - 7 * day },
