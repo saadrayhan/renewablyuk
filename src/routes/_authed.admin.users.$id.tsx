@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ShieldCheck, UserMinus, UserCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck, UserMinus, UserCheck, Ban, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update } from "@/lib/mock/store";
 import { findUser, pushAudit, fmtDate } from "@/lib/mock/queries";
@@ -9,6 +9,16 @@ import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { AuditTimeline } from "@/components/app/audit-timeline";
 import { PERMISSIONS, PERMISSION_CATEGORIES, OPERATOR_PRESETS, ROLE_META, type Permission } from "@/lib/rbac";
 import { useAuth } from "@/lib/auth-context";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authed/admin/users/$id")({
   head: () => ({ meta: [{ title: "User — Renewably UK" }] }),
