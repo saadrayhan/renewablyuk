@@ -175,6 +175,14 @@ export type ActivityEvent = {
   at: number;
 };
 
+export type UserStatus =
+  | "invited"
+  | "pending"
+  | "active"
+  | "suspended"
+  | "deactivated"
+  | "banned";
+
 export type ManagedUser = {
   id: string;
   name: string;
@@ -185,10 +193,40 @@ export type ManagedUser = {
     | "installer-access"
     | "installer-operate"
     | "readonly";
-  status: "invited" | "pending" | "active" | "suspended" | "deactivated";
+  status: UserStatus;
   permissions: string[]; // permission ids
   invitedAt: number;
   lastActive?: number;
+  banReason?: string;
+};
+
+export type PermissionRequest = {
+  id: string;
+  userId: string;
+  permission: string;
+  reason: string;
+  state: "pending" | "approved" | "rejected";
+  requestedAt: number;
+  decidedAt?: number;
+  decidedBy?: string;
+};
+
+export type IntegrationKey =
+  | "zapier"
+  | "hubspot"
+  | "slack"
+  | "salesforce"
+  | "webhooks"
+  | "make";
+
+export type Integration = {
+  key: IntegrationKey;
+  name: string;
+  category: "Automation" | "CRM" | "Comms" | "Developer";
+  description: string;
+  connected: boolean;
+  account?: string;
+  connectedAt?: number;
 };
 
 export type OnboardingApplication = {
