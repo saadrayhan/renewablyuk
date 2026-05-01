@@ -1,13 +1,72 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ComingSoon } from "@/components/app/coming-soon";
+import { useState } from "react";
+import { Download, Search } from "lucide-react";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/app/page-header";
+import { useStore } from "@/lib/mock/store";
+import { fmtDate } from "@/lib/mock/queries";
 
 export const Route = createFileRoute("/_authed/admin/audit")({
   head: () => ({ meta: [{ title: "Audit log — Renewably UK" }] }),
-  component: () => (
-    <ComingSoon
-      eyebrow="Admin · Compliance"
-      title="Audit log"
-      body="Every action across the platform. Filter by actor, event type, target entity. Export to CSV for compliance reviews."
-    />
-  ),
+  component: AuditPage,
 });
+
+function AuditPage() {
+  const data = useStore();
+  const [q, setQ] = useState("");
+  const rows = [...data.audit].sort((a, b) => b.at - a.at).filter((a) => !q || a.actor.toLowerCase().includes(q.toLowerCase()) || a.action.toLowerCase().includes(q.toLowerCase()));
+
+  function exportCsv() {
+    const lines = ["Date,Actor,Action,Entity,EntityId,Detail"];
+    rows.forEach((a) => lines.push([fmtDate(a.at), a.actor, a.action, a.entityType, a.entityId, a.detail ?? ""].map((s) => `"${String(s).replace(/"/g, '""')}"`).join(",")));
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const el = document.createElement("a");
+    el.href = url; el.download = "audit-log.csv"; el.click();
+    URL.revokeObjectURL(url);
+    toast.success("Exported");
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+      <PageHeader
+        eyebrow="Admin · Compliance"
+        title="Audit log"
+        subtitle="Every state change, write and approval — tamper-evident."
+        actions={<button onClick={exportCsv} className="press inline-flex items-center gap-1.5 rounded-full border bg-background px-3.5 py-2 text-sm font-medium"><Download className="size-3.5" /> Export CSV</button>}
+      />
+
+      <div className="mt-6 flex justify-end">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-ink-muted" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search actor or action" className="h-9 w-72 rounded-full border bg-background pl-8 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+        </div>
+      </div>
+
+      <div className="mt-5 overflow-hidden rounded-2xl border bg-card">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+              <th className="px-4 py-2.5 text-left">Date</th>
+              <th className="px-4 py-2.5 text-left">Actor</th>
+              <th className="px-4 py-2.5 text-left">Action</th>
+              <th className="px-4 py-2.5 text-left">Entity</th>
+              <th className="px-4 py-2.5 text-left">Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((a) => (
+              <tr key={a.id} className="border-b last:border-b-0">
+                <td className="px-4 py-3 text-ink-muted">{fmtDate(a.at)}</td>
+                <td className="px-4 py-3 text-foreground">{a.actor}</td>
+                <td className="px-4 py-3 text-foreground">{a.action}</td>
+                <td className="px-4 py-3"><span className="rounded-full bg-tile px-2 py-0.5 text-[11px] text-ink-muted">{a.entityType}</span></td>
+                <td className="px-4 py-3 text-ink-muted">{a.detail ?? "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

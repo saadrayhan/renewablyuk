@@ -16,14 +16,25 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthedSubmissionsRouteImport } from './routes/_authed.submissions'
+import { Route as AuthedPropertiesRouteImport } from './routes/_authed.properties'
 import { Route as AuthedProjectsRouteImport } from './routes/_authed.projects'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed.onboarding'
+import { Route as AuthedJobsRouteImport } from './routes/_authed.jobs'
 import { Route as AuthedFundingRouteImport } from './routes/_authed.funding'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed.dashboard'
+import { Route as AuthedCustomersRouteImport } from './routes/_authed.customers'
 import { Route as AuthedSettingsProfileRouteImport } from './routes/_authed.settings.profile'
+import { Route as AuthedPropertiesIdRouteImport } from './routes/_authed.properties.$id'
+import { Route as AuthedJobsNewRouteImport } from './routes/_authed.jobs.new'
+import { Route as AuthedJobsIdRouteImport } from './routes/_authed.jobs.$id'
 import { Route as AuthedIbgRepositoryRouteImport } from './routes/_authed.ibg.repository'
 import { Route as AuthedIbgNewRouteImport } from './routes/_authed.ibg.new'
 import { Route as AuthedIbgHistoryRouteImport } from './routes/_authed.ibg.history'
+import { Route as AuthedIbgIdRouteImport } from './routes/_authed.ibg.$id'
+import { Route as AuthedFundingMatchRouteImport } from './routes/_authed.funding.match'
+import { Route as AuthedFundingIdRouteImport } from './routes/_authed.funding.$id'
+import { Route as AuthedCustomersNewRouteImport } from './routes/_authed.customers.new'
+import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customers.$id'
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
 import { Route as AuthedAdminPermissionsRouteImport } from './routes/_authed.admin.permissions'
 import { Route as AuthedAdminOnboardingRouteImport } from './routes/_authed.admin.onboarding'
@@ -31,6 +42,8 @@ import { Route as AuthedAdminConfigRouteImport } from './routes/_authed.admin.co
 import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.audit'
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
+import { Route as AuthedIbgIdAmendmentRouteImport } from './routes/_authed.ibg.$id.amendment'
+import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -66,6 +79,11 @@ const AuthedSubmissionsRoute = AuthedSubmissionsRouteImport.update({
   path: '/submissions',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedPropertiesRoute = AuthedPropertiesRouteImport.update({
+  id: '/properties',
+  path: '/properties',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedProjectsRoute = AuthedProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -74,6 +92,11 @@ const AuthedProjectsRoute = AuthedProjectsRouteImport.update({
 const AuthedOnboardingRoute = AuthedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedJobsRoute = AuthedJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedFundingRoute = AuthedFundingRouteImport.update({
@@ -86,10 +109,30 @@ const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedCustomersRoute = AuthedCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedSettingsProfileRoute = AuthedSettingsProfileRouteImport.update({
   id: '/settings/profile',
   path: '/settings/profile',
   getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedPropertiesIdRoute = AuthedPropertiesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthedPropertiesRoute,
+} as any)
+const AuthedJobsNewRoute = AuthedJobsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthedJobsRoute,
+} as any)
+const AuthedJobsIdRoute = AuthedJobsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthedJobsRoute,
 } as any)
 const AuthedIbgRepositoryRoute = AuthedIbgRepositoryRouteImport.update({
   id: '/ibg/repository',
@@ -105,6 +148,31 @@ const AuthedIbgHistoryRoute = AuthedIbgHistoryRouteImport.update({
   id: '/ibg/history',
   path: '/ibg/history',
   getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedIbgIdRoute = AuthedIbgIdRouteImport.update({
+  id: '/ibg/$id',
+  path: '/ibg/$id',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedFundingMatchRoute = AuthedFundingMatchRouteImport.update({
+  id: '/match',
+  path: '/match',
+  getParentRoute: () => AuthedFundingRoute,
+} as any)
+const AuthedFundingIdRoute = AuthedFundingIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthedFundingRoute,
+} as any)
+const AuthedCustomersNewRoute = AuthedCustomersNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthedCustomersRoute,
+} as any)
+const AuthedCustomersIdRoute = AuthedCustomersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthedCustomersRoute,
 } as any)
 const AuthedAdminUsersRoute = AuthedAdminUsersRouteImport.update({
   id: '/admin/users',
@@ -141,6 +209,16 @@ const AuthedAdminActivityRoute = AuthedAdminActivityRouteImport.update({
   path: '/admin/activity',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedIbgIdAmendmentRoute = AuthedIbgIdAmendmentRouteImport.update({
+  id: '/amendment',
+  path: '/amendment',
+  getParentRoute: () => AuthedIbgIdRoute,
+} as any)
+const AuthedAdminUsersIdRoute = AuthedAdminUsersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthedAdminUsersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -148,10 +226,13 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
-  '/funding': typeof AuthedFundingRoute
+  '/funding': typeof AuthedFundingRouteWithChildren
+  '/jobs': typeof AuthedJobsRouteWithChildren
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
+  '/properties': typeof AuthedPropertiesRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRoute
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRoute
@@ -159,11 +240,21 @@ export interface FileRoutesByFullPath {
   '/admin/config': typeof AuthedAdminConfigRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
-  '/admin/users': typeof AuthedAdminUsersRoute
+  '/admin/users': typeof AuthedAdminUsersRouteWithChildren
+  '/customers/$id': typeof AuthedCustomersIdRoute
+  '/customers/new': typeof AuthedCustomersNewRoute
+  '/funding/$id': typeof AuthedFundingIdRoute
+  '/funding/match': typeof AuthedFundingMatchRoute
+  '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
   '/ibg/new': typeof AuthedIbgNewRoute
   '/ibg/repository': typeof AuthedIbgRepositoryRoute
+  '/jobs/$id': typeof AuthedJobsIdRoute
+  '/jobs/new': typeof AuthedJobsNewRoute
+  '/properties/$id': typeof AuthedPropertiesIdRoute
   '/settings/profile': typeof AuthedSettingsProfileRoute
+  '/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -171,10 +262,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
-  '/funding': typeof AuthedFundingRoute
+  '/funding': typeof AuthedFundingRouteWithChildren
+  '/jobs': typeof AuthedJobsRouteWithChildren
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
+  '/properties': typeof AuthedPropertiesRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRoute
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRoute
@@ -182,11 +276,21 @@ export interface FileRoutesByTo {
   '/admin/config': typeof AuthedAdminConfigRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
-  '/admin/users': typeof AuthedAdminUsersRoute
+  '/admin/users': typeof AuthedAdminUsersRouteWithChildren
+  '/customers/$id': typeof AuthedCustomersIdRoute
+  '/customers/new': typeof AuthedCustomersNewRoute
+  '/funding/$id': typeof AuthedFundingIdRoute
+  '/funding/match': typeof AuthedFundingMatchRoute
+  '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
   '/ibg/new': typeof AuthedIbgNewRoute
   '/ibg/repository': typeof AuthedIbgRepositoryRoute
+  '/jobs/$id': typeof AuthedJobsIdRoute
+  '/jobs/new': typeof AuthedJobsNewRoute
+  '/properties/$id': typeof AuthedPropertiesIdRoute
   '/settings/profile': typeof AuthedSettingsProfileRoute
+  '/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -196,10 +300,13 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/_authed/customers': typeof AuthedCustomersRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRoute
-  '/_authed/funding': typeof AuthedFundingRoute
+  '/_authed/funding': typeof AuthedFundingRouteWithChildren
+  '/_authed/jobs': typeof AuthedJobsRouteWithChildren
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/projects': typeof AuthedProjectsRoute
+  '/_authed/properties': typeof AuthedPropertiesRouteWithChildren
   '/_authed/submissions': typeof AuthedSubmissionsRoute
   '/_authed/admin/activity': typeof AuthedAdminActivityRoute
   '/_authed/admin/amendments': typeof AuthedAdminAmendmentsRoute
@@ -207,11 +314,21 @@ export interface FileRoutesById {
   '/_authed/admin/config': typeof AuthedAdminConfigRoute
   '/_authed/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/_authed/admin/permissions': typeof AuthedAdminPermissionsRoute
-  '/_authed/admin/users': typeof AuthedAdminUsersRoute
+  '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
+  '/_authed/customers/$id': typeof AuthedCustomersIdRoute
+  '/_authed/customers/new': typeof AuthedCustomersNewRoute
+  '/_authed/funding/$id': typeof AuthedFundingIdRoute
+  '/_authed/funding/match': typeof AuthedFundingMatchRoute
+  '/_authed/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/_authed/ibg/history': typeof AuthedIbgHistoryRoute
   '/_authed/ibg/new': typeof AuthedIbgNewRoute
   '/_authed/ibg/repository': typeof AuthedIbgRepositoryRoute
+  '/_authed/jobs/$id': typeof AuthedJobsIdRoute
+  '/_authed/jobs/new': typeof AuthedJobsNewRoute
+  '/_authed/properties/$id': typeof AuthedPropertiesIdRoute
   '/_authed/settings/profile': typeof AuthedSettingsProfileRoute
+  '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/_authed/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -221,10 +338,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/customers'
     | '/dashboard'
     | '/funding'
+    | '/jobs'
     | '/onboarding'
     | '/projects'
+    | '/properties'
     | '/submissions'
     | '/admin/activity'
     | '/admin/amendments'
@@ -233,10 +353,20 @@ export interface FileRouteTypes {
     | '/admin/onboarding'
     | '/admin/permissions'
     | '/admin/users'
+    | '/customers/$id'
+    | '/customers/new'
+    | '/funding/$id'
+    | '/funding/match'
+    | '/ibg/$id'
     | '/ibg/history'
     | '/ibg/new'
     | '/ibg/repository'
+    | '/jobs/$id'
+    | '/jobs/new'
+    | '/properties/$id'
     | '/settings/profile'
+    | '/admin/users/$id'
+    | '/ibg/$id/amendment'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -244,10 +374,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/customers'
     | '/dashboard'
     | '/funding'
+    | '/jobs'
     | '/onboarding'
     | '/projects'
+    | '/properties'
     | '/submissions'
     | '/admin/activity'
     | '/admin/amendments'
@@ -256,10 +389,20 @@ export interface FileRouteTypes {
     | '/admin/onboarding'
     | '/admin/permissions'
     | '/admin/users'
+    | '/customers/$id'
+    | '/customers/new'
+    | '/funding/$id'
+    | '/funding/match'
+    | '/ibg/$id'
     | '/ibg/history'
     | '/ibg/new'
     | '/ibg/repository'
+    | '/jobs/$id'
+    | '/jobs/new'
+    | '/properties/$id'
     | '/settings/profile'
+    | '/admin/users/$id'
+    | '/ibg/$id/amendment'
   id:
     | '__root__'
     | '/'
@@ -268,10 +411,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/_authed/customers'
     | '/_authed/dashboard'
     | '/_authed/funding'
+    | '/_authed/jobs'
     | '/_authed/onboarding'
     | '/_authed/projects'
+    | '/_authed/properties'
     | '/_authed/submissions'
     | '/_authed/admin/activity'
     | '/_authed/admin/amendments'
@@ -280,10 +426,20 @@ export interface FileRouteTypes {
     | '/_authed/admin/onboarding'
     | '/_authed/admin/permissions'
     | '/_authed/admin/users'
+    | '/_authed/customers/$id'
+    | '/_authed/customers/new'
+    | '/_authed/funding/$id'
+    | '/_authed/funding/match'
+    | '/_authed/ibg/$id'
     | '/_authed/ibg/history'
     | '/_authed/ibg/new'
     | '/_authed/ibg/repository'
+    | '/_authed/jobs/$id'
+    | '/_authed/jobs/new'
+    | '/_authed/properties/$id'
     | '/_authed/settings/profile'
+    | '/_authed/admin/users/$id'
+    | '/_authed/ibg/$id/amendment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -346,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedSubmissionsRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/properties': {
+      id: '/_authed/properties'
+      path: '/properties'
+      fullPath: '/properties'
+      preLoaderRoute: typeof AuthedPropertiesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/projects': {
       id: '/_authed/projects'
       path: '/projects'
@@ -358,6 +521,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthedOnboardingRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/jobs': {
+      id: '/_authed/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof AuthedJobsRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/funding': {
@@ -374,12 +544,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/customers': {
+      id: '/_authed/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthedCustomersRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/settings/profile': {
       id: '/_authed/settings/profile'
       path: '/settings/profile'
       fullPath: '/settings/profile'
       preLoaderRoute: typeof AuthedSettingsProfileRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/_authed/properties/$id': {
+      id: '/_authed/properties/$id'
+      path: '/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof AuthedPropertiesIdRouteImport
+      parentRoute: typeof AuthedPropertiesRoute
+    }
+    '/_authed/jobs/new': {
+      id: '/_authed/jobs/new'
+      path: '/new'
+      fullPath: '/jobs/new'
+      preLoaderRoute: typeof AuthedJobsNewRouteImport
+      parentRoute: typeof AuthedJobsRoute
+    }
+    '/_authed/jobs/$id': {
+      id: '/_authed/jobs/$id'
+      path: '/$id'
+      fullPath: '/jobs/$id'
+      preLoaderRoute: typeof AuthedJobsIdRouteImport
+      parentRoute: typeof AuthedJobsRoute
     }
     '/_authed/ibg/repository': {
       id: '/_authed/ibg/repository'
@@ -401,6 +599,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/ibg/history'
       preLoaderRoute: typeof AuthedIbgHistoryRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/_authed/ibg/$id': {
+      id: '/_authed/ibg/$id'
+      path: '/ibg/$id'
+      fullPath: '/ibg/$id'
+      preLoaderRoute: typeof AuthedIbgIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/funding/match': {
+      id: '/_authed/funding/match'
+      path: '/match'
+      fullPath: '/funding/match'
+      preLoaderRoute: typeof AuthedFundingMatchRouteImport
+      parentRoute: typeof AuthedFundingRoute
+    }
+    '/_authed/funding/$id': {
+      id: '/_authed/funding/$id'
+      path: '/$id'
+      fullPath: '/funding/$id'
+      preLoaderRoute: typeof AuthedFundingIdRouteImport
+      parentRoute: typeof AuthedFundingRoute
+    }
+    '/_authed/customers/new': {
+      id: '/_authed/customers/new'
+      path: '/new'
+      fullPath: '/customers/new'
+      preLoaderRoute: typeof AuthedCustomersNewRouteImport
+      parentRoute: typeof AuthedCustomersRoute
+    }
+    '/_authed/customers/$id': {
+      id: '/_authed/customers/$id'
+      path: '/$id'
+      fullPath: '/customers/$id'
+      preLoaderRoute: typeof AuthedCustomersIdRouteImport
+      parentRoute: typeof AuthedCustomersRoute
     }
     '/_authed/admin/users': {
       id: '/_authed/admin/users'
@@ -451,14 +684,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminActivityRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/ibg/$id/amendment': {
+      id: '/_authed/ibg/$id/amendment'
+      path: '/amendment'
+      fullPath: '/ibg/$id/amendment'
+      preLoaderRoute: typeof AuthedIbgIdAmendmentRouteImport
+      parentRoute: typeof AuthedIbgIdRoute
+    }
+    '/_authed/admin/users/$id': {
+      id: '/_authed/admin/users/$id'
+      path: '/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AuthedAdminUsersIdRouteImport
+      parentRoute: typeof AuthedAdminUsersRoute
+    }
   }
 }
 
+interface AuthedCustomersRouteChildren {
+  AuthedCustomersIdRoute: typeof AuthedCustomersIdRoute
+  AuthedCustomersNewRoute: typeof AuthedCustomersNewRoute
+}
+
+const AuthedCustomersRouteChildren: AuthedCustomersRouteChildren = {
+  AuthedCustomersIdRoute: AuthedCustomersIdRoute,
+  AuthedCustomersNewRoute: AuthedCustomersNewRoute,
+}
+
+const AuthedCustomersRouteWithChildren = AuthedCustomersRoute._addFileChildren(
+  AuthedCustomersRouteChildren,
+)
+
+interface AuthedFundingRouteChildren {
+  AuthedFundingIdRoute: typeof AuthedFundingIdRoute
+  AuthedFundingMatchRoute: typeof AuthedFundingMatchRoute
+}
+
+const AuthedFundingRouteChildren: AuthedFundingRouteChildren = {
+  AuthedFundingIdRoute: AuthedFundingIdRoute,
+  AuthedFundingMatchRoute: AuthedFundingMatchRoute,
+}
+
+const AuthedFundingRouteWithChildren = AuthedFundingRoute._addFileChildren(
+  AuthedFundingRouteChildren,
+)
+
+interface AuthedJobsRouteChildren {
+  AuthedJobsIdRoute: typeof AuthedJobsIdRoute
+  AuthedJobsNewRoute: typeof AuthedJobsNewRoute
+}
+
+const AuthedJobsRouteChildren: AuthedJobsRouteChildren = {
+  AuthedJobsIdRoute: AuthedJobsIdRoute,
+  AuthedJobsNewRoute: AuthedJobsNewRoute,
+}
+
+const AuthedJobsRouteWithChildren = AuthedJobsRoute._addFileChildren(
+  AuthedJobsRouteChildren,
+)
+
+interface AuthedPropertiesRouteChildren {
+  AuthedPropertiesIdRoute: typeof AuthedPropertiesIdRoute
+}
+
+const AuthedPropertiesRouteChildren: AuthedPropertiesRouteChildren = {
+  AuthedPropertiesIdRoute: AuthedPropertiesIdRoute,
+}
+
+const AuthedPropertiesRouteWithChildren =
+  AuthedPropertiesRoute._addFileChildren(AuthedPropertiesRouteChildren)
+
+interface AuthedAdminUsersRouteChildren {
+  AuthedAdminUsersIdRoute: typeof AuthedAdminUsersIdRoute
+}
+
+const AuthedAdminUsersRouteChildren: AuthedAdminUsersRouteChildren = {
+  AuthedAdminUsersIdRoute: AuthedAdminUsersIdRoute,
+}
+
+const AuthedAdminUsersRouteWithChildren =
+  AuthedAdminUsersRoute._addFileChildren(AuthedAdminUsersRouteChildren)
+
+interface AuthedIbgIdRouteChildren {
+  AuthedIbgIdAmendmentRoute: typeof AuthedIbgIdAmendmentRoute
+}
+
+const AuthedIbgIdRouteChildren: AuthedIbgIdRouteChildren = {
+  AuthedIbgIdAmendmentRoute: AuthedIbgIdAmendmentRoute,
+}
+
+const AuthedIbgIdRouteWithChildren = AuthedIbgIdRoute._addFileChildren(
+  AuthedIbgIdRouteChildren,
+)
+
 interface AuthedRouteChildren {
+  AuthedCustomersRoute: typeof AuthedCustomersRouteWithChildren
   AuthedDashboardRoute: typeof AuthedDashboardRoute
-  AuthedFundingRoute: typeof AuthedFundingRoute
+  AuthedFundingRoute: typeof AuthedFundingRouteWithChildren
+  AuthedJobsRoute: typeof AuthedJobsRouteWithChildren
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedProjectsRoute: typeof AuthedProjectsRoute
+  AuthedPropertiesRoute: typeof AuthedPropertiesRouteWithChildren
   AuthedSubmissionsRoute: typeof AuthedSubmissionsRoute
   AuthedAdminActivityRoute: typeof AuthedAdminActivityRoute
   AuthedAdminAmendmentsRoute: typeof AuthedAdminAmendmentsRoute
@@ -466,7 +792,8 @@ interface AuthedRouteChildren {
   AuthedAdminConfigRoute: typeof AuthedAdminConfigRoute
   AuthedAdminOnboardingRoute: typeof AuthedAdminOnboardingRoute
   AuthedAdminPermissionsRoute: typeof AuthedAdminPermissionsRoute
-  AuthedAdminUsersRoute: typeof AuthedAdminUsersRoute
+  AuthedAdminUsersRoute: typeof AuthedAdminUsersRouteWithChildren
+  AuthedIbgIdRoute: typeof AuthedIbgIdRouteWithChildren
   AuthedIbgHistoryRoute: typeof AuthedIbgHistoryRoute
   AuthedIbgNewRoute: typeof AuthedIbgNewRoute
   AuthedIbgRepositoryRoute: typeof AuthedIbgRepositoryRoute
@@ -474,10 +801,13 @@ interface AuthedRouteChildren {
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedCustomersRoute: AuthedCustomersRouteWithChildren,
   AuthedDashboardRoute: AuthedDashboardRoute,
-  AuthedFundingRoute: AuthedFundingRoute,
+  AuthedFundingRoute: AuthedFundingRouteWithChildren,
+  AuthedJobsRoute: AuthedJobsRouteWithChildren,
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedProjectsRoute: AuthedProjectsRoute,
+  AuthedPropertiesRoute: AuthedPropertiesRouteWithChildren,
   AuthedSubmissionsRoute: AuthedSubmissionsRoute,
   AuthedAdminActivityRoute: AuthedAdminActivityRoute,
   AuthedAdminAmendmentsRoute: AuthedAdminAmendmentsRoute,
@@ -485,7 +815,8 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminConfigRoute: AuthedAdminConfigRoute,
   AuthedAdminOnboardingRoute: AuthedAdminOnboardingRoute,
   AuthedAdminPermissionsRoute: AuthedAdminPermissionsRoute,
-  AuthedAdminUsersRoute: AuthedAdminUsersRoute,
+  AuthedAdminUsersRoute: AuthedAdminUsersRouteWithChildren,
+  AuthedIbgIdRoute: AuthedIbgIdRouteWithChildren,
   AuthedIbgHistoryRoute: AuthedIbgHistoryRoute,
   AuthedIbgNewRoute: AuthedIbgNewRoute,
   AuthedIbgRepositoryRoute: AuthedIbgRepositoryRoute,

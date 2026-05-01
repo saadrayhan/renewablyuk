@@ -1,203 +1,432 @@
+/**
+ * Dashboard — ElevenLabs-style hero with role-specific compositions.
+ *
+ * 5 personas:
+ *   admin            → onboarding queue, amendments queue, platform health, activity
+ *   operator         → permission summary, pinned shortcuts, what they can do today
+ *   installer-access → New IBG hero, last 5 IBGs, Upgrade card
+ *   installer-operate → ops summary: jobs by state, IBGs this month, funding readiness
+ *   readonly         → record browser tiles
+ */
+
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  FileBadge,
-  FolderKanban,
-  Send,
-  Sparkles,
-  Database,
-  ArrowRight,
-  Lock,
-  Users,
-  ScrollText,
-  Activity,
-  ClipboardList,
-  FileWarning,
+  FileBadge, FolderKanban, Send, Sparkles, Database, ArrowRight,
+  Users, ScrollText, Activity, ClipboardList, FileWarning,
+  Volume2, Music2, Mic2, BookOpen, Image as ImageIcon, Video,
+  Plus, TrendingUp, CheckCircle2, AlertTriangle, Clock,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
-import { can, canAny, type Permission } from "@/lib/rbac";
+import { can, type Permission } from "@/lib/rbac";
+import { useStore } from "@/lib/mock/store";
+import { StatePill, JOB_STATES, IBG_STATES, ONBOARDING_STATES, AMENDMENT_STATES } from "@/components/app/state-pill";
+import { fmtDate, relTime } from "@/lib/mock/queries";
 
 export const Route = createFileRoute("/_authed/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Renewably UK" }] }),
+  head: () => ({ meta: [{ title: "Home — Renewably UK" }] }),
   component: DashboardPage,
 });
 
-type Tile = {
-  label: string;
-  to: string;
-  icon: React.ComponentType<{ className?: string }>;
-  tone: "green" | "blue" | "amber" | "purple" | "rose" | "teal";
-  permission?: Permission;
-};
+function DashboardPage() {
+  const { user } = useAuth();
+  const { role } = useDevRole();
+  const firstName = user.fullName.split(" ")[0];
+  const greeting = greet();
 
-const installerTiles: Tile[] = [
-  { label: "New IBG", to: "/ibg/new", icon: FileBadge, tone: "green", permission: "ibg.issue" },
-  { label: "Projects", to: "/projects", icon: FolderKanban, tone: "blue", permission: "jobs.read" },
-  { label: "IBG Repository", to: "/ibg/repository", icon: Database, tone: "teal", permission: "ibg.repository.read" },
-  { label: "Submissions", to: "/submissions", icon: Send, tone: "purple", permission: "submissions.read" },
-  { label: "Funding", to: "/funding", icon: Sparkles, tone: "rose", permission: "funding.match.read" },
-];
+  return (
+    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+      <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
+        {workspaceName(role)}
+      </div>
+      <h1 className="mt-2 text-[44px] font-semibold leading-[1.05] tracking-tight text-ink">
+        {greeting}, {firstName}
+      </h1>
 
-const adminTiles: Tile[] = [
-  { label: "Users", to: "/admin/users", icon: Users, tone: "purple", permission: "users.read" },
-  { label: "Audit log", to: "/admin/audit", icon: ScrollText, tone: "blue", permission: "audit.read" },
-  { label: "Activity", to: "/admin/activity", icon: Activity, tone: "green", permission: "activity.read" },
-  { label: "Onboarding queue", to: "/admin/onboarding", icon: ClipboardList, tone: "amber", permission: "onboarding.queue.read" },
-  { label: "Amendments", to: "/admin/amendments", icon: FileWarning, tone: "rose", permission: "amendments.queue.read" },
-];
+      {role === "admin" && <AdminDash />}
+      {role === "operator" && <OperatorDash />}
+      {role === "installer-access" && <AccessDash />}
+      {role === "installer-operate" && <OperateDash />}
+      {role === "readonly" && <ReadonlyDash />}
+    </div>
+  );
+}
 
-const toneClasses: Record<Tile["tone"], { bg: string; ink: string }> = {
+/* ─── Admin ──────────────────────────────────────────── */
+
+function AdminDash() {
+  const data = useStore();
+  const onboardingPending = data.onboarding.filter((o) => o.state !== "activated");
+  const amendmentsPending = data.amendments.filter((a) => a.state === "pending");
+  const recent = data.activity.slice(0, 6);
+
+  return (
+    <>
+      <NewBadgeBanner
+        text="Permission Library v2 — assign capabilities to operators in one click."
+        cta="Open library"
+        to="/admin/permissions"
+      />
+
+      <SectionLabel>Quick actions</SectionLabel>
+      <TileGrid tiles={[
+        { label: "Users", to: "/admin/users", icon: Users, tone: "purple", desc: "Invite, assign roles, grant permissions" },
+        { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, tone: "amber", desc: `${onboardingPending.length} accounts to review` },
+        { label: "Amendments", to: "/admin/amendments", icon: FileWarning, tone: "rose", desc: `${amendmentsPending.length} pending` },
+        { label: "Audit log", to: "/admin/audit", icon: ScrollText, tone: "blue", desc: "Compliance trail" },
+        { label: "Activity", to: "/admin/activity", icon: Activity, tone: "green", desc: "Live platform feed" },
+        { label: "Permissions", to: "/admin/permissions", icon: Database, tone: "teal", desc: "Library + presets" },
+      ]} />
+
+      <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <SectionPanel title="Onboarding queue" to="/admin/onboarding">
+          {onboardingPending.length === 0 ? (
+            <EmptyRow text="No accounts waiting." />
+          ) : (
+            onboardingPending.slice(0, 4).map((o) => (
+              <Link key={o.id} to="/admin/onboarding" className="press flex items-center justify-between rounded-xl px-2 py-2.5 hover:bg-surface">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-foreground">{o.companyName}</div>
+                  <div className="text-xs text-ink-muted">{o.contactName} · {o.tier === "operate" ? "Operate" : "Access"}</div>
+                </div>
+                <StatePill meta={ONBOARDING_STATES[o.state]} />
+              </Link>
+            ))
+          )}
+        </SectionPanel>
+
+        <SectionPanel title="Amendments queue" to="/admin/amendments">
+          {amendmentsPending.length === 0 ? (
+            <EmptyRow text="No amendments pending." />
+          ) : (
+            amendmentsPending.slice(0, 4).map((a) => (
+              <Link key={a.id} to="/admin/amendments" className="press flex items-center justify-between rounded-xl px-2 py-2.5 hover:bg-surface">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-foreground">{a.field}</div>
+                  <div className="truncate text-xs text-ink-muted">{a.reason}</div>
+                </div>
+                <StatePill meta={AMENDMENT_STATES[a.state]} />
+              </Link>
+            ))
+          )}
+        </SectionPanel>
+      </div>
+
+      <div className="mt-4">
+        <SectionPanel title="Latest activity" to="/admin/activity">
+          {recent.map((act) => (
+            <div key={act.id} className="flex items-center justify-between rounded-xl px-2 py-2.5">
+              <div className="text-sm text-foreground">
+                <span className="font-medium">{act.actor}</span>{" "}
+                <span className="text-ink-muted">{act.action}</span>{" "}
+                <span className="font-medium">{act.target}</span>
+              </div>
+              <div className="text-xs text-ink-muted">{relTime(act.at)}</div>
+            </div>
+          ))}
+        </SectionPanel>
+      </div>
+    </>
+  );
+}
+
+/* ─── Operator ───────────────────────────────────────── */
+
+function OperatorDash() {
+  const { permissions, pendingPermissionRequests } = useDevRole();
+
+  const groups = [
+    { label: "Customers", icon: FolderKanban, to: "/customers", perm: "customers.read" as const },
+    { label: "Jobs", icon: Database, to: "/jobs", perm: "jobs.read" as const },
+    { label: "IBG Repository", icon: FileBadge, to: "/ibg/repository", perm: "ibg.repository.read" as const },
+    { label: "Submissions", icon: Send, to: "/submissions", perm: "submissions.read" as const },
+    { label: "Funding", to: "/funding", icon: Sparkles, perm: "funding.projects.read" as const },
+    { label: "Audit", to: "/admin/audit", icon: ScrollText, perm: "audit.read" as const },
+  ];
+  const granted = groups.filter((g) => can(permissions, g.perm));
+  const locked = groups.filter((g) => !can(permissions, g.perm));
+
+  return (
+    <>
+      <NewBadgeBanner
+        text={`You hold ${permissions.length} permission${permissions.length === 1 ? "" : "s"}. Request more from any locked feature.`}
+        cta="View my access"
+        to="/settings/profile"
+      />
+
+      <SectionLabel>What you can do</SectionLabel>
+      {granted.length === 0 ? (
+        <div className="rounded-2xl border border-dashed bg-surface/40 px-6 py-10 text-center text-sm text-ink-muted">
+          You don't have any permissions yet. Open a locked feature and tap "Request access".
+        </div>
+      ) : (
+        <TileGrid tiles={granted.map((g) => ({ label: g.label, to: g.to, icon: g.icon, tone: "blue" as const, desc: "Granted" }))} />
+      )}
+
+      {locked.length > 0 && (
+        <>
+          <SectionLabel>Available — request access</SectionLabel>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {locked.map((g) => {
+              const Icon = g.icon;
+              return (
+                <Link key={g.label} to={g.to} className="press tile flex flex-col items-start gap-2 rounded-2xl border border-dashed bg-card/50 p-4 opacity-80">
+                  <div className="grid size-10 place-items-center rounded-xl bg-tile text-ink-muted">
+                    <Icon className="size-5" />
+                  </div>
+                  <div className="text-sm font-medium text-foreground">{g.label}</div>
+                  <div className="text-[11px] text-ink-muted">Locked</div>
+                </Link>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {pendingPermissionRequests.length > 0 && (
+        <div className="mt-8 rounded-2xl border bg-cat-amber-bg/30 p-5">
+          <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <Clock className="size-4 text-cat-amber" /> {pendingPermissionRequests.length} permission request{pendingPermissionRequests.length === 1 ? "" : "s"} awaiting admin
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ─── Installer Access ───────────────────────────────── */
+
+function AccessDash() {
+  const data = useStore();
+  const recent = data.ibgs.filter((i) => i.state === "issued").slice(0, 5);
+
+  return (
+    <>
+      <NewBadgeBanner text="Standalone IBG generator — issue a certificate without setting up a job." cta="New IBG" to="/ibg/new" />
+
+      <SectionLabel>Quick start</SectionLabel>
+      <TileGrid tiles={[
+        { label: "Issue an IBG", to: "/ibg/new", icon: FileBadge, tone: "green", desc: "Generate certificate + policy" },
+        { label: "My IBGs", to: "/ibg/history", icon: Database, tone: "blue", desc: "View 5 most recent" },
+        { label: "Upgrade to Operate", to: "/pricing", icon: Sparkles, tone: "amber", desc: "Unlock Projects, Funding, Repository" },
+      ]} />
+
+      <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <SectionPanel title="Recent IBGs" to="/ibg/history">
+          {recent.length === 0 ? (
+            <EmptyRow text="No IBGs yet — issue your first one." />
+          ) : (
+            recent.map((i) => (
+              <Link key={i.id} to="/ibg/history" className="press flex items-center justify-between rounded-xl px-2 py-2.5 hover:bg-surface">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-foreground">{i.ref} · {i.customerName}</div>
+                  <div className="truncate text-xs text-ink-muted">{i.propertyAddress}</div>
+                </div>
+                <StatePill meta={IBG_STATES[i.state]} />
+              </Link>
+            ))
+          )}
+        </SectionPanel>
+        <UpgradeCard />
+      </div>
+    </>
+  );
+}
+
+/* ─── Installer Operate ──────────────────────────────── */
+
+function OperateDash() {
+  const data = useStore();
+  const inProgress = data.jobs.filter((j) => j.state === "in-progress").length;
+  const blocked = data.jobs.filter((j) => j.state === "blocked").length;
+  const ibgsThisMonth = data.ibgs.filter((i) => i.issuedAt && i.issuedAt > Date.now() - 30 * 86400000).length;
+  const fundingReady = data.fundingProjects.filter((f) => f.state === "ready-for-submission").length;
+
+  return (
+    <>
+      <NewBadgeBanner
+        text="Funding Match Hub — see schemes scored against your approved measures."
+        cta="Open Match Hub"
+        to="/funding/match"
+      />
+
+      <SectionLabel>Workspace</SectionLabel>
+      <TileGrid tiles={[
+        { label: "New IBG", to: "/ibg/new", icon: FileBadge, tone: "green", desc: "Issue certificate" },
+        { label: "Projects", to: "/projects", icon: FolderKanban, tone: "blue", desc: "Customers · Properties · Jobs" },
+        { label: "IBG Repository", to: "/ibg/repository", icon: Database, tone: "teal", desc: "All issued records" },
+        { label: "Submissions", to: "/submissions", icon: Send, tone: "purple", desc: "Scheme submissions" },
+        { label: "Funding", to: "/funding", icon: Sparkles, tone: "rose", desc: "Match Hub + projects" },
+        { label: "Settings", to: "/settings/profile", icon: TrendingUp, tone: "amber", desc: "Profile · Subscription" },
+      ]} />
+
+      <SectionLabel>This week</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Jobs in progress" value={inProgress} icon={Clock} tone="blue" />
+        <Stat label="Jobs blocked" value={blocked} icon={AlertTriangle} tone="rose" />
+        <Stat label="IBGs (30d)" value={ibgsThisMonth} icon={FileBadge} tone="green" />
+        <Stat label="Funding ready" value={fundingReady} icon={CheckCircle2} tone="teal" />
+      </div>
+
+      <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <SectionPanel title="Jobs needing attention" to="/jobs">
+          {data.jobs
+            .filter((j) => j.state === "blocked" || j.state === "awaiting-information")
+            .slice(0, 5)
+            .map((j) => {
+              const c = data.customers.find((c) => c.id === j.customerId);
+              return (
+                <Link key={j.id} to="/jobs" className="press flex items-center justify-between rounded-xl px-2 py-2.5 hover:bg-surface">
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-foreground">{j.ref} · {j.measure}</div>
+                    <div className="truncate text-xs text-ink-muted">{c?.name}</div>
+                  </div>
+                  <StatePill meta={JOB_STATES[j.state]} />
+                </Link>
+              );
+            })}
+        </SectionPanel>
+        <SectionPanel title="Latest IBGs" to="/ibg/repository">
+          {data.ibgs.slice(0, 5).map((i) => (
+            <Link key={i.id} to="/ibg/repository" className="press flex items-center justify-between rounded-xl px-2 py-2.5 hover:bg-surface">
+              <div className="min-w-0">
+                <div className="text-sm font-medium text-foreground">{i.ref} · {i.customerName}</div>
+                <div className="truncate text-xs text-ink-muted">{i.measure} · {i.issuedAt ? fmtDate(i.issuedAt) : "—"}</div>
+              </div>
+              <StatePill meta={IBG_STATES[i.state]} />
+            </Link>
+          ))}
+        </SectionPanel>
+      </div>
+    </>
+  );
+}
+
+/* ─── Readonly ───────────────────────────────────────── */
+
+function ReadonlyDash() {
+  return (
+    <>
+      <NewBadgeBanner text="Read-only view of operational data. No edits, no submissions." cta="Browse records" to="/ibg/repository" />
+      <SectionLabel>Browse</SectionLabel>
+      <TileGrid tiles={[
+        { label: "Customers", to: "/customers", icon: FolderKanban, tone: "blue", desc: "Read-only" },
+        { label: "Jobs", to: "/jobs", icon: Database, tone: "teal", desc: "Read-only" },
+        { label: "IBG Repository", to: "/ibg/repository", icon: FileBadge, tone: "green", desc: "Read-only" },
+        { label: "Submissions", to: "/submissions", icon: Send, tone: "purple", desc: "Read-only" },
+        { label: "Funding", to: "/funding", icon: Sparkles, tone: "rose", desc: "Read-only" },
+        { label: "Audit log", to: "/admin/audit", icon: ScrollText, tone: "amber", desc: "Compliance trail" },
+      ]} />
+    </>
+  );
+}
+
+/* ─── Pieces ─────────────────────────────────────────── */
+
+const TONES = {
   green: { bg: "bg-cat-green-bg", ink: "text-cat-green" },
   blue: { bg: "bg-cat-blue-bg", ink: "text-cat-blue" },
   amber: { bg: "bg-cat-amber-bg", ink: "text-cat-amber" },
   purple: { bg: "bg-cat-purple-bg", ink: "text-cat-purple" },
   rose: { bg: "bg-cat-rose-bg", ink: "text-cat-rose" },
   teal: { bg: "bg-cat-teal-bg", ink: "text-cat-teal" },
-};
+} as const;
+type Tone = keyof typeof TONES;
 
-function DashboardPage() {
-  const { user, permissions, isAdmin } = useAuth();
-  const { role } = useDevRole();
-  const firstName = user.fullName.split(" ")[0];
-  const greeting = greet();
+type Tile = { label: string; to: string; icon: React.ComponentType<{ className?: string }>; tone: Tone; desc: string; permission?: Permission };
 
-  const isOperator = role === "operator";
-  const showAdminTiles = isAdmin || canAny(permissions, adminTiles.map((t) => t.permission!).filter(Boolean));
-
+function TileGrid({ tiles }: { tiles: Tile[] }) {
   return (
-    <div className="mx-auto w-full max-w-6xl px-8 py-10">
-      {/* Role banner */}
-      <div className="flex items-center justify-between gap-4 rounded-2xl border bg-surface px-4 py-3 text-sm">
-        <div className="flex items-center gap-3">
-          <span className="rounded-full bg-cat-purple-bg px-2 py-0.5 text-xs font-medium text-cat-purple">
-            {user.roleLabel}
-          </span>
-          <span className="text-foreground">
-            {isOperator
-              ? `You hold ${permissions.length} permission${permissions.length === 1 ? "" : "s"}. Request more from any locked feature.`
-              : isAdmin
-              ? "You have full configuration access."
-              : `${permissions.length} capabilities active in this workspace.`}
-          </span>
-        </div>
-        {isOperator && (
-          <Link
-            to="/settings/profile"
-            className="press inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium text-foreground"
-          >
-            My access <ArrowRight className="size-3.5" />
+    <div className="stagger-in mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      {tiles.map((t) => {
+        const Icon = t.icon;
+        const tone = TONES[t.tone];
+        return (
+          <Link key={t.label + t.to} to={t.to} className="press tile group flex h-[148px] flex-col items-start justify-between rounded-2xl border bg-card p-4">
+            <div className={`grid size-10 place-items-center rounded-xl ${tone.bg} ${tone.ink}`}>
+              <Icon className="size-5" />
+            </div>
+            <div>
+              <div className="text-sm font-medium text-foreground">{t.label}</div>
+              <div className="mt-0.5 text-[11px] leading-snug text-ink-muted">{t.desc}</div>
+            </div>
           </Link>
-        )}
-      </div>
-
-      {/* Header */}
-      <div className="mt-10">
-        <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
-          My Workspace
-        </div>
-        <h1 className="mt-2 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-          {greeting}, {firstName}
-        </h1>
-      </div>
-
-      {/* Workspace tiles */}
-      <div className="mt-8">
-        <div className="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
-          Workspace
-        </div>
-        <div className="stagger-in grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {installerTiles.map((t) => (
-            <QuickTile key={t.label} tile={t} permissions={permissions} />
-          ))}
-        </div>
-      </div>
-
-      {showAdminTiles && (
-        <div className="mt-8">
-          <div className="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
-            Admin
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {adminTiles.map((t) => (
-              <QuickTile key={t.label} tile={t} permissions={permissions} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Lower section */}
-      <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card title="Recent activity">
-          <ActivityRow
-            tone="green"
-            title="No activity yet"
-            meta="Your IBGs and jobs will appear here."
-          />
-        </Card>
-        <Card title="Get more from Renewably">
-          <SuggestionRow to="/ibg/new" label="Issue your first IBG" meta="Generate a certificate in under a minute." />
-          <SuggestionRow to="/pricing" label="Upgrade to Operate" meta="Unlock Projects, Funding Match and the IBG repository." />
-          <SuggestionRow to="/onboarding" label="Finish onboarding" meta="Verify company, upload accreditations." />
-        </Card>
-      </div>
+        );
+      })}
     </div>
   );
 }
 
-function QuickTile({ tile, permissions }: { tile: Tile; permissions: Permission[] }) {
-  const Icon = tile.icon;
-  const tone = toneClasses[tile.tone];
-  const locked = !!tile.permission && !can(permissions, tile.permission);
-
+function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <Link to={tile.to} className="press block">
-      <div className="tile flex flex-col gap-3 rounded-2xl border bg-card p-4">
-        <div className={`relative grid size-12 place-items-center rounded-xl ${tone.bg} ${tone.ink}`}>
-          <Icon className="size-6" />
-          {locked && (
-            <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full border bg-background text-ink-muted">
-              <Lock className="size-3" />
-            </span>
-          )}
-        </div>
-        <div className="text-sm font-medium text-foreground">{tile.label}</div>
-      </div>
-    </Link>
-  );
-}
-
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border bg-card p-5">
-      <div className="mb-3 text-sm font-medium text-foreground">{title}</div>
-      <div className="space-y-1">{children}</div>
+    <div className="mb-2 mt-10 text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
+      {children}
     </div>
   );
 }
 
-function ActivityRow({ tone, title, meta }: { tone: "green" | "blue" | "amber"; title: string; meta: string }) {
-  const dot = { green: "bg-cat-green", blue: "bg-cat-blue", amber: "bg-cat-amber" }[tone];
+function SectionPanel({ title, to, children }: { title: string; to: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl px-2 py-2.5">
-      <span className={`size-2 rounded-full ${dot}`} />
-      <div className="flex-1">
-        <div className="text-sm text-foreground">{title}</div>
-        <div className="text-xs text-ink-muted">{meta}</div>
+    <div className="rounded-2xl border bg-card p-4">
+      <div className="mb-2 flex items-center justify-between px-2">
+        <div className="text-sm font-medium text-foreground">{title}</div>
+        <Link to={to} className="press inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-ink-muted hover:text-foreground">
+          View all <ArrowRight className="size-3" />
+        </Link>
       </div>
+      <div className="space-y-0.5">{children}</div>
     </div>
   );
 }
 
-function SuggestionRow({ to, label, meta }: { to: string; label: string; meta: string }) {
+function EmptyRow({ text }: { text: string }) {
+  return <div className="rounded-xl bg-surface px-3 py-4 text-center text-xs text-ink-muted">{text}</div>;
+}
+
+function NewBadgeBanner({ text, cta, to }: { text: string; cta: string; to: string }) {
   return (
-    <Link to={to} className="press flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 hover:bg-surface">
-      <div className="flex-1">
-        <div className="text-sm font-medium text-foreground">{label}</div>
-        <div className="text-xs text-ink-muted">{meta}</div>
-      </div>
-      <ArrowRight className="size-4 text-ink-muted" />
-    </Link>
+    <div className="mt-7 flex flex-wrap items-center gap-3 rounded-full border bg-surface/60 px-3 py-1.5 text-sm">
+      <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">New</span>
+      <span className="flex-1 text-foreground">{text}</span>
+      <Link to={to} className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-background">
+        {cta} <ArrowRight className="size-3" />
+      </Link>
+    </div>
   );
+}
+
+function Stat({ label, value, icon: Icon, tone }: { label: string; value: number; icon: React.ComponentType<{ className?: string }>; tone: Tone }) {
+  const t = TONES[tone];
+  return (
+    <div className="rounded-2xl border bg-card p-4">
+      <div className={`grid size-8 place-items-center rounded-lg ${t.bg} ${t.ink}`}>
+        <Icon className="size-4" />
+      </div>
+      <div className="mt-3 text-2xl font-semibold text-ink">{value}</div>
+      <div className="text-xs text-ink-muted">{label}</div>
+    </div>
+  );
+}
+
+function UpgradeCard() {
+  return (
+    <div className="overflow-hidden rounded-2xl border bg-foreground p-5 text-background">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-background/60">Operate plan</div>
+      <div className="mt-2 text-xl font-semibold leading-tight">Unlock Projects, Funding Match and the IBG Repository.</div>
+      <div className="mt-1 text-sm text-background/70">Run the full record chain — Customer → Property → Job → IBG → Submission.</div>
+      <Link to="/pricing" className="press mt-4 inline-flex items-center gap-1 rounded-full bg-background px-4 py-2 text-xs font-medium text-foreground">
+        See plans <ArrowRight className="size-3" />
+      </Link>
+    </div>
+  );
+}
+
+function workspaceName(role: string) {
+  if (role === "admin") return "Renewably HQ";
+  if (role === "operator") return "Renewably Ops";
+  if (role === "installer-access") return "Northwarmth Ltd · Access";
+  if (role === "installer-operate") return "Evergreen Installs · Operate";
+  return "External · Read-only";
 }
 
 function greet() {
@@ -207,3 +436,6 @@ function greet() {
   if (h < 18) return "Good afternoon";
   return "Good evening";
 }
+
+// silence unused import warnings (these icons may not all be used after refactor)
+void Volume2; void Music2; void Mic2; void BookOpen; void ImageIcon; void Video; void Plus;
