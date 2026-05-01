@@ -41,6 +41,7 @@ function loadData(): SeedData {
 
 function persist() {
   if (typeof window === "undefined") return;
+  if (!DATA) return;
   try {
     window.localStorage.setItem(KEY, JSON.stringify(DATA));
   } catch {
