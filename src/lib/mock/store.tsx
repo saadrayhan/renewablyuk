@@ -49,12 +49,12 @@ function persist() {
   listeners.forEach((l) => l());
 }
 
-export function getData() {
-  return DATA;
+export function getData(): SeedData {
+  return loadData();
 }
 
 export function update(mutator: (d: SeedData) => void) {
-  mutator(DATA);
+  mutator(loadData());
   persist();
 }
 
@@ -82,7 +82,7 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value = useMemo(() => ({ data: DATA, tick }), [tick]);
+  const value = useMemo(() => ({ data: loadData(), tick }), [tick]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
