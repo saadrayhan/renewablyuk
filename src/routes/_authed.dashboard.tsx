@@ -125,7 +125,7 @@ function QuickTile({ tile }: { tile: Tile }) {
   const tone = toneClasses[tile.tone];
 
   const inner = (
-    <div className="flex flex-col gap-3 rounded-2xl border bg-card p-4 transition-[box-shadow,transform] @media[hover:hover]:hover:-translate-y-[1px] @media[hover:hover]:hover:shadow-sm">
+    <div className="tile flex flex-col gap-3 rounded-2xl border bg-card p-4">
       <div
         className={`relative grid size-12 place-items-center rounded-xl ${tone.bg} ${tone.ink}`}
       >
