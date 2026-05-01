@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { User, Bell, CreditCard, Wrench } from "lucide-react";
+import { User, Bell, CreditCard, Wrench, Plug } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 
@@ -11,12 +11,15 @@ export const Route = createFileRoute("/_authed/settings")({
 function SettingsLayout() {
   const loc = useLocation();
   const { user } = useAuth();
-  const isOperate = user.role === "installer-operate";
+  const isAdmin = user.role === "admin";
+  // Subscription is only relevant for paid installer tier — admins and read-only never pay.
+  const showSubscription = user.role === "installer-operate";
 
   const items = [
     { to: "/settings/profile", label: "Profile", icon: User, show: true },
     { to: "/settings/notifications", label: "Notifications", icon: Bell, show: true },
-    { to: "/settings/subscription", label: "Subscription", icon: CreditCard, show: isOperate },
+    { to: "/settings/subscription", label: "Subscription", icon: CreditCard, show: showSubscription },
+    { to: "/settings/integrations", label: "Integrations", icon: Plug, show: isAdmin || user.role === "installer-operate" },
     { to: "/settings/measures", label: "Measures", icon: Wrench, show: true },
   ].filter((i) => i.show);
 
