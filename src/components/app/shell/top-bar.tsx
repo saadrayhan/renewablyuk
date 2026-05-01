@@ -1,61 +1,52 @@
 /**
- * Top bar — breadcrumb on the left, action cluster on the right.
- * Mirrors ElevenLabs: Feedback / Docs / Ask / Files / Bell / Avatar.
+ * Top bar — sidebar toggle + breadcrumb on the left, notifications +
+ * profile on the right. Trimmed: Feedback / Docs / Ask / Files removed
+ * per product request.
  */
 
-import { FileText, FolderOpen, MessageSquare, Sparkles } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 import { Breadcrumbs } from "./breadcrumbs";
 import { NotificationsPopover } from "./notifications-popover";
 import { ProfilePopover } from "./profile-popover";
+import { useSidebarState } from "./sidebar-context";
 
 export function TopBar() {
+  const { collapsed, toggleCollapsed, setMobileOpen } = useSidebarState();
+
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/90 px-5 backdrop-blur">
-      <Breadcrumbs />
-      <div className="flex items-center gap-1">
-        <PillButton icon={MessageSquare} label="Feedback" />
-        <PillButton icon={FileText} label="Docs" href="https://docs.lovable.dev" />
-        <PillButton icon={Sparkles} label="Ask" highlight />
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b bg-background/90 px-3 backdrop-blur md:px-5">
+      <div className="flex min-w-0 items-center gap-2">
+        {/* Mobile menu */}
         <button
           type="button"
-          aria-label="Files"
-          className="press grid size-8 place-items-center rounded-full text-ink-muted hover:bg-surface hover:text-foreground"
+          aria-label="Open menu"
+          onClick={() => setMobileOpen(true)}
+          className="press grid size-8 place-items-center rounded-lg text-ink-muted hover:bg-surface hover:text-foreground md:hidden"
         >
-          <FolderOpen className="size-[18px]" />
+          <Menu className="size-[18px]" />
         </button>
+        {/* Desktop collapse toggle */}
+        <button
+          type="button"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={toggleCollapsed}
+          className="press hidden size-8 place-items-center rounded-lg text-ink-muted hover:bg-surface hover:text-foreground md:grid"
+        >
+          {collapsed ? (
+            <PanelLeftOpen className="size-[18px]" />
+          ) : (
+            <PanelLeftClose className="size-[18px]" />
+          )}
+        </button>
+        <div className="min-w-0 truncate">
+          <Breadcrumbs />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1">
         <NotificationsPopover />
         <ProfilePopover />
       </div>
     </header>
-  );
-}
-
-function PillButton({
-  icon: Icon,
-  label,
-  href,
-  highlight,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  href?: string;
-  highlight?: boolean;
-}) {
-  const cls =
-    "press inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-surface" +
-    (highlight ? " ring-1 ring-cat-blue/20" : "");
-  if (href) {
-    return (
-      <a href={href} target="_blank" rel="noreferrer" className={cls}>
-        <Icon className="size-3.5" />
-        {label}
-      </a>
-    );
-  }
-  return (
-    <button type="button" className={cls}>
-      <Icon className="size-3.5" />
-      {label}
-    </button>
   );
 }
