@@ -6,12 +6,9 @@ export const Route = createFileRoute("/_authed")({
 });
 
 function AuthedLayout() {
-  // Backend disabled — auth bypassed for design preview.
-  const tier = "access" as const;
-
   return (
     <div className="flex min-h-screen w-full bg-background">
-      <AppSidebar tier={tier} />
+      <AppSidebar />
       <main className="min-w-0 flex-1">
         <Outlet />
       </main>
