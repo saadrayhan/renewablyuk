@@ -1,5 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { AppSidebar } from "@/components/app/app-sidebar";
+import { MiniRail } from "@/components/app/shell/mini-rail";
+import { SidePanel } from "@/components/app/shell/side-panel";
+import { TopBar } from "@/components/app/shell/top-bar";
 
 export const Route = createFileRoute("/_authed")({
   component: AuthedLayout,
@@ -8,10 +10,15 @@ export const Route = createFileRoute("/_authed")({
 function AuthedLayout() {
   return (
     <div className="flex min-h-screen w-full bg-background">
-      <AppSidebar />
-      <main className="min-w-0 flex-1">
-        <Outlet />
+      <MiniRail />
+      <SidePanel />
+      <main className="flex min-w-0 flex-1 flex-col">
+        <TopBar />
+        <div className="flex-1">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
 }
+
