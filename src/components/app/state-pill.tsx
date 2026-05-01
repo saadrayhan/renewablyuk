@@ -81,6 +81,7 @@ export const USER_STATES: Record<string, StateMeta> = {
   active: ACTIVE("Active"),
   suspended: ERR("Suspended"),
   deactivated: NEU("Deactivated"),
+  banned: ERR("Banned"),
 };
 
 export const AMENDMENT_STATES: Record<string, StateMeta> = {
