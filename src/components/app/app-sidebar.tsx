@@ -1,66 +1,103 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
-  FileBadge,
-  Briefcase,
-  Users,
-  Building2,
+  FolderKanban,
+  FilePlus2,
+  History,
+  Database,
   Send,
   Sparkles,
-  BarChart3,
-  Database,
   Settings,
-  Bell,
-  Plus,
   Lock,
   ChevronsLeft,
   ChevronsRight,
+  Shield,
+  Users,
+  ScrollText,
+  Activity,
+  ClipboardList,
+  FileWarning,
+  Library,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-type Tier = "access" | "operate";
+import { useAuth } from "@/lib/auth-context";
+import { canAny, type Permission } from "@/lib/rbac";
 
 type NavItem = {
   label: string;
   to: string;
   icon: React.ComponentType<{ className?: string }>;
-  requires?: Tier;
-  trailing?: React.ReactNode;
+  /** Visible to anyone holding ANY of these permissions. */
+  visibleIf?: Permission[];
+  /** Lock indicator when present but disabled. Item still shows. */
+  showLockedIfNot?: Permission[];
 };
 
 const main: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
-  { label: "IBG", to: "/ibg/history", icon: FileBadge },
+  {
+    label: "Projects",
+    to: "/projects",
+    icon: FolderKanban,
+    showLockedIfNot: ["customers.read", "jobs.read", "properties.read"],
+  },
 ];
 
-const operateGroup: NavItem[] = [
-  { label: "Jobs", to: "/jobs", icon: Briefcase, requires: "operate" },
-  { label: "Customers", to: "/customers", icon: Users, requires: "operate" },
-  { label: "Properties", to: "/properties", icon: Building2, requires: "operate" },
-  { label: "Submissions", to: "/submissions", icon: Send, requires: "operate" },
-  { label: "Funding", to: "/funding", icon: Sparkles, requires: "operate" },
-];
-
-const insightsGroup: NavItem[] = [
-  { label: "Reports", to: "/reports", icon: BarChart3, requires: "operate" },
+const ibgGroup: NavItem[] = [
+  {
+    label: "IBG Generator",
+    to: "/ibg/new",
+    icon: FilePlus2,
+    showLockedIfNot: ["ibg.issue"],
+  },
+  { label: "IBG History", to: "/ibg/history", icon: History },
   {
     label: "IBG Repository",
     to: "/ibg/repository",
     icon: Database,
-    requires: "operate",
+    showLockedIfNot: ["ibg.repository.read"],
   },
+];
+
+const workGroup: NavItem[] = [
+  {
+    label: "Submissions",
+    to: "/submissions",
+    icon: Send,
+    showLockedIfNot: ["submissions.read"],
+  },
+  {
+    label: "Funding",
+    to: "/funding",
+    icon: Sparkles,
+    showLockedIfNot: ["funding.match.read", "funding.projects.read"],
+  },
+];
+
+// Admin-only conditional items — only render at all if the user has the perm.
+const adminGroup: NavItem[] = [
+  { label: "Users", to: "/admin/users", icon: Users, visibleIf: ["users.read"] },
+  { label: "Audit log", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
+  { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
+  { label: "Onboarding queue", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
+  { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
+  { label: "Permission library", to: "/admin/permissions", icon: Library, visibleIf: ["permissions.library.manage"] },
+  { label: "System config", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
 ];
 
 const footerGroup: NavItem[] = [
   { label: "Settings", to: "/settings/profile", icon: Settings },
-  { label: "Notifications", to: "/settings/notifications", icon: Bell },
 ];
 
-export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
+export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const initials = "DP";
-  const displayName = "Design preview";
+  const { user, permissions } = useAuth();
+
+  const visibleAdmin = adminGroup.filter(
+    (item) => !item.visibleIf || canAny(permissions, item.visibleIf),
+  );
 
   return (
     <aside
@@ -71,7 +108,6 @@ export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
         collapsed ? "w-[68px]" : "w-[248px]",
       )}
     >
-      {/* Logo + collapse */}
       <div className="flex h-14 items-center justify-between px-3">
         <Link
           to="/dashboard"
@@ -92,38 +128,36 @@ export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
           onClick={() => setCollapsed((v) => !v)}
           className="press grid size-7 place-items-center rounded-md text-ink-muted hover:bg-sidebar-accent hover:text-foreground"
         >
-          {collapsed ? (
-            <ChevronsRight className="size-4" />
-          ) : (
-            <ChevronsLeft className="size-4" />
-          )}
+          {collapsed ? <ChevronsRight className="size-4" /> : <ChevronsLeft className="size-4" />}
         </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 pb-3 pt-1">
-        <Group items={main} tier={tier} collapsed={collapsed}>
-          {!collapsed && (
-            <Link
-              to="/ibg/new"
-              className="press grid size-6 place-items-center rounded-md text-ink-muted hover:bg-background hover:text-foreground"
-              aria-label="New IBG"
-            >
-              <Plus className="size-3.5" />
-            </Link>
-          )}
-        </Group>
+        <Group items={main} permissions={permissions} collapsed={collapsed} />
 
-        <SectionLabel collapsed={collapsed}>Operate</SectionLabel>
-        <Group items={operateGroup} tier={tier} collapsed={collapsed} />
+        <SectionLabel collapsed={collapsed}>IBG</SectionLabel>
+        <Group items={ibgGroup} permissions={permissions} collapsed={collapsed} />
 
-        <SectionLabel collapsed={collapsed}>Insights</SectionLabel>
-        <Group items={insightsGroup} tier={tier} collapsed={collapsed} />
+        <SectionLabel collapsed={collapsed}>Workflows</SectionLabel>
+        <Group items={workGroup} permissions={permissions} collapsed={collapsed} />
+
+        {visibleAdmin.length > 0 && (
+          <>
+            <SectionLabel collapsed={collapsed} icon={Shield}>
+              Admin
+            </SectionLabel>
+            <Group
+              items={visibleAdmin}
+              permissions={permissions}
+              collapsed={collapsed}
+            />
+          </>
+        )}
 
         <div className="my-3 h-px bg-sidebar-border" />
-        <Group items={footerGroup} tier={tier} collapsed={collapsed} />
+        <Group items={footerGroup} permissions={permissions} collapsed={collapsed} />
       </nav>
 
-      {/* Account footer */}
       <div className="border-t p-2">
         <div
           className={cn(
@@ -132,13 +166,13 @@ export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
           )}
         >
           <div className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {initials}
+            {user.initials}
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium">{displayName}</div>
-              <div className="truncate text-xs capitalize text-ink-muted">
-                {tier} plan
+              <div className="truncate text-sm font-medium">{user.fullName}</div>
+              <div className="truncate text-xs text-ink-muted">
+                {user.roleLabel}
               </div>
             </div>
           )}
@@ -151,13 +185,16 @@ export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
 function SectionLabel({
   children,
   collapsed,
+  icon: Icon,
 }: {
   children: React.ReactNode;
   collapsed: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
 }) {
   if (collapsed) return <div className="my-3 h-px bg-sidebar-border" />;
   return (
-    <div className="px-3 pb-1.5 pt-4 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted">
+    <div className="flex items-center gap-1.5 px-3 pb-1.5 pt-4 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted">
+      {Icon && <Icon className="size-3" />}
       {children}
     </div>
   );
@@ -165,14 +202,12 @@ function SectionLabel({
 
 function Group({
   items,
-  tier,
+  permissions,
   collapsed,
-  children,
 }: {
   items: NavItem[];
-  tier: Tier;
+  permissions: Permission[];
   collapsed: boolean;
-  children?: React.ReactNode;
 }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
 
@@ -180,7 +215,9 @@ function Group({
     <ul className="space-y-0.5">
       {items.map((item) => {
         const Icon = item.icon;
-        const locked = item.requires === "operate" && tier !== "operate";
+        const locked =
+          !!item.showLockedIfNot &&
+          !canAny(permissions, item.showLockedIfNot);
         const active =
           path === item.to ||
           (item.to !== "/dashboard" && path.startsWith(item.to));
@@ -202,7 +239,6 @@ function Group({
               {!collapsed && locked && (
                 <Lock className="size-3.5 text-ink-muted/70" />
               )}
-              {!collapsed && !locked && children}
             </Link>
           </li>
         );
