@@ -1,241 +1,153 @@
-# Renewably UK Platform — V1.0
 
-A private operational and compliance platform for UK Net Zero installation companies. Built around the linked record chain **Customer → Property → Job → Workflow → Output → Audit**, with two live membership tiers (**Access** and **Operate**) plus stakeholder onboarding for non-installer user types.
+# Renewably UK — A→Z plan
 
-Visual language is taken wholesale from ElevenLabs: bright white canvas, slim left sidebar, bold black headings, soft rounded grey tiles with vibrant illustrated icons, black pill primary buttons, generous whitespace, no chrome. Every interaction is held to a craft standard — the aggregate of invisible correctness is the differentiator.
+Two goals, in order:
+1. **Reconstruct the shell** to match ElevenLabs as closely as possible.
+2. **Make every IA flow actually work** — every screen in the IA HTML gets a real, navigable, role-aware page. No more "coming soon" dead-ends.
 
----
-
-## Visual System
-
-**Theme** — Light. Background `#FFFFFF`, surface `#FAFAFA`, soft tile `#F4F4F5`, borders `#E5E5E5`, ink `#0A0A0A`, muted `#6B6B6B`.
-**Accent** — Renewably green used sparingly on status, charts, and Funding Match. Category illustration tiles use a small palette: green, blue, amber, purple, rose — same energy as ElevenLabs' Audiobook / AI Agent / Podcast tiles.
-**Type** — Inter (or similar geometric sans). Black weight for H1 ("Good morning, Sarah"), regular for body, small uppercase muted for section labels.
-**Components** — Rounded-2xl cards, pill buttons, slim sidebar with icon + label rows, status as small pills, slim progress bars, soft hover states.
-**Illustrated tiles** — Each category (IBG, Jobs, Customers, Properties, Submissions, Funding) gets its own bright illustrated icon on a soft grey square — the "Instant speech / Audiobook / AI agent" row.
-**Auth** — Split layout: form left (white), gradient marketing card right with floating sample chips.
+All in design-only mode (no backend). Mock data lives in `src/lib/mock/*` and a tiny in-memory store with `localStorage` persistence so created records survive a refresh.
 
 ---
 
-## Motion & Craft
+## Part 1 — ElevenLabs shell (foundation)
 
-Motion is a feature, not decoration. It runs on these rules:
+What ElevenLabs actually does (from your screenshots):
 
-**Tokens** (in `styles.css`):
-```text
---ease-out:    cubic-bezier(0.23, 1, 0.32, 1)
---ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)
---ease-drawer: cubic-bezier(0.32, 0.72, 0, 1)
-durations: 100 / 160 / 200 / 250 ms
-```
+- **Mini icon rail** (~56px) on the far left: workspace avatar at top, then iconified shortcuts, "Lovable" trigger at the bottom.
+- **Secondary sidebar** (~240px) opens next to it: workspace switcher row, primary nav (Home, Voices, Studio, Flows, Files), a **Pinned** group of user shortcuts, "Invite team members" card pinned to bottom, "Developers" footer.
+- Both rails can collapse independently — the secondary one slides away, the mini rail stays.
+- **Top bar**: breadcrumb on the left (`Voices › Explore`), pill cluster on the right — `Feedback`, `Docs`, `Ask` (with little icon), file tray, notifications bell with blue dot, circular avatar.
+- **Profile popover** = card-style menu: Balance block (with Upgrade), current workspace row with a swap icon, Settings / Workspace settings / Subscription / Theme / etc., Terms sub-popover, Sign out at bottom.
+- **Notifications popover** = right-side panel: "Introducing X" cards with image + body + relative timestamp.
+- **Hero block** on Home: tiny "Workspace name" eyebrow → giant "Good morning, Makibul" → New badge banner → row of 6 large illustration tiles (Instant speech, Audiobook, Image & Video, ElevenAgents, Music, Dubbed video).
+- **List section** below: "Latest from the library" on the left, "Create or clone a voice" on the right.
+- **Tabs** = simple underline ("Explore" | "My Voices"), filter pills below them with icons, Filters / Sort dropdowns on the right.
+- **Modals**: rounded-2xl, screenshot/illustration top, headline, 3 bullet rows with mono icons, full-width black CTA.
 
-**Rules applied everywhere:**
-- Animate only `transform` and `opacity`. No `transition: all`.
-- Enter from `scale(0.95)` + `opacity:0`, never `scale(0)`.
-- Pressable elements scale to `0.97` on `:active`, 160ms.
-- Popovers/dropdowns/menus use `transform-origin: var(--radix-*-content-transform-origin)`. Modals stay centered.
-- Tooltips: 150ms delay on first hover, instant on subsequent.
-- High-frequency actions (sidebar nav clicks, keyboard shortcuts) get **no** animation.
-- Hover effects gated behind `@media (hover: hover) and (pointer: fine)`.
-- Lists stagger at 40ms on first mount only; no stagger on filter/refetch.
-- Status-pill changes and button label swaps use `filter: blur(2px)` to mask the crossfade.
-- Irreversible actions (Cancel IBG, archive) use a **hold-to-confirm** pattern: 2s linear `clip-path` fill on press, 200ms ease-out snap-back on release.
-- Sidebar collapse uses `--ease-drawer`, 250ms, transform only.
-- Onboarding step transitions: 200ms enter / 160ms exit, slide+fade via `@starting-style`.
-- `prefers-reduced-motion`: keep opacity transitions, drop transforms.
-- CSS transitions for reactive UI (interruptible). WAAPI for JS-driven (clip-path fills). Never Framer `x`/`y` shorthand under load — use full `transform` strings.
-- Slow-motion QA pass on dashboard tiles, sidebar collapse, onboarding steps, popover origins, and IBG cancel hold before each ships.
-
----
-
-## Information Architecture (V1)
+### Build (Part 1)
 
 ```text
-Public                  Authenticated                 Operate-only
-─────                   ─────────────                 ─────────────
-/                       /dashboard                    /jobs
-/sign-in                /onboarding                   /jobs/$id
-/sign-up                /settings                     /customers
-/reset-password         /settings/profile             /customers/$id
-/pricing                /settings/company             /properties
-                        /settings/measures            /properties/$id
-                        /settings/billing             /submissions
-                        /settings/team                /submissions/$id
-                        /ibg/new                      /funding
-                        /ibg/history                  /funding/match
-                                                      /ibg/repository
-                                                      /ibg/repository/$id
-                                                      /reports
+src/
+  components/app/
+    shell/
+      mini-rail.tsx          ← left icon rail (56px)
+      side-panel.tsx         ← secondary nav (240px), pinned group, invite card
+      top-bar.tsx            ← breadcrumb + Feedback/Docs/Ask/Files/Bell/Avatar
+      profile-popover.tsx    ← balance card · workspace · settings · sign out
+      notifications-popover.tsx
+      workspace-switcher.tsx
+      breadcrumbs.tsx        ← derived from current route + record context
+    ui-kit/
+      page-header.tsx        ← "eyebrow / H1 / subtitle / actions" pattern
+      tile-grid.tsx          ← big illustration tiles (Home + section indexes)
+      tabs-underline.tsx     ← ElevenLabs underline tabs
+      filter-pills.tsx       ← icon + label rounded chips
+      empty-state.tsx
+      record-list.tsx        ← reusable list row with avatar/icon/meta/right
+      info-modal.tsx         ← rounded modal w/ illustration + bullets + CTA
 ```
 
-Sidebar visibility follows membership; the platform also enforces access on the server. Stakeholder user types (Assessor, Coordinator, Designer, Funding Partner, Scheme Provider, Architect) get a slimmer experience — Dashboard + Settings only — while their record sits in HubSpot for CRM follow-up.
+- `_authed.tsx` becomes: `<MiniRail /> <SidePanel /> <main>{TopBar + Outlet}</main>`.
+- Side panel includes a **Pinned** group (per-role: e.g. New IBG, IBG Repository, Funding match for Operate) and the **"Invite team members"** card at the bottom (admin-only action).
+- Dev switcher gets restyled into the same popover language so it stops feeling like a dev hack.
+- Replace the current `LockedCard` with an inline ElevenLabs-style banner (small lock icon, single line, "Request access" pill on the right).
 
 ---
 
-## Sidebar Layout
+## Part 2 — Wire every IA flow
 
-```text
-┌──────────────────────┐
-│  Renewably           │   logo + collapse trigger
-│  ─────────           │
-│  ⌂  Dashboard        │
-│  ✦  IBG          [+] │   New IBG quick-add
-│                      │
-│  OPERATE             │   muted section label
-│  ⊟  Jobs             │
-│  ◉  Customers        │
-│  ⌂  Properties       │
-│  ⇪  Submissions      │
-│  ◈  Funding          │
-│                      │
-│  INSIGHTS            │
-│  ▤  Reports          │
-│  ▦  IBG Repository   │
-│                      │
-│  ⌥  Settings         │
-│  ⚐  Notifications    │
-│  ─────────           │
-│  ◐ Sarah        ›    │   account footer
-└──────────────────────┘
-```
+Every node in the IA HTML maps to a real route below. Each route has: list/detail/edit screens, role-aware visibility, real state pills, real action buttons, and a right-rail or inline audit timeline where the IA calls for it. Nav between them works (e.g. Customer → Property → Job → IBG, or Job → Funding project → Submission).
 
-Locked items for Access render with a small lock icon and route to an Operate upgrade modal. Active-route highlight uses `clip-path` reveal so it slides between items.
+### A. Authentication & onboarding flows
+- `sign-in`, `forgot-password`, `reset-password` — restyle to match ElevenLabs auth (centered card, illustration, social buttons placeholder).
+- **Onboarding wizard** at `/onboarding` with 6 steps as separate sub-routes (`/onboarding/signup`, `/verify`, `/company`, `/measures`, `/accreditation`, `/payment`, `/review`). Stepper at top, persists progress to `localStorage`, each step shows correct state pill (in progress, awaiting verification, blocked, etc.), Access tier skips Payment.
 
----
+### B. Dashboard — five role-specific compositions
+Replaces today's single-shape dashboard. Switching role in DevSwitcher swaps composition:
+- Admin → pending approvals (onboarding queue, amendments queue), platform reports tile.
+- Operator → permission summary + pinned shortcuts assigned by Admin.
+- Installer · Access → minimal: "Issue an IBG" + "View my IBGs" + Upgrade card.
+- Installer · Operate → full ops summary: jobs by state, IBGs this month, funding readiness.
+- Read-Only → record browser tiles (no action buttons).
 
-## Authentication & Onboarding
+### C. Projects (record chain)
+- `/projects` — landing index with three tiles (Customers / Properties / Jobs) + recent records.
+- `/customers` — list with search + filter pills (status), "Create" pill.
+- `/customers/new` — drawer or page form: name/email/phone/org, Save draft / Save & activate.
+- `/customers/[id]` — detail with tabs (Overview · Properties · Jobs · Documents · Audit), right-rail audit timeline, status pill swap, action menu.
+- `/customers/[id]/properties/new`, `/properties/[id]` — duplicate-flag warning state, EPC/UPRN fields, Job History tab.
+- `/jobs`, `/jobs/new`, `/jobs/[id]` (Job hub) with the full state machine pill (`draft → in progress → awaiting info → under validation → blocked → completed → closed → cancelled → archived`), tabbed sub-pages: Overview · Documents · IBGs · Funding · Audit.
+- `/jobs/[id]/documents` — upload (mock), category, link to workflow stage, delete (admin/operator only).
 
-**Sign-up captures** name, email, phone, password, company name, registration number, address, optional TrustMark licence, **user type** (8 options), consent.
+### D. IBG (state-machine module)
+- `/ibg/new` — wizard: customer picker (Operate auto-fills from Job), measure type, policy type, validate → issued, success screen with "Download certificate" (mock blob).
+- `/ibg/history` — limited view for Access tier (5 most recent + Upgrade banner), full view otherwise.
+- `/ibg/repository` — searchable repository, state filter chips, row → detail.
+- `/ibg/[id]` — full state pill (`draft → initiated → awaiting validation → incomplete → validated → processing → ready for issue → issued → amended → superseded → cancelled → archived`), actions gated by state + role: Download, Request amendment (Operate only, only when issued), Cancel (Operate only, same calendar month).
+- `/ibg/[id]/amendment` — form: corrected value, reason, submit → shows "Pending admin approval" with appropriate state pill.
 
-**Routing branches off user type:**
-- **Installation Company** → choose **Access** (£0) or **Operate** (subscription) → Stripe Checkout → return to onboarding wizard
-- **All other types** → straight to lighter stakeholder onboarding (no Stripe)
+### E. Submissions
+- `/submissions` — list with state filter (submitted/under review/awaiting info/accepted/rejected/withdrawn).
+- `/submissions/[id]` — linked job + funding project links, snapshot download, "Upload additional info" enabled only when state is `awaiting information`.
 
-**Installation Company wizard** (ElevenLabs-style — slim progress bar, one question per screen, big bold question, Skip / Next pills):
-1. Confirm company details
-2. Companies House verification (auto-lookup; mismatch → manual review)
-3. TrustMark licence (manual, optional)
-4. **Approved measures** (drives Funding Match) — *unlock*
-5. **Optional measures** (advisory only) — *suggest*
-6. Readiness review → Activate
+### F. Funding (Operate / Operator / Admin)
+- `/funding/match` — Match Hub: scored scheme cards (ECO4, GBIS, BUS, etc.) matched against the company's approved measures + geography (mock). "Start funding project" CTA.
+- `/funding` — funding project list with state pills.
+- `/jobs/[id]/funding/new` — start a project from a job (auto-links).
+- `/funding/[id]` — project hub with readiness checklist, state pill, blocking issues panel.
+- `/funding/[id]/evidence` — upload, categorise, link to scheme requirement (mock).
+- `/funding/[id]/submit` — submission summary + confirm (creates a Submissions record).
+- `/funding/[id]/tracking` — post-submission tracking view with the full state pill set.
 
-States: `not_started`, `in_progress`, `awaiting_company_verification`, `awaiting_review`, `ready_for_activation`, `completed`, `blocked`, `cancelled`. Resumable from a persistent banner on Dashboard.
+### G. Settings
+- `/settings` — index landing.
+- `/settings/profile`, `/settings/notifications`, `/settings/subscription` (Operate only, with payment-failed and cancelled states), `/settings/measures` (request addition flow → admin queue).
 
-**Stakeholder onboarding**: identity, role, organisation, reason for access — submitted to HubSpot, may sit in `awaiting_review`.
+### H. Admin (visible only when role = admin)
+- `/admin/users` — directory with role + status filter, invite pill.
+- `/admin/users/invite` — form (name, email, role) → pending acceptance state.
+- `/admin/users/[id]` — user detail with tabs: Overview · **Permissions** (matrix + presets, exactly the model we agreed: assign from library, apply preset, see what's currently granted) · Audit · Records owned. State actions: suspend / reactivate / deactivate.
+- `/admin/audit` — filter (actor, event, date, target), CSV export (mock download).
+- `/admin/activity` — real-time activity stream (simulated ticking entries).
+- `/admin/onboarding` — queue with state pills, → `/admin/onboarding/[id]` review screen (override / verify / activate / reject).
+- `/admin/ibg/amendments` — queue, → `/admin/ibg/amendments/[id]` review screen showing original vs requested with Approve / Reject + reason.
+- `/admin/permissions` — Permission Library: full matrix + the three presets (Junior / Senior / Compliance Reviewer). Editable here so the Admin actually feels in control.
+- `/admin/config` — system config tabs (Approved measures, Notification templates, Scheme integrations).
 
----
-
-## Dashboard
-
-```text
-┌────────────────────────────────────────────────────────────┐
-│  [New • Funding Match now live for Operate     →]          │
-│                                                            │
-│  My Workspace                                              │
-│  Good morning, Sarah                                       │
-│                                                            │
-│  ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐                │
-│  │ ✦  │ │ ⊟  │ │ ◉  │ │ ⇪  │ │ ◈  │ │ ▦  │   quick-tiles  │
-│  └────┘ └────┘ └────┘ └────┘ └────┘ └────┘                │
-│  New IBG  Jobs  Customers Submit Funding Repository        │
-│                                                            │
-│  ┌─ Recent activity ─────┐  ┌─ Get more from Renewably ─┐  │
-│  │ • IBG #4421 issued    │  │ ◐ Add a property          │  │
-│  │ • Job J-118 in review │  │ ◑ Run Funding Match       │  │
-│  │ • Submission accepted │  │ ◒ Invite teammate         │  │
-│  └───────────────────────┘  └───────────────────────────┘  │
-└────────────────────────────────────────────────────────────┘
-```
-
-Tiles stagger in at 40ms on first mount only. Access users see only New IBG, Recent IBG history, and an Upgrade-to-Operate prompt card.
+### I. Cross-cutting
+- **Breadcrumbs** in the top bar reflect the actual record chain (`Projects › Customers › Jane Smith › 14 Oak Ln › IBG-2451`).
+- **Right-rail audit timeline** component used on every record detail (Customer, Property, Job, IBG, Funding project, Submission).
+- **State pill component** with the full state vocabulary from the IA, color-coded green/blue/amber/rose/grey.
+- **Empty states** everywhere — no "Coming soon" stubs left.
 
 ---
 
-## IBG Workflow
+## Mock data + persistence
 
-- **`/ibg/new`** — single-page form: customer + property (existing or inline-create), measure(s), policy detail. Submit → generation → success screen with downloadable certificate + policy PDF + "Send to customer" (Operate) or "Available in your account" (Access).
-- **`/ibg/history`** — list view, filter by status / date / customer. Access sees limited history (e.g. last 30 days).
-- **`/ibg/repository`** *(Operate)* — full searchable repository with filters and bulk export. Per-record drawer: certificate + policy detail, status timeline, **Cancel** (within calendar month, hold-to-confirm), **Request amendment** (name/address only, routes to admin approval queue).
+Single in-memory store in `src/lib/mock/store.ts` seeded with realistic UK data (3 customers, 5 properties, 6 jobs across all states, 8 IBGs across the state machine, 3 funding projects, 2 submissions). Reads/writes go through the store; it mirrors to `localStorage` so the preview feels real.
 
 ---
 
-## Operate Modules
+## Build order (so each phase looks finished)
 
-All four follow the same pattern: list view (search + filter + status pills) → record detail (header, key facts, related-records tabs, evidence drawer, audit timeline).
-
-- **Customers** (`/customers`) — durable account record. Tabs: Properties, Jobs, Communications, History.
-- **Properties** (`/properties`) — site record. Tabs: Customer, Jobs, Evidence, History.
-- **Jobs** (`/jobs`) — central operational record. Tabs: Workflow, Evidence, IBG, Funding, Audit. Full lifecycle (`draft → created → in_progress → under_validation → blocked → completed → closed → archived`).
-- **Submissions** (`/submissions`) — workflow record linked to a Job. Readiness checklist → Active progression → Post-submission tracking.
-
-List rows: clean, left-aligned name, muted metadata, status pill on right, hover highlight, three-dot menu.
-
----
-
-## Funding (`/funding`, Operate)
-
-**Funding Match** — rule-driven, measure-led. Two columns:
-- **Active matches** — schemes unlocked by approved measures (ECO4, GBIS, BUS, WH:LG, WH:SHF, HEEPS, Nest, NISEP — geography-aware)
-- **Opportunity matches** — adjacent suggestions from optional measures (Warm Homes Fund, Consumer Loans, specialist Heat Network routes)
-
-Each scheme card: name, category badge (Direct / Finance / Specialist / Reference), matched measures, geography, eligibility blurb, "Prepare project" CTA. Warm Homes Plan shown as umbrella resolving into BUS / WH:LG / WH:SHF / specialist routes.
-
-**Funding Hub** — initiate a funding project from a job → readiness checklist → evidence collection → internal review → submission preparation → funder email handoff (V1: no direct submission).
+1. **Shell** (mini rail, side panel, top bar, popovers, page header, tile grid, tabs, filter pills, modal).
+2. **Mock store + state-pill + audit-timeline** primitives.
+3. **Dashboard** — five role-aware compositions.
+4. **Projects** chain (Customers → Properties → Jobs).
+5. **IBG** module (Generator → History → Repository → Detail/State machine → Amendment).
+6. **Submissions + Funding** (Match Hub → Projects → Evidence → Submit → Tracking).
+7. **Settings**.
+8. **Admin** (Users + Permission detail, Audit, Activity, Onboarding queue, Amendments queue, Permission library, Config).
+9. **Onboarding wizard** (6 steps).
+10. **Auth screens** restyle.
 
 ---
 
-## Reports (`/reports`, Operate)
+## Out of scope (this plan)
 
-Tabbed dashboards with filterable lists:
-- **Operational** — jobs by status, submissions awaiting action, blocked records
-- **Workflow** — submissions by readiness, IBG by issue status, funding by stage
-- **Management** — volumes over time, owner workload, completion trends
-- **Audit** — record changes by date range, user-attributed events
+- Real backend / database.
+- Real Stripe, Companies House, TrustMark integrations.
+- Real document PDF rendering (mocked as blob downloads).
+- Email sending.
 
-Charts are minimal — thin lines, soft fills, no heavy gridlines.
-
----
-
-## Settings
-
-- **Profile** — name, email, phone, password, MFA
-- **Company** — registered details, Companies House status (re-verify), TrustMark
-- **Measures** — Approved (live, fixed) vs Optional (advisory). Hard reminder that approved-measure changes affect active Funding Match
-- **Billing** — plan, Stripe customer portal link, invoices, upgrade Access → Operate
-- **Team** — placeholder for V1 ("Coming soon")
-- **Notifications** — email preferences
-
----
-
-## Backend & Data
-
-- **Lovable Cloud** for auth, database, storage. Tables: `profiles`, `user_roles` (separate, `has_role` security definer), `organisations`, `customers`, `properties`, `jobs`, `submissions`, `ibg_records`, `funding_projects`, `measures_approved`, `measures_optional`, `documents`, `audit_events`, `onboarding_state`, `companies_house_verifications`.
-- **RLS everywhere**, scoped by organisation.
-- **Audit table** — every material action (status changes, attachments, IBG issuance, cancellations, amendments) writes to `audit_events` with user, timestamp, before/after. 7-year retention.
-- **Server functions**: Companies House lookup (`COMPANIES_HOUSE_API_KEY`), Stripe checkout + webhook, HubSpot sync (`HUBSPOT_PRIVATE_APP_TOKEN`), IBG PDF generation, Funding Match rule engine.
-- **Stripe** — Access = £0 setup (customer creation), Operate = subscription. Stripe → Zapier → HubSpot for installer lifecycle (Zapier handled outside Lovable; the platform emits the right Stripe state).
-- **Companies House** — onboarding lookup + scheduled cron at `/api/public/cron/companies-house` checking strike-off / late accounts / dissolution; flagged accounts move to `suspended` review state.
-- **HubSpot** — non-installer signups posted directly via platform → HubSpot API.
-
----
-
-## Build Order
-
-1. Design tokens + motion tokens, sidebar shell, auth pages, dashboard skeleton — lock the look and feel
-2. Sign-up + user-type routing + Stripe (installer) / direct (stakeholder)
-3. Installation Company onboarding wizard (Companies House + Approved/Optional measures)
-4. Dashboard with quick-tiles, recent activity, onboarding-resume banner
-5. IBG: `/ibg/new`, `/ibg/history`, then `/ibg/repository` with cancel + amendment (hold-to-confirm)
-6. Customers, Properties, Jobs (list + detail + linkage)
-7. Submissions module + Job→Submission workflow
-8. Funding Match (rule engine over approved/optional measures + geography) + Funding Hub
-9. Reports
-10. Settings (Company, Measures, Billing, Notifications) + audit log surfacing
-11. Stakeholder onboarding (lighter path) + admin review states
-12. Companies House cron, HubSpot sync polish, audit retention
-
----
-
-## Out of Scope for V1
-
-Multi-user / roles within an organisation, advanced compliance tooling, direct funder submission (V1 is email handoff), Comply / Deliver / Enterprise tiers, mobile app.
+Approve and I'll execute A→Z. Step 1 (shell) lands first and is visually unmistakable — that's the "feels like ElevenLabs" win — then I march through the IA without leaving any dead ends.
