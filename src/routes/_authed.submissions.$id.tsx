@@ -16,8 +16,9 @@ function SubmissionDetail() {
   const { id } = Route.useParams();
   const data = useStore();
   const { user } = useAuth();
-  const sub = findSubmission(data, id);
-  if (!sub) throw notFound();
+  const submission = findSubmission(data, id);
+  if (!submission) throw notFound();
+  const sub = submission;
   const funding = findFunding(data, sub.fundingProjectId);
   const job = findJob(data, sub.jobId);
 
