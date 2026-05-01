@@ -63,8 +63,8 @@ function SubmissionsList() {
                 {rows.map((s) => {
                   const fp = data.fundingProjects.find((f) => f.id === s.fundingProjectId);
                   return (
-                    <tr key={s.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                      <td className="px-4 py-3 font-medium text-foreground">{s.ref}</td>
+                    <tr key={s.id} className="cursor-pointer border-b last:border-b-0 hover:bg-surface/60">
+                      <td className="px-4 py-3 font-medium text-foreground"><Link to="/submissions/$id" params={{ id: s.id }} className="hover:underline">{s.ref}</Link></td>
                       <td className="px-4 py-3 text-foreground">{s.scheme}</td>
                       <td className="px-4 py-3">
                         {fp ? <Link to="/funding/$id" params={{ id: fp.id }} className="text-foreground hover:underline">{fp.ref}</Link> : "—"}

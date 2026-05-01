@@ -20,19 +20,28 @@ const KEY = "renewably:mock-store:v1";
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
-let DATA: SeedData = (() => {
-  if (typeof window === "undefined") return seed();
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw) as SeedData;
-  } catch {
-    /* ignore */
+let DATA: SeedData | null = null;
+
+function loadData(): SeedData {
+  if (DATA) return DATA;
+  if (typeof window !== "undefined") {
+    try {
+      const raw = window.localStorage.getItem(KEY);
+      if (raw) {
+        DATA = JSON.parse(raw) as SeedData;
+        return DATA;
+      }
+    } catch {
+      /* ignore */
+    }
   }
-  return seed();
-})();
+  DATA = seed();
+  return DATA;
+}
 
 function persist() {
   if (typeof window === "undefined") return;
+  if (!DATA) return;
   try {
     window.localStorage.setItem(KEY, JSON.stringify(DATA));
   } catch {
@@ -41,12 +50,12 @@ function persist() {
   listeners.forEach((l) => l());
 }
 
-export function getData() {
-  return DATA;
+export function getData(): SeedData {
+  return loadData();
 }
 
 export function update(mutator: (d: SeedData) => void) {
-  mutator(DATA);
+  mutator(loadData());
   persist();
 }
 
@@ -74,7 +83,7 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value = useMemo(() => ({ data: DATA, tick }), [tick]);
+  const value = useMemo(() => ({ data: loadData(), tick }), [tick]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
