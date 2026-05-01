@@ -20,7 +20,7 @@ function IbgHistory() {
   const rows = isAccessTier ? all.slice(0, 5) : all;
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader
         eyebrow="IBG"
         title="IBG history"

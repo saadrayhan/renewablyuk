@@ -31,7 +31,7 @@ function SubmissionsList() {
     .filter((s) => !q || s.ref.toLowerCase().includes(q.toLowerCase()) || s.scheme.toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Submissions" title="Scheme submissions" subtitle="Created automatically when a funding project is submitted." />
 
       <div className="mt-6 flex items-center justify-between gap-3">

@@ -33,7 +33,7 @@ function Repository() {
 
   if (!can(permissions, "ibg.repository.read")) {
     return (
-      <div className="mx-auto w-full max-w-2xl px-8 py-10">
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
         <PageHeader eyebrow="IBG" title="IBG Repository" />
         <div className="mt-6">
           <LockedCard title="IBG Repository" body="Searchable record store of every issued IBG. Operate plan or operator permission required." reason={{ kind: "permission", permission: "ibg.repository.read" }} />
@@ -47,7 +47,7 @@ function Repository() {
     .filter((i) => !q || i.ref.toLowerCase().includes(q.toLowerCase()) || i.customerName.toLowerCase().includes(q.toLowerCase()) || i.propertyAddress.toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader
         eyebrow="IBG"
         title="Repository"

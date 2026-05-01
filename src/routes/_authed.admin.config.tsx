@@ -24,7 +24,7 @@ const SCHEMES = [
 function ConfigPage() {
   const [tab, setTab] = useState<"measures" | "templates" | "schemes">("measures");
   return (
-    <div className="mx-auto w-full max-w-[1100px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1100px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Admin · System" title="System config" subtitle="Approved measures, notification templates and scheme integrations." />
 
       <div className="mt-6">

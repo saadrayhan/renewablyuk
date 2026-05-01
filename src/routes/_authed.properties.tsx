@@ -23,7 +23,7 @@ function PropertiesList() {
     .filter((p) => q === "" || p.address.toLowerCase().includes(q.toLowerCase()) || p.postcode.toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Projects" title="Properties" subtitle="Sites linked to a customer. Each property hosts jobs." />
 
       <div className="mt-6 flex items-center justify-between gap-3">

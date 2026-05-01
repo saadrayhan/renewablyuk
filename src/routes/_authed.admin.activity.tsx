@@ -14,7 +14,7 @@ function ActivityPage() {
   const rows = [...data.activity].sort((a, b) => b.at - a.at);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-8 py-10">
+    <div className="mx-auto w-full max-w-3xl px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Admin · Compliance" title="Activity" subtitle="Live platform feed." />
 
       <div className="mt-6 rounded-2xl border bg-card">
