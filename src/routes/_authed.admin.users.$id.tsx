@@ -48,7 +48,7 @@ function UserDetail() {
     toast.success(`Applied ${preset.label}`);
   }
 
-  function setStatus(next: typeof u.status) {
+  function setStatus(next: "invited" | "pending" | "active" | "suspended" | "deactivated") {
     update((d) => {
       const x = d.users.find((y) => y.id === id);
       if (!x) return;
