@@ -249,6 +249,16 @@
     .press:active {
       transform: scale(0.97);
     }
+
+    .tile {
+      transition:
+        transform var(--dur-3) var(--ease-out),
+        box-shadow var(--dur-3) var(--ease-out);
+    }
+    .tile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px -8px oklch(0 0 0 / 0.15);
+    }
   }
 
   /* List / tile entrance — first mount only. Caller adds .stagger-in
