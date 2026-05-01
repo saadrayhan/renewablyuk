@@ -1,153 +1,141 @@
 
-# Renewably UK — A→Z plan
+## Goals (in order)
 
-Two goals, in order:
-1. **Reconstruct the shell** to match ElevenLabs as closely as possible.
-2. **Make every IA flow actually work** — every screen in the IA HTML gets a real, navigable, role-aware page. No more "coming soon" dead-ends.
-
-All in design-only mode (no backend). Mock data lives in `src/lib/mock/*` and a tiny in-memory store with `localStorage` persistence so created records survive a refresh.
-
----
-
-## Part 1 — ElevenLabs shell (foundation)
-
-What ElevenLabs actually does (from your screenshots):
-
-- **Mini icon rail** (~56px) on the far left: workspace avatar at top, then iconified shortcuts, "Lovable" trigger at the bottom.
-- **Secondary sidebar** (~240px) opens next to it: workspace switcher row, primary nav (Home, Voices, Studio, Flows, Files), a **Pinned** group of user shortcuts, "Invite team members" card pinned to bottom, "Developers" footer.
-- Both rails can collapse independently — the secondary one slides away, the mini rail stays.
-- **Top bar**: breadcrumb on the left (`Voices › Explore`), pill cluster on the right — `Feedback`, `Docs`, `Ask` (with little icon), file tray, notifications bell with blue dot, circular avatar.
-- **Profile popover** = card-style menu: Balance block (with Upgrade), current workspace row with a swap icon, Settings / Workspace settings / Subscription / Theme / etc., Terms sub-popover, Sign out at bottom.
-- **Notifications popover** = right-side panel: "Introducing X" cards with image + body + relative timestamp.
-- **Hero block** on Home: tiny "Workspace name" eyebrow → giant "Good morning, Makibul" → New badge banner → row of 6 large illustration tiles (Instant speech, Audiobook, Image & Video, ElevenAgents, Music, Dubbed video).
-- **List section** below: "Latest from the library" on the left, "Create or clone a voice" on the right.
-- **Tabs** = simple underline ("Explore" | "My Voices"), filter pills below them with icons, Filters / Sort dropdowns on the right.
-- **Modals**: rounded-2xl, screenshot/illustration top, headline, 3 bullet rows with mono icons, full-width black CTA.
-
-### Build (Part 1)
-
-```text
-src/
-  components/app/
-    shell/
-      mini-rail.tsx          ← left icon rail (56px)
-      side-panel.tsx         ← secondary nav (240px), pinned group, invite card
-      top-bar.tsx            ← breadcrumb + Feedback/Docs/Ask/Files/Bell/Avatar
-      profile-popover.tsx    ← balance card · workspace · settings · sign out
-      notifications-popover.tsx
-      workspace-switcher.tsx
-      breadcrumbs.tsx        ← derived from current route + record context
-    ui-kit/
-      page-header.tsx        ← "eyebrow / H1 / subtitle / actions" pattern
-      tile-grid.tsx          ← big illustration tiles (Home + section indexes)
-      tabs-underline.tsx     ← ElevenLabs underline tabs
-      filter-pills.tsx       ← icon + label rounded chips
-      empty-state.tsx
-      record-list.tsx        ← reusable list row with avatar/icon/meta/right
-      info-modal.tsx         ← rounded modal w/ illustration + bullets + CTA
-```
-
-- `_authed.tsx` becomes: `<MiniRail /> <SidePanel /> <main>{TopBar + Outlet}</main>`.
-- Side panel includes a **Pinned** group (per-role: e.g. New IBG, IBG Repository, Funding match for Operate) and the **"Invite team members"** card at the bottom (admin-only action).
-- Dev switcher gets restyled into the same popover language so it stops feeling like a dev hack.
-- Replace the current `LockedCard` with an inline ElevenLabs-style banner (small lock icon, single line, "Request access" pill on the right).
+1. **Fix slow load** — preview is doing way too much on first paint.
+2. **Audit the project against the original A→Z scope** and close any real gaps.
+3. **Write a complete design spec** (`DESIGN_SPEC.md`) any designer / dev / no-code AI can rebuild from.
+4. **Add a polished `README.md`** for GitHub.
 
 ---
 
-## Part 2 — Wire every IA flow
+## 1. Performance fix (load time)
 
-Every node in the IA HTML maps to a real route below. Each route has: list/detail/edit screens, role-aware visibility, real state pills, real action buttons, and a right-rail or inline audit timeline where the IA calls for it. Nav between them works (e.g. Customer → Property → Job → IBG, or Job → Funding project → Submission).
+Root causes I confirmed:
 
-### A. Authentication & onboarding flows
-- `sign-in`, `forgot-password`, `reset-password` — restyle to match ElevenLabs auth (centered card, illustration, social buttons placeholder).
-- **Onboarding wizard** at `/onboarding` with 6 steps as separate sub-routes (`/onboarding/signup`, `/verify`, `/company`, `/measures`, `/accreditation`, `/payment`, `/review`). Stepper at top, persists progress to `localStorage`, each step shows correct state pill (in progress, awaiting verification, blocked, etc.), Access tier skips Payment.
+- `__root.tsx` loads **Inter 400/500/600/700/800** from Google Fonts *blocking* the first paint.
+- The mock store seeds **579 lines of data eagerly at module load**, then re-renders the whole app on every mutation via a single context tick (every `useStore()` consumer re-renders on every write).
+- `_authed.dashboard.tsx` is 442 lines, `app-sidebar.tsx` 331 — all imported in the critical bundle, plus all 35+ route components.
+- `defaultPreloadStaleTime: 0` in `router.tsx` defeats route-data caching, causing repeat work on every nav.
+- TanStack auto code-splitting is on, but several route files **export** their component (which I'll verify and convert to non-exported) — when exported, the component gets pulled into the main bundle.
 
-### B. Dashboard — five role-specific compositions
-Replaces today's single-shape dashboard. Switching role in DevSwitcher swaps composition:
-- Admin → pending approvals (onboarding queue, amendments queue), platform reports tile.
-- Operator → permission summary + pinned shortcuts assigned by Admin.
-- Installer · Access → minimal: "Issue an IBG" + "View my IBGs" + Upgrade card.
-- Installer · Operate → full ops summary: jobs by state, IBGs this month, funding readiness.
-- Read-Only → record browser tiles (no action buttons).
+Fixes:
 
-### C. Projects (record chain)
-- `/projects` — landing index with three tiles (Customers / Properties / Jobs) + recent records.
-- `/customers` — list with search + filter pills (status), "Create" pill.
-- `/customers/new` — drawer or page form: name/email/phone/org, Save draft / Save & activate.
-- `/customers/[id]` — detail with tabs (Overview · Properties · Jobs · Documents · Audit), right-rail audit timeline, status pill swap, action menu.
-- `/customers/[id]/properties/new`, `/properties/[id]` — duplicate-flag warning state, EPC/UPRN fields, Job History tab.
-- `/jobs`, `/jobs/new`, `/jobs/[id]` (Job hub) with the full state machine pill (`draft → in progress → awaiting info → under validation → blocked → completed → closed → cancelled → archived`), tabbed sub-pages: Overview · Documents · IBGs · Funding · Audit.
-- `/jobs/[id]/documents` — upload (mock), category, link to workflow stage, delete (admin/operator only).
+- **Fonts**: switch to `font-display: swap` and load only weights 400/500/600/700 (drop 800). Use `&display=swap` query and a `preload` hint, OR self-host via `@fontsource/inter` for instant first paint.
+- **Router caching**: change `defaultPreloadStaleTime: 0` → `30_000` and add `defaultPreload: "intent"` so hover-preloading kicks in.
+- **Mock store**: lazy-init seed data only on first `getData()` call, and make `useStore()` accept a selector so components only re-render when their slice changes (prevents the whole tree re-rendering on every audit-log push).
+- **Route components**: ensure no `export function XComponent` patterns inside route files (rename `export` → local `function`) so the code-splitter can extract them.
+- **Dashboard split**: extract per-role compositions into `src/components/dashboard/*.tsx` so only the active role's tree mounts.
+- **Top-level providers**: keep `MockStoreProvider` mounted, but defer `subscribe()` registration with `requestIdleCallback`.
 
-### D. IBG (state-machine module)
-- `/ibg/new` — wizard: customer picker (Operate auto-fills from Job), measure type, policy type, validate → issued, success screen with "Download certificate" (mock blob).
-- `/ibg/history` — limited view for Access tier (5 most recent + Upgrade banner), full view otherwise.
-- `/ibg/repository` — searchable repository, state filter chips, row → detail.
-- `/ibg/[id]` — full state pill (`draft → initiated → awaiting validation → incomplete → validated → processing → ready for issue → issued → amended → superseded → cancelled → archived`), actions gated by state + role: Download, Request amendment (Operate only, only when issued), Cancel (Operate only, same calendar month).
-- `/ibg/[id]/amendment` — form: corrected value, reason, submit → shows "Pending admin approval" with appropriate state pill.
-
-### E. Submissions
-- `/submissions` — list with state filter (submitted/under review/awaiting info/accepted/rejected/withdrawn).
-- `/submissions/[id]` — linked job + funding project links, snapshot download, "Upload additional info" enabled only when state is `awaiting information`.
-
-### F. Funding (Operate / Operator / Admin)
-- `/funding/match` — Match Hub: scored scheme cards (ECO4, GBIS, BUS, etc.) matched against the company's approved measures + geography (mock). "Start funding project" CTA.
-- `/funding` — funding project list with state pills.
-- `/jobs/[id]/funding/new` — start a project from a job (auto-links).
-- `/funding/[id]` — project hub with readiness checklist, state pill, blocking issues panel.
-- `/funding/[id]/evidence` — upload, categorise, link to scheme requirement (mock).
-- `/funding/[id]/submit` — submission summary + confirm (creates a Submissions record).
-- `/funding/[id]/tracking` — post-submission tracking view with the full state pill set.
-
-### G. Settings
-- `/settings` — index landing.
-- `/settings/profile`, `/settings/notifications`, `/settings/subscription` (Operate only, with payment-failed and cancelled states), `/settings/measures` (request addition flow → admin queue).
-
-### H. Admin (visible only when role = admin)
-- `/admin/users` — directory with role + status filter, invite pill.
-- `/admin/users/invite` — form (name, email, role) → pending acceptance state.
-- `/admin/users/[id]` — user detail with tabs: Overview · **Permissions** (matrix + presets, exactly the model we agreed: assign from library, apply preset, see what's currently granted) · Audit · Records owned. State actions: suspend / reactivate / deactivate.
-- `/admin/audit` — filter (actor, event, date, target), CSV export (mock download).
-- `/admin/activity` — real-time activity stream (simulated ticking entries).
-- `/admin/onboarding` — queue with state pills, → `/admin/onboarding/[id]` review screen (override / verify / activate / reject).
-- `/admin/ibg/amendments` — queue, → `/admin/ibg/amendments/[id]` review screen showing original vs requested with Approve / Reject + reason.
-- `/admin/permissions` — Permission Library: full matrix + the three presets (Junior / Senior / Compliance Reviewer). Editable here so the Admin actually feels in control.
-- `/admin/config` — system config tabs (Approved measures, Notification templates, Scheme integrations).
-
-### I. Cross-cutting
-- **Breadcrumbs** in the top bar reflect the actual record chain (`Projects › Customers › Jane Smith › 14 Oak Ln › IBG-2451`).
-- **Right-rail audit timeline** component used on every record detail (Customer, Property, Job, IBG, Funding project, Submission).
-- **State pill component** with the full state vocabulary from the IA, color-coded green/blue/amber/rose/grey.
-- **Empty states** everywhere — no "Coming soon" stubs left.
+Expected impact: TTI drops from ~3–5s to <1s on cached load; first paint becomes near-instant because fonts no longer block.
 
 ---
 
-## Mock data + persistence
+## 2. Scope audit (against `.lovable/plan.md`)
 
-Single in-memory store in `src/lib/mock/store.ts` seeded with realistic UK data (3 customers, 5 properties, 6 jobs across all states, 8 IBGs across the state machine, 3 funding projects, 2 submissions). Reads/writes go through the store; it mirrors to `localStorage` so the preview feels real.
+Cross-checking every node from the original A→Z plan against current routes:
+
+| Area | Plan calls for | Exists? | Action |
+|------|---------------|---------|--------|
+| Auth | sign-in, sign-up, reset-password | ✅ | Keep |
+| Onboarding | 6-step wizard | ✅ single page w/ stepper | Keep (acceptable) |
+| Dashboard | 5 role-specific compositions | ⚠️ one shape branching by role | **Refactor into 5 clean compositions** |
+| Customers | list / new / detail (tabs) | ✅ | Verify tabs (Overview, Properties, Jobs, Documents, Audit) |
+| Properties | list / detail w/ duplicate flag | ✅ | Keep |
+| Jobs | list / new / detail w/ tabs | ✅ | Verify Documents sub-tab + state machine pill |
+| IBG | new / history / repository / detail / amendment | ✅ | Keep |
+| Submissions | list / detail w/ "Upload additional info" gating | ✅ list | **Add `/submissions/$id` detail** |
+| Funding | match / list / detail / evidence / submit / tracking | ✅ match, list, detail | **Add `evidence`, `submit`, `tracking` sub-pages** |
+| Settings | profile, notifications, subscription, measures, integrations | ✅ | Keep |
+| Admin | users, users/$id, audit, activity, onboarding, amendments, permissions, config | ✅ | Verify onboarding queue has `$id` review screen; verify amendments has `$id` review |
+| Admin onboarding review | `/admin/onboarding/$id` | ❌ | **Add** |
+| Admin amendment review | `/admin/amendments/$id` (approve/reject vs original) | ❌ | **Add** |
+
+Gaps to close in this turn:
+1. `src/routes/_authed.submissions.$id.tsx` — detail with snapshot download and "Upload additional info" enabled only when state is `awaiting information`.
+2. `src/routes/_authed.funding.$id.evidence.tsx` — upload + categorise + link to scheme requirement (mock).
+3. `src/routes/_authed.funding.$id.submit.tsx` — submission summary + confirm → creates Submissions record.
+4. `src/routes/_authed.funding.$id.tracking.tsx` — post-submission tracking with state pills.
+5. `src/routes/_authed.admin.onboarding.$id.tsx` — review screen (override / verify / activate / reject).
+6. `src/routes/_authed.admin.amendments.$id.tsx` — original vs requested diff with Approve / Reject.
+7. Dashboard split into 5 compositions under `src/components/dashboard/`.
+
+State / interaction polish sweep:
+- Verify every state pill set matches the plan (IBG 12 states, Job 9 states, Funding tracking states).
+- Verify role gating: Access tier sees only Issue IBG / View IBGs / Upgrade; Read-Only has no action buttons.
+- Verify "Request amendment" only enabled on issued IBG within current calendar month for Operate role.
 
 ---
 
-## Build order (so each phase looks finished)
+## 3. `DESIGN_SPEC.md` (root of repo)
 
-1. **Shell** (mini rail, side panel, top bar, popovers, page header, tile grid, tabs, filter pills, modal).
-2. **Mock store + state-pill + audit-timeline** primitives.
-3. **Dashboard** — five role-aware compositions.
-4. **Projects** chain (Customers → Properties → Jobs).
-5. **IBG** module (Generator → History → Repository → Detail/State machine → Amendment).
-6. **Submissions + Funding** (Match Hub → Projects → Evidence → Submit → Tracking).
-7. **Settings**.
-8. **Admin** (Users + Permission detail, Audit, Activity, Onboarding queue, Amendments queue, Permission library, Config).
-9. **Onboarding wizard** (6 steps).
-10. **Auth screens** restyle.
+A single ~25–35KB markdown spec, sectioned so any designer or AI can rebuild pixel-perfect. Sections:
+
+1. **Product overview** — what Renewably UK is, primary user roles (Admin, Operator, Installer · Operate, Installer · Access, Read-Only), tier rules.
+2. **Information architecture** — full sitemap (every route + access matrix).
+3. **Design tokens** — exact OKLCH color palette (light + dark) from `styles.css`, type scale, spacing scale, radii, shadows, motion easings/durations.
+4. **Component inventory** — for each: anatomy, states (default/hover/active/disabled/focus), responsive behavior, code reference. Covers Sidebar (collapsed + drawer), TopBar, NotificationsPopover, ProfilePopover, PageHeader, StatePill, DataTable, SectionCard, AuditTimeline, FilterPills, EmptyState, LockedCard, all dialogs/sheets.
+5. **Page specs** — one block per route: purpose, hero, primary content, side rail, empty state, role visibility.
+6. **State machines** — IBG (12 states + transitions table), Job (9 states), Funding (tracking states), Onboarding (6 stages).
+7. **Permission model** — library + presets + assignment + request flow.
+8. **Interaction & animation** — modal/sheet entry (center fade+zoom 200ms), press scale (`press` utility), sidebar collapse, hover preload.
+9. **Responsive rules** — breakpoints, sidebar drawer behavior <768px, padding scale.
+10. **Mock data shape** — TypeScript types from `src/lib/mock/types.ts` reproduced verbatim.
+11. **Source code index** — for each implemented file, a short purpose line + the full source pasted in fenced ```tsx blocks so an AI can replicate without the repo.
+
+The source-code dump section will be the largest. I'll include every file under `src/components/app/`, `src/lib/`, `src/styles.css`, `src/routes/__root.tsx`, `_authed.tsx`, and the route files. To stay maintainable I'll group into 3 appendices (Shell, Routes, Library) inside the same file.
 
 ---
 
-## Out of scope (this plan)
+## 4. `README.md` (GitHub)
 
-- Real backend / database.
-- Real Stripe, Companies House, TrustMark integrations.
-- Real document PDF rendering (mocked as blob downloads).
-- Email sending.
+Standard pro README with:
 
-Approve and I'll execute A→Z. Step 1 (shell) lands first and is visually unmistakable — that's the "feels like ElevenLabs" win — then I march through the IA without leaving any dead ends.
+- Hero (project name, tagline, status badge placeholders)
+- Screenshots placeholder block
+- "What it is" 2-paragraph summary
+- Tech stack (TanStack Start, React 19, Tailwind v4, Lovable Cloud)
+- Getting started (clone, `bun install`, `bun dev`)
+- Project structure tree
+- Roles & access tiers explainer
+- Available routes table
+- Roadmap & contribution
+- Link to `DESIGN_SPEC.md`
+- License
+
+---
+
+## Files I'll create / edit (build mode)
+
+**Performance**
+- edit `src/router.tsx` (preload settings)
+- edit `src/routes/__root.tsx` (font loading)
+- edit `src/lib/mock/store.tsx` (lazy init + selector hook)
+
+**Scope completion (new routes)**
+- `src/routes/_authed.submissions.$id.tsx`
+- `src/routes/_authed.funding.$id.evidence.tsx`
+- `src/routes/_authed.funding.$id.submit.tsx`
+- `src/routes/_authed.funding.$id.tracking.tsx`
+- `src/routes/_authed.admin.onboarding.$id.tsx`
+- `src/routes/_authed.admin.amendments.$id.tsx`
+
+**Dashboard refactor**
+- `src/components/dashboard/admin.tsx`, `operator.tsx`, `installer-operate.tsx`, `installer-access.tsx`, `read-only.tsx`
+- edit `src/routes/_authed.dashboard.tsx` to dispatch by role
+
+**Docs**
+- `DESIGN_SPEC.md` (root)
+- `README.md` (root)
+
+No backend / migrations needed — this is a design-mode project.
+
+---
+
+## Caveats
+
+- The `DESIGN_SPEC.md` will be large (~30–50KB) because you asked for embedded source. If you'd prefer a slimmer spec that **references** files instead of pasting them, say so and I'll switch.
+- Dashboard refactor changes structure but keeps existing visual output.
+- I won't touch `routeTree.gen.ts` — it regenerates automatically.
+
+Approve and I'll execute the whole list in one pass.
