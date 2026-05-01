@@ -270,7 +270,7 @@ function StepAccount({
           value={data.email}
           onChange={(e) => patch({ email: e.target.value })}
           placeholder="you@company.co.uk"
-          className="input"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
         />
       </Field>
 
@@ -311,7 +311,7 @@ function TierCard({
       onClick={onClick}
       className={cn(
         "rounded-2xl border p-5 text-left transition press",
-        selected ? "border-primary bg-primary/5" : "border-border bg-surface hover:bg-surface-hover",
+        selected ? "border-primary bg-primary/5" : "border-border bg-surface hover:bg-muted/40",
       )}
     >
       <div className="flex items-center gap-2">
@@ -384,7 +384,7 @@ function StepCompany({
           value={data.companyName}
           onChange={(e) => patch({ companyName: e.target.value })}
           placeholder="Evergreen Installs Ltd"
-          className="input"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
         />
       </Field>
       <Field label="Companies House number">
@@ -392,7 +392,7 @@ function StepCompany({
           value={data.companyNumber}
           onChange={(e) => patch({ companyNumber: e.target.value })}
           placeholder="12345678"
-          className="input"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
         />
       </Field>
       <Field label="Registered address">
@@ -401,7 +401,7 @@ function StepCompany({
           onChange={(e) => patch({ companyAddress: e.target.value })}
           placeholder="Street, city, postcode"
           rows={3}
-          className="input"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
         />
       </Field>
     </div>
@@ -439,7 +439,7 @@ function StepMeasures({
                 "flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition press",
                 on
                   ? "border-primary bg-primary/5 text-ink"
-                  : "border-border bg-surface text-ink hover:bg-surface-hover",
+                  : "border-border bg-surface text-ink hover:bg-muted/40",
               )}
             >
               <span>{m}</span>
@@ -466,7 +466,7 @@ function StepAccreditation({
           value={data.trustmarkId}
           onChange={(e) => patch({ trustmarkId: e.target.value })}
           placeholder="TM-000-000-00"
-          className="input"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
         />
       </Field>
       <Field label="Accreditation document">
@@ -476,7 +476,7 @@ function StepAccreditation({
             patch({ accreditationFile: "trustmark-cert.pdf" });
             toast.success("Document uploaded");
           }}
-          className="press flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface px-4 py-8 text-sm text-ink-muted hover:bg-surface-hover"
+          className="press flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface px-4 py-8 text-sm text-ink-muted hover:bg-muted/40"
         >
           {data.accreditationFile ? (
             <span className="flex items-center gap-2 text-ink">
