@@ -430,6 +430,7 @@ function workspaceName(role: string) {
 }
 
 function greet() {
+  // Computed at render time; safe because <Outlet/> is client-gated in _authed layout.
   const h = new Date().getHours();
   if (h < 5) return "Good evening";
   if (h < 12) return "Good morning";
