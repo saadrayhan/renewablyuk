@@ -30,6 +30,7 @@ import { Route as AuthedJobsIdRouteImport } from './routes/_authed.jobs.$id'
 import { Route as AuthedIbgRepositoryRouteImport } from './routes/_authed.ibg.repository'
 import { Route as AuthedIbgNewRouteImport } from './routes/_authed.ibg.new'
 import { Route as AuthedIbgHistoryRouteImport } from './routes/_authed.ibg.history'
+import { Route as AuthedIbgIdRouteImport } from './routes/_authed.ibg.$id'
 import { Route as AuthedCustomersNewRouteImport } from './routes/_authed.customers.new'
 import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customers.$id'
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
@@ -39,6 +40,7 @@ import { Route as AuthedAdminConfigRouteImport } from './routes/_authed.admin.co
 import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.audit'
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
+import { Route as AuthedIbgIdAmendmentRouteImport } from './routes/_authed.ibg.$id.amendment'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -144,6 +146,11 @@ const AuthedIbgHistoryRoute = AuthedIbgHistoryRouteImport.update({
   path: '/ibg/history',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedIbgIdRoute = AuthedIbgIdRouteImport.update({
+  id: '/ibg/$id',
+  path: '/ibg/$id',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedCustomersNewRoute = AuthedCustomersNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -189,6 +196,11 @@ const AuthedAdminActivityRoute = AuthedAdminActivityRouteImport.update({
   path: '/admin/activity',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedIbgIdAmendmentRoute = AuthedIbgIdAmendmentRouteImport.update({
+  id: '/amendment',
+  path: '/amendment',
+  getParentRoute: () => AuthedIbgIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -213,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthedAdminUsersRoute
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
+  '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
   '/ibg/new': typeof AuthedIbgNewRoute
   '/ibg/repository': typeof AuthedIbgRepositoryRoute
@@ -220,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
   '/settings/profile': typeof AuthedSettingsProfileRoute
+  '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -244,6 +258,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthedAdminUsersRoute
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
+  '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
   '/ibg/new': typeof AuthedIbgNewRoute
   '/ibg/repository': typeof AuthedIbgRepositoryRoute
@@ -251,6 +266,7 @@ export interface FileRoutesByTo {
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
   '/settings/profile': typeof AuthedSettingsProfileRoute
+  '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -277,6 +293,7 @@ export interface FileRoutesById {
   '/_authed/admin/users': typeof AuthedAdminUsersRoute
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
+  '/_authed/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/_authed/ibg/history': typeof AuthedIbgHistoryRoute
   '/_authed/ibg/new': typeof AuthedIbgNewRoute
   '/_authed/ibg/repository': typeof AuthedIbgRepositoryRoute
@@ -284,6 +301,7 @@ export interface FileRoutesById {
   '/_authed/jobs/new': typeof AuthedJobsNewRoute
   '/_authed/properties/$id': typeof AuthedPropertiesIdRoute
   '/_authed/settings/profile': typeof AuthedSettingsProfileRoute
+  '/_authed/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -310,6 +328,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
+    | '/ibg/$id'
     | '/ibg/history'
     | '/ibg/new'
     | '/ibg/repository'
@@ -317,6 +336,7 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/properties/$id'
     | '/settings/profile'
+    | '/ibg/$id/amendment'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -341,6 +361,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
+    | '/ibg/$id'
     | '/ibg/history'
     | '/ibg/new'
     | '/ibg/repository'
@@ -348,6 +369,7 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/properties/$id'
     | '/settings/profile'
+    | '/ibg/$id/amendment'
   id:
     | '__root__'
     | '/'
@@ -373,6 +395,7 @@ export interface FileRouteTypes {
     | '/_authed/admin/users'
     | '/_authed/customers/$id'
     | '/_authed/customers/new'
+    | '/_authed/ibg/$id'
     | '/_authed/ibg/history'
     | '/_authed/ibg/new'
     | '/_authed/ibg/repository'
@@ -380,6 +403,7 @@ export interface FileRouteTypes {
     | '/_authed/jobs/new'
     | '/_authed/properties/$id'
     | '/_authed/settings/profile'
+    | '/_authed/ibg/$id/amendment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -540,6 +564,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedIbgHistoryRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/ibg/$id': {
+      id: '/_authed/ibg/$id'
+      path: '/ibg/$id'
+      fullPath: '/ibg/$id'
+      preLoaderRoute: typeof AuthedIbgIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/customers/new': {
       id: '/_authed/customers/new'
       path: '/new'
@@ -603,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminActivityRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/ibg/$id/amendment': {
+      id: '/_authed/ibg/$id/amendment'
+      path: '/amendment'
+      fullPath: '/ibg/$id/amendment'
+      preLoaderRoute: typeof AuthedIbgIdAmendmentRouteImport
+      parentRoute: typeof AuthedIbgIdRoute
+    }
   }
 }
 
@@ -645,6 +683,18 @@ const AuthedPropertiesRouteChildren: AuthedPropertiesRouteChildren = {
 const AuthedPropertiesRouteWithChildren =
   AuthedPropertiesRoute._addFileChildren(AuthedPropertiesRouteChildren)
 
+interface AuthedIbgIdRouteChildren {
+  AuthedIbgIdAmendmentRoute: typeof AuthedIbgIdAmendmentRoute
+}
+
+const AuthedIbgIdRouteChildren: AuthedIbgIdRouteChildren = {
+  AuthedIbgIdAmendmentRoute: AuthedIbgIdAmendmentRoute,
+}
+
+const AuthedIbgIdRouteWithChildren = AuthedIbgIdRoute._addFileChildren(
+  AuthedIbgIdRouteChildren,
+)
+
 interface AuthedRouteChildren {
   AuthedCustomersRoute: typeof AuthedCustomersRouteWithChildren
   AuthedDashboardRoute: typeof AuthedDashboardRoute
@@ -661,6 +711,7 @@ interface AuthedRouteChildren {
   AuthedAdminOnboardingRoute: typeof AuthedAdminOnboardingRoute
   AuthedAdminPermissionsRoute: typeof AuthedAdminPermissionsRoute
   AuthedAdminUsersRoute: typeof AuthedAdminUsersRoute
+  AuthedIbgIdRoute: typeof AuthedIbgIdRouteWithChildren
   AuthedIbgHistoryRoute: typeof AuthedIbgHistoryRoute
   AuthedIbgNewRoute: typeof AuthedIbgNewRoute
   AuthedIbgRepositoryRoute: typeof AuthedIbgRepositoryRoute
@@ -683,6 +734,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminOnboardingRoute: AuthedAdminOnboardingRoute,
   AuthedAdminPermissionsRoute: AuthedAdminPermissionsRoute,
   AuthedAdminUsersRoute: AuthedAdminUsersRoute,
+  AuthedIbgIdRoute: AuthedIbgIdRouteWithChildren,
   AuthedIbgHistoryRoute: AuthedIbgHistoryRoute,
   AuthedIbgNewRoute: AuthedIbgNewRoute,
   AuthedIbgRepositoryRoute: AuthedIbgRepositoryRoute,
