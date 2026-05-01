@@ -89,26 +89,42 @@ function UserDetail() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
       <Link to="/admin/users" className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-foreground">
         <ArrowLeft className="size-3.5" /> Users
       </Link>
 
-      <div className="mt-3 flex items-start justify-between gap-6">
+      <div className="mt-3 flex flex-col items-start justify-between gap-4 md:flex-row md:items-start md:gap-6">
         <div>
           <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">User</div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">{u.name}</h1>
           <div className="mt-2 text-sm text-ink-muted">{u.email} · <span className="rounded-full bg-cat-purple-bg px-2 py-0.5 text-[11px] font-medium text-cat-purple">{ROLE_META[u.role].label}</span></div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <StatePill meta={USER_STATES[u.status]} />
-          {u.status === "active" ? (
+          {u.status === "active" && (
             <button onClick={() => setStatus("suspended")} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs"><UserMinus className="size-3" /> Suspend</button>
-          ) : (
+          )}
+          {(u.status === "suspended" || u.status === "deactivated") && (
             <button onClick={() => setStatus("active")} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs"><UserCheck className="size-3" /> Reactivate</button>
+          )}
+          {u.status === "banned" ? (
+            <button onClick={() => setStatus("active")} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs"><UserCheck className="size-3" /> Unban</button>
+          ) : (
+            <button onClick={() => setBanOpen(true)} className="press inline-flex items-center gap-1 rounded-full border border-cat-rose/30 bg-cat-rose-bg px-3 py-1.5 text-xs text-cat-rose"><Ban className="size-3" /> Ban</button>
           )}
         </div>
       </div>
+
+      {u.status === "banned" && u.banReason && (
+        <div className="mt-4 flex items-start gap-2 rounded-2xl border border-cat-rose/30 bg-cat-rose-bg/50 px-4 py-3 text-sm text-cat-rose">
+          <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+          <div>
+            <div className="font-medium">User is banned</div>
+            <div className="text-xs opacity-90">{u.banReason}</div>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <UnderlineTabs<Tab>
@@ -130,6 +146,7 @@ function UserDetail() {
               <Row label="Email" value={u.email} />
               <Row label="Invited" value={fmtDate(u.invitedAt)} />
               <Row label="Permissions" value={`${u.permissions.length} granted`} />
+              {u.banReason && <Row label="Ban reason" value={u.banReason} />}
             </div>
           </div>
         )}
