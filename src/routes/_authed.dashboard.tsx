@@ -39,7 +39,7 @@ function DashboardPage() {
       <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
         {workspaceName(role)}
       </div>
-      <h1 className="mt-2 text-[44px] font-semibold leading-[1.05] tracking-tight text-ink">
+      <h1 className="mt-2 text-3xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-4xl md:text-[44px] md:leading-[1.05]">
         {greeting}, {firstName}
       </h1>
 
