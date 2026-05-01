@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Plus, Search, Users, MoreHorizontal, Ban, UserCheck, ShieldAlert } from "lucide-react";
+import { Plus, Search, Users, MoreHorizontal, Ban, UserCheck, ShieldAlert, Mail, Send } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
 import { useStore, update, nid } from "@/lib/mock/store";
 import { StatePill, USER_STATES } from "@/components/app/state-pill";
@@ -172,10 +172,25 @@ function UsersList() {
                             <MoreHorizontal className="size-4" />
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuContent align="end" className="w-48">
                           <DropdownMenuItem asChild>
                             <Link to="/admin/users/$id" params={{ id: u.id }}>Open profile</Link>
                           </DropdownMenuItem>
+                          {u.status === "invited" && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                update((d) => {
+                                  const x = d.users.find((y) => y.id === u.id);
+                                  if (!x) return;
+                                  x.invitedAt = Date.now();
+                                  pushAudit(d, "user", u.id, actor.fullName, "Invitation resent");
+                                });
+                                toast.success(`Invitation resent to ${u.email}`);
+                              }}
+                            >
+                              <Mail className="mr-2 size-3.5" /> Resend invite
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuSeparator />
                           {u.status === "active" && (
                             <DropdownMenuItem onClick={() => setStatus(u, "suspended")}>
