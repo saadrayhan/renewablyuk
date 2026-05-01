@@ -49,7 +49,7 @@ export const Route = createRootRoute({
           "Operational and compliance platform for UK Net Zero installation companies. IBG, Jobs, Funding Match — built for installers.",
       },
       { name: "author", content: "Renewably UK" },
-      { property: "og:title", content: "Renewably UK" },
+      { property: "og:title", content: "Renewably UK — Net Zero operations platform" },
       {
         property: "og:description",
         content:
@@ -57,6 +57,12 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Renewably UK — Net Zero operations platform" },
+      { name: "description", content: "ElevenLab Design Hub is a design application that visualizes and structures digital product design elements." },
+      { property: "og:description", content: "ElevenLab Design Hub is a design application that visualizes and structures digital product design elements." },
+      { name: "twitter:description", content: "ElevenLab Design Hub is a design application that visualizes and structures digital product design elements." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f1cbee4e-ca11-437b-bbca-869d13fc943e/id-preview-ab92c4b0--251b1e68-a9f6-47bc-bcc6-89a0809d31dd.lovable.app-1777664739071.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f1cbee4e-ca11-437b-bbca-869d13fc943e/id-preview-ab92c4b0--251b1e68-a9f6-47bc-bcc6-89a0809d31dd.lovable.app-1777664739071.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
