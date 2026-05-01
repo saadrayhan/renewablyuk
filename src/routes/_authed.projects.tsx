@@ -20,7 +20,7 @@ function ProjectsIndex() {
   ] as const;
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Projects" title="The record chain" subtitle="Customer → Property → Job. Every IBG, funding project and submission is anchored here." />
 
       <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-3">

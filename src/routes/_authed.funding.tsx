@@ -19,7 +19,7 @@ function FundingHub() {
 
   if (!can(permissions, "funding.projects.read")) {
     return (
-      <div className="mx-auto w-full max-w-2xl px-8 py-10">
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
         <PageHeader eyebrow="Funding" title="Funding" />
         <div className="mt-6"><LockedCard title="Funding hub" reason={{ kind: "permission", permission: "funding.projects.read" }} /></div>
       </div>
@@ -27,7 +27,7 @@ function FundingHub() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader
         eyebrow="Funding"
         title="Funding hub"

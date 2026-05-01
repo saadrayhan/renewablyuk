@@ -44,7 +44,7 @@ function Amendment() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-8 py-10">
+    <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
       <Link to="/ibg/$id" params={{ id }} className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-foreground">
         <ArrowLeft className="size-3.5" /> Back to {ibg.ref}
       </Link>

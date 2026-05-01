@@ -23,7 +23,7 @@ function CustomersList() {
     .filter((c) => q === "" || c.name.toLowerCase().includes(q.toLowerCase()) || c.ref.toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader
         eyebrow="Projects"
         title="Customers"

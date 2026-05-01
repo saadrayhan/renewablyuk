@@ -35,11 +35,11 @@ function DashboardPage() {
   const greeting = greet();
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-8 py-10">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
         {workspaceName(role)}
       </div>
-      <h1 className="mt-2 text-[44px] font-semibold leading-[1.05] tracking-tight text-ink">
+      <h1 className="mt-2 text-3xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-4xl md:text-[44px] md:leading-[1.05]">
         {greeting}, {firstName}
       </h1>
 
