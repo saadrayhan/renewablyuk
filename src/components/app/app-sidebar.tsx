@@ -15,11 +15,8 @@ import {
   Lock,
   ChevronsLeft,
   ChevronsRight,
-  LogOut,
 } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
 type Tier = "access" | "operate";
@@ -62,17 +59,8 @@ const footerGroup: NavItem[] = [
 
 export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
   const [collapsed, setCollapsed] = useState(false);
-  const { user } = useAuth();
-
-  const initials =
-    (user?.user_metadata?.full_name as string | undefined)
-      ?.split(" ")
-      .map((s) => s[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase() ??
-    user?.email?.[0]?.toUpperCase() ??
-    "U";
+  const initials = "DP";
+  const displayName = "Design preview";
 
   return (
     <aside
@@ -148,25 +136,11 @@ export function AppSidebar({ tier = "access" as Tier }: { tier?: Tier }) {
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium">
-                {(user?.user_metadata?.full_name as string | undefined) ??
-                  user?.email ??
-                  "Account"}
-              </div>
+              <div className="truncate text-sm font-medium">{displayName}</div>
               <div className="truncate text-xs capitalize text-ink-muted">
                 {tier} plan
               </div>
             </div>
-          )}
-          {!collapsed && (
-            <button
-              type="button"
-              onClick={() => supabase.auth.signOut()}
-              className="press grid size-7 place-items-center rounded-md text-ink-muted hover:bg-background hover:text-foreground"
-              aria-label="Sign out"
-            >
-              <LogOut className="size-4" />
-            </button>
           )}
         </div>
       </div>
