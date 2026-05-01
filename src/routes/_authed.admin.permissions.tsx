@@ -201,7 +201,7 @@ function RequestsTab() {
         </div>
         {pending.length === 0 ? (
           <div className="px-5 py-10">
-            <EmptyState icon={Check} title="No pending requests" subtitle="Operators can request access from any locked feature." />
+            <EmptyState icon={Check} title="No pending requests" body="Operators can request access from any locked feature." />
           </div>
         ) : (
           <div className="divide-y">
