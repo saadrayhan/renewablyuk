@@ -195,6 +195,35 @@ function UserDetail() {
 
         {tab === "audit" && <AuditTimeline entityType="user" entityId={u.id} />}
       </div>
+
+      <Dialog open={banOpen} onOpenChange={(v) => { if (!v) setBanReason(""); setBanOpen(v); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldAlert className="size-4 text-cat-rose" /> Ban {u.name}?
+            </DialogTitle>
+            <DialogDescription>
+              They'll lose access immediately. The reason is recorded in the audit trail.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5">
+            <Label htmlFor="ban-reason">Reason</Label>
+            <Textarea
+              id="ban-reason"
+              value={banReason}
+              onChange={(e) => setBanReason(e.target.value)}
+              placeholder="Repeated policy violations, fraudulent submissions, etc."
+              rows={4}
+            />
+          </div>
+          <DialogFooter>
+            <button onClick={() => { setBanReason(""); setBanOpen(false); }} className="press rounded-full border bg-background px-3.5 py-2 text-sm">Cancel</button>
+            <button onClick={confirmBan} className="press inline-flex items-center gap-1.5 rounded-full bg-cat-rose px-3.5 py-2 text-sm font-medium text-white">
+              <Ban className="size-4" /> Ban user
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
