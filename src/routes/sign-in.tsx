@@ -3,12 +3,8 @@ import {
   createFileRoute,
   Link,
   useNavigate,
-  useRouter,
 } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth-context";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,32 +23,20 @@ export const Route = createFileRoute("/sign-in")({
 });
 
 function SignInPage() {
-  const router = useRouter();
   const navigate = useNavigate();
-  const { session, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Backend disabled — auth is bypassed for design preview.
   useEffect(() => {
-    if (!authLoading && session) {
-      router.navigate({ to: "/dashboard" });
-    }
-  }, [authLoading, session, router]);
+    // no-op
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    navigate({ to: "/dashboard" });
+    setTimeout(() => navigate({ to: "/dashboard" }), 200);
   };
 
   return (
@@ -75,7 +59,6 @@ function SignInPage() {
             id="email"
             type="email"
             autoComplete="email"
-            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@company.co.uk"
@@ -95,7 +78,6 @@ function SignInPage() {
             id="password"
             type="password"
             autoComplete="current-password"
-            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -107,8 +89,12 @@ function SignInPage() {
           className="press inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-medium text-primary-foreground disabled:opacity-60"
         >
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Sign in
+          Continue to dashboard
         </button>
+
+        <p className="text-center text-xs text-ink-muted">
+          Backend is disabled — any details will take you straight in.
+        </p>
       </form>
     </AuthLayout>
   );
