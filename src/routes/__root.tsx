@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import { DevRoleProvider } from "@/lib/dev-role";
 import { DevSwitcher } from "@/components/app/dev-switcher";
+import { MockStoreProvider } from "@/lib/mock/store";
 
 function NotFoundComponent() {
   return (
@@ -89,11 +90,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <DevRoleProvider>
-      <AuthProvider>
-        <Outlet />
-        <Toaster />
-        <DevSwitcher />
-      </AuthProvider>
+      <MockStoreProvider>
+        <AuthProvider>
+          <Outlet />
+          <Toaster />
+          <DevSwitcher />
+        </AuthProvider>
+      </MockStoreProvider>
     </DevRoleProvider>
   );
 }
