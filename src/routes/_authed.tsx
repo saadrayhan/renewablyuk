@@ -1,10 +1,4 @@
-import { useEffect } from "react";
-import {
-  createFileRoute,
-  Outlet,
-  useRouter,
-} from "@tanstack/react-router";
-import { useAuth } from "@/lib/auth-context";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { AppSidebar } from "@/components/app/app-sidebar";
 
 export const Route = createFileRoute("/_authed")({
@@ -12,25 +6,7 @@ export const Route = createFileRoute("/_authed")({
 });
 
 function AuthedLayout() {
-  const router = useRouter();
-  const { session, loading } = useAuth();
-
-  useEffect(() => {
-    if (!loading && !session) {
-      router.navigate({ to: "/sign-in" });
-    }
-  }, [loading, session, router]);
-
-  if (loading || !session) {
-    return (
-      <div className="grid min-h-screen place-items-center bg-background text-sm text-ink-muted">
-        Loading…
-      </div>
-    );
-  }
-
-  // Tier will eventually come from a profile/membership query.
-  // V1 starting state: all new accounts start on Access.
+  // Backend disabled — auth bypassed for design preview.
   const tier = "access" as const;
 
   return (
