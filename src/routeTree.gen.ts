@@ -50,6 +50,7 @@ import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.aud
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
 import { Route as AuthedIbgIdAmendmentRouteImport } from './routes/_authed.ibg.$id.amendment'
+import { Route as AuthedFundingIdTrackingRouteImport } from './routes/_authed.funding.$id.tracking'
 import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
 
 const SignUpRoute = SignUpRouteImport.update({
@@ -259,6 +260,11 @@ const AuthedIbgIdAmendmentRoute = AuthedIbgIdAmendmentRouteImport.update({
   path: '/amendment',
   getParentRoute: () => AuthedIbgIdRoute,
 } as any)
+const AuthedFundingIdTrackingRoute = AuthedFundingIdTrackingRouteImport.update({
+  id: '/tracking',
+  path: '/tracking',
+  getParentRoute: () => AuthedFundingIdRoute,
+} as any)
 const AuthedAdminUsersIdRoute = AuthedAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -290,7 +296,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
-  '/funding/$id': typeof AuthedFundingIdRoute
+  '/funding/$id': typeof AuthedFundingIdRouteWithChildren
   '/funding/match': typeof AuthedFundingMatchRoute
   '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
@@ -306,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesByTo {
@@ -333,7 +340,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
-  '/funding/$id': typeof AuthedFundingIdRoute
+  '/funding/$id': typeof AuthedFundingIdRouteWithChildren
   '/funding/match': typeof AuthedFundingMatchRoute
   '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesById {
@@ -378,7 +386,7 @@ export interface FileRoutesById {
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
-  '/_authed/funding/$id': typeof AuthedFundingIdRoute
+  '/_authed/funding/$id': typeof AuthedFundingIdRouteWithChildren
   '/_authed/funding/match': typeof AuthedFundingMatchRoute
   '/_authed/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/_authed/ibg/history': typeof AuthedIbgHistoryRoute
@@ -394,6 +402,7 @@ export interface FileRoutesById {
   '/_authed/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/_authed/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/_authed/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/_authed/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRouteTypes {
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/settings/subscription'
     | '/submissions/$id'
     | '/admin/users/$id'
+    | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
     | '/settings/subscription'
     | '/submissions/$id'
     | '/admin/users/$id'
+    | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
   id:
     | '__root__'
@@ -526,6 +537,7 @@ export interface FileRouteTypes {
     | '/_authed/settings/subscription'
     | '/_authed/submissions/$id'
     | '/_authed/admin/users/$id'
+    | '/_authed/funding/$id/tracking'
     | '/_authed/ibg/$id/amendment'
   fileRoutesById: FileRoutesById
 }
@@ -828,6 +840,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedIbgIdAmendmentRouteImport
       parentRoute: typeof AuthedIbgIdRoute
     }
+    '/_authed/funding/$id/tracking': {
+      id: '/_authed/funding/$id/tracking'
+      path: '/tracking'
+      fullPath: '/funding/$id/tracking'
+      preLoaderRoute: typeof AuthedFundingIdTrackingRouteImport
+      parentRoute: typeof AuthedFundingIdRoute
+    }
     '/_authed/admin/users/$id': {
       id: '/_authed/admin/users/$id'
       path: '/$id'
@@ -852,13 +871,25 @@ const AuthedCustomersRouteWithChildren = AuthedCustomersRoute._addFileChildren(
   AuthedCustomersRouteChildren,
 )
 
+interface AuthedFundingIdRouteChildren {
+  AuthedFundingIdTrackingRoute: typeof AuthedFundingIdTrackingRoute
+}
+
+const AuthedFundingIdRouteChildren: AuthedFundingIdRouteChildren = {
+  AuthedFundingIdTrackingRoute: AuthedFundingIdTrackingRoute,
+}
+
+const AuthedFundingIdRouteWithChildren = AuthedFundingIdRoute._addFileChildren(
+  AuthedFundingIdRouteChildren,
+)
+
 interface AuthedFundingRouteChildren {
-  AuthedFundingIdRoute: typeof AuthedFundingIdRoute
+  AuthedFundingIdRoute: typeof AuthedFundingIdRouteWithChildren
   AuthedFundingMatchRoute: typeof AuthedFundingMatchRoute
 }
 
 const AuthedFundingRouteChildren: AuthedFundingRouteChildren = {
-  AuthedFundingIdRoute: AuthedFundingIdRoute,
+  AuthedFundingIdRoute: AuthedFundingIdRouteWithChildren,
   AuthedFundingMatchRoute: AuthedFundingMatchRoute,
 }
 
