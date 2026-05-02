@@ -52,13 +52,19 @@ function AmendmentsQueue() {
 
               {a.state === "pending" && (
                 <div className="mt-4 flex justify-end gap-2">
-                  <button onClick={() => decide(a.id, "rejected", prompt("Reason for rejection?") ?? undefined)} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-sm">
-                    <XCircle className="size-3.5" /> Reject
-                  </button>
-                  <button onClick={() => decide(a.id, "approved")} className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-sm font-medium text-background">
-                    <CheckCircle2 className="size-3.5" /> Approve
+                  <button
+                    onClick={() => setSelected(a)}
+                    className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-sm font-medium text-background"
+                  >
+                    <Eye className="size-3.5" /> Review
                   </button>
                 </div>
+              )}
+
+              {a.rejectReason && a.state === "rejected" && (
+                <p className="mt-3 rounded-lg bg-cat-rose-bg/40 p-2 text-xs text-foreground">
+                  <strong>Rejected:</strong> {a.rejectReason}
+                </p>
               )}
 
               {ibg && (
@@ -70,6 +76,13 @@ function AmendmentsQueue() {
           );
         })}
       </div>
+
+      <AmendmentReviewSheet
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+        amendment={selected}
+        ibg={selectedIbg}
+      />
     </div>
   );
 }
