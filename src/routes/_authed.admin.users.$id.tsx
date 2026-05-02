@@ -7,7 +7,7 @@ import { findUser, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, USER_STATES } from "@/components/app/state-pill";
 import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { AuditTimeline } from "@/components/app/audit-timeline";
-import { PERMISSIONS, PERMISSION_CATEGORIES, OPERATOR_PRESETS, ROLE_META, type Permission } from "@/lib/rbac";
+import { PERMISSIONS, PERMISSION_CATEGORIES, OPERATOR_PRESETS, ROLE_META, DEFAULT_PERMISSIONS, type Permission } from "@/lib/rbac";
 import { useAuth } from "@/lib/auth-context";
 import {
   Dialog,
