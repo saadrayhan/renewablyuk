@@ -5,7 +5,11 @@ import { useStore, update } from "@/lib/mock/store";
 import { findSubmission, findFunding, findJob, fmtDate, pushAudit } from "@/lib/mock/queries";
 import { StatePill, SUBMISSION_STATES } from "@/components/app/state-pill";
 import { AuditTimeline } from "@/components/app/audit-timeline";
+import { LockedCard } from "@/components/app/locked-card";
+import { PageHeader } from "@/components/app/page-header";
 import { useAuth } from "@/lib/auth-context";
+import { useDevRole } from "@/lib/dev-role";
+import { can } from "@/lib/rbac";
 
 export const Route = createFileRoute("/_authed/submissions/$id")({
   head: () => ({ meta: [{ title: "Submission — Renewably UK" }] }),
@@ -16,6 +20,15 @@ function SubmissionDetail() {
   const { id } = Route.useParams();
   const data = useStore();
   const { user } = useAuth();
+  const { permissions } = useDevRole();
+  if (!can(permissions, "submissions.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Submission" title="Submission" />
+        <div className="mt-6"><LockedCard title="Submission" reason={{ kind: "permission", permission: "submissions.read" }} /></div>
+      </div>
+    );
+  }
   const submission = findSubmission(data, id);
   if (!submission) throw notFound();
   const sub = submission;
