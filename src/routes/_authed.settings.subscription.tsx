@@ -4,6 +4,7 @@ import { CreditCard, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { StatePill } from "@/components/app/state-pill";
+import { PaymentMethodDialog } from "@/components/app/payment-method-dialog";
 
 export const Route = createFileRoute("/_authed/settings/subscription")({
   head: () => ({ meta: [{ title: "Subscription — Renewably UK" }] }),
@@ -13,6 +14,8 @@ export const Route = createFileRoute("/_authed/settings/subscription")({
 type State = "active" | "payment-failed" | "cancelled";
 
 function SubscriptionSettings() {
+  const [last4, setLast4] = useState("4242");
+  const [payOpen, setPayOpen] = useState(false);
   const [state, setState] = useState<State>("active");
 
   const meta =
