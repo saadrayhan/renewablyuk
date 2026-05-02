@@ -27,8 +27,19 @@ const FILTERS: { value: SubmissionState; label: string }[] = [
 
 function SubmissionsList() {
   const data = useStore();
+  const { permissions } = useDevRole();
   const [filter, setFilter] = useState<SubmissionState | "all">("all");
   const [q, setQ] = useState("");
+
+  if (!can(permissions, "submissions.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Submissions" title="Submissions" />
+        <div className="mt-6"><LockedCard title="Submissions" reason={{ kind: "permission", permission: "submissions.read" }} /></div>
+      </div>
+    );
+  }
+
   const rows = data.submissions
     .filter((s) => filter === "all" || s.state === filter)
     .filter((s) => !q || s.ref.toLowerCase().includes(q.toLowerCase()) || s.scheme.toLowerCase().includes(q.toLowerCase()));
