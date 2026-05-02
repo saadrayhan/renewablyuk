@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: buildUser(role),
       permissions,
       isAdmin: role === "admin",
+      isOperator: role === "operator",
       loading: false,
     }),
     [role, permissions],
