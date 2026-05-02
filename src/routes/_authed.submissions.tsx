@@ -7,6 +7,9 @@ import { StatePill, SUBMISSION_STATES } from "@/components/app/state-pill";
 import { FilterPills } from "@/components/app/filter-pills";
 import { fmtDate } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
+import { LockedCard } from "@/components/app/locked-card";
+import { useDevRole } from "@/lib/dev-role";
+import { can } from "@/lib/rbac";
 import type { SubmissionState } from "@/lib/mock/types";
 
 export const Route = createFileRoute("/_authed/submissions")({
