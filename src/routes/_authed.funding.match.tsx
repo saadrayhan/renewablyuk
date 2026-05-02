@@ -83,9 +83,14 @@ function MatchHub() {
               <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${m.state === "active" ? "bg-cat-green-bg text-cat-green" : m.state === "opportunity" ? "bg-cat-amber-bg text-cat-amber" : "bg-tile text-ink-muted"}`}>
                 {m.state === "active" ? "Active match" : m.state === "opportunity" ? "Opportunity" : "No match"}
               </span>
-              <Link to="/funding" className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background">
+              <button
+                type="button"
+                onClick={() => startProject(m.scheme, m.measures[0] ?? "Insulation")}
+                disabled={m.state === "no-match"}
+                className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-40"
+              >
                 Start funding project <ArrowRight className="size-3" />
-              </Link>
+              </button>
             </div>
           </div>
         ))}
