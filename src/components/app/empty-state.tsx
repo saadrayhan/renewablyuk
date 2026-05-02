@@ -31,7 +31,7 @@ export function EmptyState({
         <circle cx="100" cy="60" r="60" fill="none" stroke="currentColor" strokeWidth="1" />
         <circle cx="100" cy="60" r="80" fill="none" stroke="currentColor" strokeWidth="1" />
       </svg>
-      <div className="relative flex flex-col items-center animate-in fade-in-0 duration-300 [animation-delay:150ms] fill-mode-both">
+      <div className="relative flex flex-col items-center animate-in fade-in-0 duration-300 [animation-delay:150ms] [animation-fill-mode:both]">
         {Icon && (
           <div className="grid size-14 place-items-center rounded-2xl bg-background text-ink-muted shadow-sm">
             <Icon className="size-6" />
