@@ -29,8 +29,18 @@ const FILTERS: { value: JobState; label: string }[] = [
 
 function JobsList() {
   const data = useStore();
+  const { permissions } = useDevRole();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<JobState | "all">("all");
+
+  if (!can(permissions, "jobs.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Jobs" title="Jobs" />
+        <div className="mt-6"><LockedCard title="Jobs" reason={{ kind: "permission", permission: "jobs.read" }} /></div>
+      </div>
+    );
+  }
 
   const rows = data.jobs
     .filter((j) => filter === "all" || j.state === filter)
