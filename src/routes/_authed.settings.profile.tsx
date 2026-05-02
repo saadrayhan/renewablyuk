@@ -12,6 +12,11 @@ function ProfileSettings() {
   const { user } = useAuth();
   const [fullName, setFullName] = useState(user.fullName);
   const [email, setEmail] = useState(user.email);
+  const [twoFa, setTwoFa] = useState(false);
+
+  useEffect(() => {
+    try { setTwoFa(localStorage.getItem("renewably:2fa") === "true"); } catch { /* */ }
+  }, []);
 
   return (
     <div className="space-y-6">
