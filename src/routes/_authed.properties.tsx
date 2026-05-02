@@ -7,6 +7,9 @@ import { StatePill, RECORD_STATES } from "@/components/app/state-pill";
 import { FilterPills } from "@/components/app/filter-pills";
 import { findCustomer, jobsOfProperty } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
+import { LockedCard } from "@/components/app/locked-card";
+import { useDevRole } from "@/lib/dev-role";
+import { can } from "@/lib/rbac";
 
 export const Route = createFileRoute("/_authed/properties")({
   head: () => ({ meta: [{ title: "Properties — Renewably UK" }] }),
@@ -15,8 +18,18 @@ export const Route = createFileRoute("/_authed/properties")({
 
 function PropertiesList() {
   const data = useStore();
+  const { permissions } = useDevRole();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "draft">("all");
+
+  if (!can(permissions, "properties.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Properties" title="Properties" />
+        <div className="mt-6"><LockedCard title="Properties" reason={{ kind: "permission", permission: "properties.read" }} /></div>
+      </div>
+    );
+  }
 
   const rows = data.properties
     .filter((p) => filter === "all" || p.status === filter)
