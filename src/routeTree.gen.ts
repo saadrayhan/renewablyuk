@@ -27,6 +27,7 @@ import { Route as AuthedDashboardRouteImport } from './routes/_authed.dashboard'
 import { Route as AuthedCustomersRouteImport } from './routes/_authed.customers'
 import { Route as AuthedSubmissionsIdRouteImport } from './routes/_authed.submissions.$id'
 import { Route as AuthedSettingsSubscriptionRouteImport } from './routes/_authed.settings.subscription'
+import { Route as AuthedSettingsSecurityRouteImport } from './routes/_authed.settings.security'
 import { Route as AuthedSettingsProfileRouteImport } from './routes/_authed.settings.profile'
 import { Route as AuthedSettingsNotificationsRouteImport } from './routes/_authed.settings.notifications'
 import { Route as AuthedSettingsMeasuresRouteImport } from './routes/_authed.settings.measures'
@@ -144,6 +145,11 @@ const AuthedSettingsSubscriptionRoute =
     path: '/subscription',
     getParentRoute: () => AuthedSettingsRoute,
   } as any)
+const AuthedSettingsSecurityRoute = AuthedSettingsSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AuthedSettingsRoute,
+} as any)
 const AuthedSettingsProfileRoute = AuthedSettingsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -316,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
   '/settings/notifications': typeof AuthedSettingsNotificationsRoute
   '/settings/profile': typeof AuthedSettingsProfileRoute
+  '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -361,6 +368,7 @@ export interface FileRoutesByTo {
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
   '/settings/notifications': typeof AuthedSettingsNotificationsRoute
   '/settings/profile': typeof AuthedSettingsProfileRoute
+  '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -408,6 +416,7 @@ export interface FileRoutesById {
   '/_authed/settings/measures': typeof AuthedSettingsMeasuresRoute
   '/_authed/settings/notifications': typeof AuthedSettingsNotificationsRoute
   '/_authed/settings/profile': typeof AuthedSettingsProfileRoute
+  '/_authed/settings/security': typeof AuthedSettingsSecurityRoute
   '/_authed/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/_authed/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/settings/measures'
     | '/settings/notifications'
     | '/settings/profile'
+    | '/settings/security'
     | '/settings/subscription'
     | '/submissions/$id'
     | '/admin/users/$id'
@@ -500,6 +510,7 @@ export interface FileRouteTypes {
     | '/settings/measures'
     | '/settings/notifications'
     | '/settings/profile'
+    | '/settings/security'
     | '/settings/subscription'
     | '/submissions/$id'
     | '/admin/users/$id'
@@ -546,6 +557,7 @@ export interface FileRouteTypes {
     | '/_authed/settings/measures'
     | '/_authed/settings/notifications'
     | '/_authed/settings/profile'
+    | '/_authed/settings/security'
     | '/_authed/settings/subscription'
     | '/_authed/submissions/$id'
     | '/_authed/admin/users/$id'
@@ -689,6 +701,13 @@ declare module '@tanstack/react-router' {
       path: '/subscription'
       fullPath: '/settings/subscription'
       preLoaderRoute: typeof AuthedSettingsSubscriptionRouteImport
+      parentRoute: typeof AuthedSettingsRoute
+    }
+    '/_authed/settings/security': {
+      id: '/_authed/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AuthedSettingsSecurityRouteImport
       parentRoute: typeof AuthedSettingsRoute
     }
     '/_authed/settings/profile': {
@@ -947,6 +966,7 @@ interface AuthedSettingsRouteChildren {
   AuthedSettingsMeasuresRoute: typeof AuthedSettingsMeasuresRoute
   AuthedSettingsNotificationsRoute: typeof AuthedSettingsNotificationsRoute
   AuthedSettingsProfileRoute: typeof AuthedSettingsProfileRoute
+  AuthedSettingsSecurityRoute: typeof AuthedSettingsSecurityRoute
   AuthedSettingsSubscriptionRoute: typeof AuthedSettingsSubscriptionRoute
 }
 
@@ -956,6 +976,7 @@ const AuthedSettingsRouteChildren: AuthedSettingsRouteChildren = {
   AuthedSettingsMeasuresRoute: AuthedSettingsMeasuresRoute,
   AuthedSettingsNotificationsRoute: AuthedSettingsNotificationsRoute,
   AuthedSettingsProfileRoute: AuthedSettingsProfileRoute,
+  AuthedSettingsSecurityRoute: AuthedSettingsSecurityRoute,
   AuthedSettingsSubscriptionRoute: AuthedSettingsSubscriptionRoute,
 }
 
