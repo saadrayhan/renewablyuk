@@ -9,7 +9,9 @@
  * Replaces the previous MiniRail + SidePanel pair.
  */
 
+import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { InviteDialog } from "@/components/app/invite-dialog";
 import {
   Home,
   FolderKanban,
