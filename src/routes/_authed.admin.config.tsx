@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/app/page-header";
 import { UnderlineTabs } from "@/components/app/underline-tabs";
+import { TemplateEditorDialog } from "@/components/app/template-editor-dialog";
 
 export const Route = createFileRoute("/_authed/admin/config")({
   head: () => ({ meta: [{ title: "System config — Renewably UK" }] }),
