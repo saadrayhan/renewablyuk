@@ -15,6 +15,7 @@ import {
   ArrowLeftRight,
   CreditCard,
   Crown,
+  KeyRound,
   LogOut,
   Moon,
   Settings,
