@@ -38,15 +38,8 @@ function UserDetail() {
 
   if (!u) throw notFound();
 
-  function toggle(p: Permission) {
-    update((d) => {
-      const x = d.users.find((y) => y.id === id);
-      if (!x) return;
-      const has = x.permissions.includes(p);
-      x.permissions = has ? x.permissions.filter((y) => y !== p) : [...x.permissions, p];
-      pushAudit(d, "user", id, actor.fullName, has ? `Revoked ${p}` : `Granted ${p}`);
-    });
-  }
+
+
 
   function grant(p: Permission) {
     update((d) => {
