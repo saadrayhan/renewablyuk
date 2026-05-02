@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { User, Bell, CreditCard, Wrench, Plug } from "lucide-react";
+import { User, Bell, CreditCard, Wrench, Plug, ShieldCheck, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 
