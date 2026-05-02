@@ -14,7 +14,9 @@ export const Route = createFileRoute("/_authed/funding/$id")({
   component: FundingDetail,
 });
 
-const POST_REVIEW: FundingState[] = ["under-review", "validated", "returned", "ready-for-submission", "submitted"];
+// Review is "done" only when it has actually completed successfully.
+// `returned` means review failed and step must re-open.
+const REVIEW_DONE: FundingState[] = ["validated", "ready-for-submission", "submitted", "under-review"];
 const POST_SUBMIT: FundingState[] = ["submitted", "under-review", "validated", "returned"];
 
 function FundingDetail() {
@@ -26,11 +28,19 @@ function FundingDetail() {
   if (!f) throw notFound();
   const job = findJob(data, f.jobId);
 
+  const reviewDone = REVIEW_DONE.includes(f.state) && f.state !== "under-review";
+  const reviewActive = f.state === "under-review";
+  const reviewReturned = f.state === "returned";
+
   const steps = [
     { label: "Company verified", done: true, hint: "Workspace company on file" },
     { label: "Measure confirmed", done: !!f.measure, hint: f.measure || "Pick a measure" },
-    { label: "Evidence uploaded", done: f.evidence.length >= 1, hint: `${f.evidence.length} file${f.evidence.length === 1 ? "" : "s"}` },
-    { label: "Internal review", done: POST_REVIEW.includes(f.state), hint: POST_REVIEW.includes(f.state) ? "Reviewed" : "Awaiting review" },
+    { label: "Evidence uploaded", done: f.evidence.length >= 1, hint: reviewReturned ? "Re-upload required" : `${f.evidence.length} file${f.evidence.length === 1 ? "" : "s"}` },
+    {
+      label: "Internal review",
+      done: reviewDone,
+      hint: reviewReturned ? "Returned — fix issues and resubmit" : reviewActive ? "Review in progress" : reviewDone ? "Reviewed" : "Awaiting review",
+    },
     { label: "Ready for submission", done: false, hint: "All previous steps complete" },
     { label: "Submitted", done: POST_SUBMIT.includes(f.state), hint: POST_SUBMIT.includes(f.state) ? "Sent to scheme" : "Not yet submitted" },
   ];
