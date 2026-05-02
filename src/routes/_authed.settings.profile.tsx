@@ -56,19 +56,24 @@ function ProfileSettings() {
         </div>
       </Card>
 
-      <Card title="Two-factor authentication" tone="warning">
+      <Card title="Two-factor authentication" tone={twoFa ? undefined : "warning"}>
         <p className="text-sm text-ink-muted">
-          Add an extra layer of security with an authenticator app. Recommended for all admins
-          and operators handling funding submissions.
+          {twoFa
+            ? "2FA is enabled on your account. Manage your authenticator app and backup codes from Security."
+            : "Add an extra layer of security with an authenticator app. Recommended for all admins and operators handling funding submissions."}
         </p>
-        <div className="pt-2">
-          <button
-            type="button"
-            onClick={() => toast.info("2FA setup flow coming up")}
+        <div className="flex items-center gap-2 pt-2">
+          <Link
+            to="/settings/security"
             className="press rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           >
-            Enable 2FA
-          </button>
+            {twoFa ? "Manage 2FA" : "Enable 2FA"}
+          </Link>
+          {twoFa && (
+            <span className="rounded-full bg-cat-green-bg px-2 py-0.5 text-[11px] font-medium text-cat-green">
+              Enabled
+            </span>
+          )}
         </div>
       </Card>
     </div>
