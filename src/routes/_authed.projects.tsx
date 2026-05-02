@@ -4,6 +4,9 @@ import { PageHeader } from "@/components/app/page-header";
 import { useStore } from "@/lib/mock/store";
 import { StatePill, JOB_STATES, RECORD_STATES } from "@/components/app/state-pill";
 import { fmtDate } from "@/lib/mock/queries";
+import { useDevRole } from "@/lib/dev-role";
+import { canAny } from "@/lib/rbac";
+import { LockedCard } from "@/components/app/locked-card";
 
 export const Route = createFileRoute("/_authed/projects")({
   head: () => ({ meta: [{ title: "Projects — Renewably UK" }] }),
@@ -12,6 +15,16 @@ export const Route = createFileRoute("/_authed/projects")({
 
 function ProjectsIndex() {
   const data = useStore();
+  const { permissions } = useDevRole();
+
+  if (!canAny(permissions, ["customers.read", "jobs.read", "properties.read"])) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Projects" title="Projects" />
+        <div className="mt-6"><LockedCard title="Projects hub" body="Ask an admin for read access to customers, properties or jobs." reason={{ kind: "permission", permission: "customers.read" }} /></div>
+      </div>
+    );
+  }
 
   const tiles = [
     { label: "Customers", to: "/customers", icon: Users, count: data.customers.length, desc: "People + organisations you serve", tone: "blue" },

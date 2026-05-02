@@ -9,7 +9,9 @@
  * Replaces the previous MiniRail + SidePanel pair.
  */
 
+import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { InviteDialog } from "@/components/app/invite-dialog";
 import {
   Home,
   FolderKanban,
@@ -308,24 +310,31 @@ function Divider() {
 }
 
 function InviteCard({ onClick }: { onClick?: () => void }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="mt-3 rounded-2xl border bg-background p-3">
-      <div className="grid size-7 place-items-center rounded-lg bg-cat-blue-bg text-cat-blue">
-        <Send className="size-3.5" />
+    <>
+      <div className="mt-3 rounded-2xl border bg-background p-3">
+        <div className="grid size-7 place-items-center rounded-lg bg-cat-blue-bg text-cat-blue">
+          <Send className="size-3.5" />
+        </div>
+        <div className="mt-2 text-[13px] font-medium text-foreground">
+          Invite team members
+        </div>
+        <div className="mt-1 text-[11px] leading-snug text-ink-muted">
+          Bring your team into your workspace.
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            onClick?.();
+            setOpen(true);
+          }}
+          className="press mt-2 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-3 py-1.5 text-[11px] font-medium text-background"
+        >
+          Invite
+        </button>
       </div>
-      <div className="mt-2 text-[13px] font-medium text-foreground">
-        Invite team members
-      </div>
-      <div className="mt-1 text-[11px] leading-snug text-ink-muted">
-        Bring your team into your workspace.
-      </div>
-      <Link
-        to="/admin/users"
-        onClick={onClick}
-        className="press mt-2 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-3 py-1.5 text-[11px] font-medium text-background"
-      >
-        Invite
-      </Link>
-    </div>
+      <InviteDialog open={open} onOpenChange={setOpen} />
+    </>
   );
 }

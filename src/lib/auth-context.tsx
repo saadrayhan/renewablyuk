@@ -20,6 +20,7 @@ type AuthContextValue = {
   user: MockUser;
   permissions: Permission[];
   isAdmin: boolean;
+  isOperator: boolean;
   loading: false;
 };
 
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: buildUser(role),
       permissions,
       isAdmin: role === "admin",
+      isOperator: role === "operator",
       loading: false,
     }),
     [role, permissions],

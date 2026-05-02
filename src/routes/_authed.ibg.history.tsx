@@ -3,9 +3,11 @@ import { ArrowRight, FileBadge, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
 import { useStore } from "@/lib/mock/store";
 import { useDevRole } from "@/lib/dev-role";
+import { can } from "@/lib/rbac";
 import { StatePill, IBG_STATES } from "@/components/app/state-pill";
 import { fmtDate } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
+import { LockedCard } from "@/components/app/locked-card";
 
 export const Route = createFileRoute("/_authed/ibg/history")({
   head: () => ({ meta: [{ title: "IBG history — Renewably UK" }] }),
@@ -14,7 +16,15 @@ export const Route = createFileRoute("/_authed/ibg/history")({
 
 function IbgHistory() {
   const data = useStore();
-  const { role } = useDevRole();
+  const { role, permissions } = useDevRole();
+  if (!can(permissions, "ibg.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="IBG" title="IBG history" />
+        <div className="mt-6"><LockedCard title="IBG history" reason={{ kind: "permission", permission: "ibg.read" }} /></div>
+      </div>
+    );
+  }
   const isAccessTier = role === "installer-access";
   const all = [...data.ibgs].sort((a, b) => b.createdAt - a.createdAt);
   const rows = isAccessTier ? all.slice(0, 5) : all;
