@@ -38,7 +38,6 @@ function FundingDetail() {
   steps[4].done = steps.slice(0, 4).every((s) => s.done);
 
   const completed = steps.filter((s) => s.done).length;
-  const allDone = completed === steps.length || steps.slice(0, 5).every((s) => s.done);
   const ready = steps.slice(0, 5).every((s) => s.done);
 
   // Animate progress bar on mount
@@ -194,6 +193,3 @@ function FundingDetail() {
     </div>
   );
 }
-
-void allDoneSilencer;
-function allDoneSilencer() { /* keep */ }
