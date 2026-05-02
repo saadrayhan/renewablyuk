@@ -136,4 +136,6 @@ Currently in `_authed.admin.users.$id.tsx` the toggle works both ways (grant/rev
 - Mobile breakpoints — already passed prior audit
 - Real backend wiring — mock store stays the source of truth
 
-Approve and I'll implement the lot.
+## 5. Status — DELIVERED
+
+All items above are implemented. Build is clean.
