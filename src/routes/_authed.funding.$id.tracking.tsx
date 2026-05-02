@@ -1,5 +1,5 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Check, Clock, Lock as LockIcon, Upload, X } from "lucide-react";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { ArrowLeft, Check, Clock, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update, nid } from "@/lib/mock/store";
 import { findFunding, fmtDate, pushAudit, relTime } from "@/lib/mock/queries";
