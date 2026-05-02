@@ -7,6 +7,9 @@ import { StatePill, RECORD_STATES } from "@/components/app/state-pill";
 import { FilterPills } from "@/components/app/filter-pills";
 import { fmtDate, propertiesOfCustomer, jobsOfCustomer } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
+import { LockedCard } from "@/components/app/locked-card";
+import { useDevRole } from "@/lib/dev-role";
+import { can } from "@/lib/rbac";
 
 export const Route = createFileRoute("/_authed/customers")({
   head: () => ({ meta: [{ title: "Customers — Renewably UK" }] }),
@@ -15,8 +18,18 @@ export const Route = createFileRoute("/_authed/customers")({
 
 function CustomersList() {
   const data = useStore();
+  const { permissions } = useDevRole();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "draft" | "archived">("all");
+
+  if (!can(permissions, "customers.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Customers" title="Customers" />
+        <div className="mt-6"><LockedCard title="Customers" reason={{ kind: "permission", permission: "customers.read" }} /></div>
+      </div>
+    );
+  }
 
   const rows = data.customers
     .filter((c) => filter === "all" || c.status === filter)
