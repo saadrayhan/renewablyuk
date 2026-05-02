@@ -260,10 +260,10 @@ function Row({
       aria-label={item.label}
       title={collapsed ? item.label : undefined}
       className={cn(
-        "group relative flex items-center gap-2.5 rounded-lg text-sm",
+        "group relative flex items-center gap-2.5 overflow-hidden rounded-lg text-sm",
         collapsed ? "mx-auto h-9 w-9 justify-center" : "px-2.5 py-1.5",
         active
-          ? "bg-sidebar-accent text-foreground"
+          ? "bg-sidebar-accent text-foreground before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full before:bg-brand"
           : "text-ink-muted hover:bg-sidebar-accent hover:text-foreground",
       )}
     >
