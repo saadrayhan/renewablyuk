@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, XCircle } from "lucide-react";
-import { toast } from "sonner";
+import { Eye } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
-import { useStore, update } from "@/lib/mock/store";
+import { useStore } from "@/lib/mock/store";
 import { StatePill, AMENDMENT_STATES } from "@/components/app/state-pill";
-import { fmtDate, pushAudit } from "@/lib/mock/queries";
-import { useAuth } from "@/lib/auth-context";
+import { fmtDate } from "@/lib/mock/queries";
+import { AmendmentReviewSheet } from "@/components/app/amendment-review-sheet";
+import type { AmendmentRequest } from "@/lib/mock/types";
 
 export const Route = createFileRoute("/_authed/admin/amendments")({
   head: () => ({ meta: [{ title: "Amendments — Renewably UK" }] }),
@@ -14,24 +15,8 @@ export const Route = createFileRoute("/_authed/admin/amendments")({
 
 function AmendmentsQueue() {
   const data = useStore();
-  const { user } = useAuth();
-
-  function decide(id: string, decision: "approved" | "rejected", reason?: string) {
-    update((d) => {
-      const a = d.amendments.find((x) => x.id === id);
-      if (!a) return;
-      a.state = decision;
-      a.decidedAt = Date.now();
-      a.decidedBy = user.fullName;
-      if (reason) a.rejectReason = reason;
-      pushAudit(d, "amendment", id, user.fullName, decision === "approved" ? "Approved amendment" : "Rejected amendment", reason);
-      if (decision === "approved") {
-        const ibg = d.ibgs.find((i) => i.id === a.ibgId);
-        if (ibg) ibg.state = "amended";
-      }
-    });
-    toast.success(`Amendment ${decision}`);
-  }
+  const [selected, setSelected] = useState<AmendmentRequest | null>(null);
+  const selectedIbg = selected ? data.ibgs.find((i) => i.id === selected.ibgId) ?? null : null;
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
