@@ -208,28 +208,82 @@ function UserDetail() {
               </div>
             )}
 
-            {PERMISSION_CATEGORIES.map((cat) => {
-              const perms = PERMISSIONS.filter((p) => p.category === cat);
-              return (
-                <div key={cat} className="rounded-2xl border bg-card">
-                  <div className="border-b px-5 py-3 text-sm font-medium text-foreground">{cat}</div>
-                  <div className="divide-y">
-                    {perms.map((p) => {
-                      const granted = u.permissions.includes(p.id);
-                      return (
-                        <label key={p.id} className="flex cursor-pointer items-center justify-between gap-4 px-5 py-3 hover:bg-surface/40">
-                          <div>
-                            <div className="text-sm font-medium text-foreground">{p.label}</div>
-                            <div className="text-xs text-ink-muted">{p.description}</div>
-                          </div>
-                          <input type="checkbox" checked={granted} onChange={() => toggle(p.id)} className="size-4 cursor-pointer accent-foreground" />
-                        </label>
-                      );
-                    })}
-                  </div>
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border bg-surface/40 p-3 text-xs text-ink-muted">
+              <span>
+                <strong className="text-foreground">{u.permissions.length}</strong> permission{u.permissions.length === 1 ? "" : "s"} granted
+                {" · "}role default: {DEFAULT_PERMISSIONS[u.role].length}
+              </span>
+              <div className="flex gap-2">
+                <button onClick={resetToRoleDefaults} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs">
+                  <RotateCcw className="size-3" /> Reset to role defaults
+                </button>
+                <button onClick={clearAll} className="press inline-flex items-center gap-1 rounded-full border border-cat-rose/30 bg-cat-rose-bg px-3 py-1.5 text-xs text-cat-rose">
+                  <Trash2 className="size-3" /> Clear all
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              {/* Granted */}
+              <div className="rounded-2xl border bg-card">
+                <div className="flex items-center justify-between border-b px-5 py-3 text-sm">
+                  <span className="font-medium text-foreground">Granted ({u.permissions.length})</span>
+                  <span className="rounded-full bg-cat-green-bg px-2 py-0.5 text-[10px] font-medium text-cat-green">Active</span>
                 </div>
-              );
-            })}
+                {u.permissions.length === 0 ? (
+                  <div className="p-6 text-center text-sm text-ink-muted">No permissions granted yet.</div>
+                ) : (
+                  <div className="divide-y">
+                    {PERMISSIONS.filter((p) => u.permissions.includes(p.id)).map((p) => (
+                      <div key={p.id} className="flex items-start justify-between gap-3 px-5 py-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-foreground">{p.label}</div>
+                          <div className="text-[11px] text-ink-muted">{p.category} · {p.description}</div>
+                        </div>
+                        <button
+                          onClick={() => revoke(p.id)}
+                          className="press inline-flex shrink-0 items-center gap-1 rounded-full border border-cat-rose/30 bg-cat-rose-bg px-2.5 py-1 text-[11px] text-cat-rose"
+                        >
+                          <X className="size-3" /> Revoke
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Available */}
+              <div className="rounded-2xl border bg-card">
+                <div className="border-b px-5 py-3 text-sm font-medium text-foreground">
+                  Available ({PERMISSIONS.length - u.permissions.length})
+                </div>
+                <div className="max-h-[600px] divide-y overflow-y-auto">
+                  {PERMISSION_CATEGORIES.map((cat) => {
+                    const perms = PERMISSIONS.filter((p) => p.category === cat && !u.permissions.includes(p.id));
+                    if (perms.length === 0) return null;
+                    return (
+                      <div key={cat}>
+                        <div className="bg-surface/60 px-5 py-1.5 text-[10px] font-medium uppercase tracking-wider text-ink-muted">{cat}</div>
+                        {perms.map((p) => (
+                          <div key={p.id} className="flex items-start justify-between gap-3 px-5 py-3">
+                            <div className="min-w-0">
+                              <div className="text-sm font-medium text-foreground">{p.label}</div>
+                              <div className="text-[11px] text-ink-muted">{p.description}</div>
+                            </div>
+                            <button
+                              onClick={() => grant(p.id)}
+                              className="press inline-flex shrink-0 items-center gap-1 rounded-full bg-foreground px-2.5 py-1 text-[11px] font-medium text-background"
+                            >
+                              <Plus className="size-3" /> Grant
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
