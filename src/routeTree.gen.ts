@@ -31,6 +31,7 @@ import { Route as AuthedSettingsProfileRouteImport } from './routes/_authed.sett
 import { Route as AuthedSettingsNotificationsRouteImport } from './routes/_authed.settings.notifications'
 import { Route as AuthedSettingsMeasuresRouteImport } from './routes/_authed.settings.measures'
 import { Route as AuthedSettingsIntegrationsRouteImport } from './routes/_authed.settings.integrations'
+import { Route as AuthedSettingsAccessRouteImport } from './routes/_authed.settings.access'
 import { Route as AuthedPropertiesIdRouteImport } from './routes/_authed.properties.$id'
 import { Route as AuthedJobsNewRouteImport } from './routes/_authed.jobs.new'
 import { Route as AuthedJobsIdRouteImport } from './routes/_authed.jobs.$id'
@@ -165,6 +166,11 @@ const AuthedSettingsIntegrationsRoute =
     path: '/integrations',
     getParentRoute: () => AuthedSettingsRoute,
   } as any)
+const AuthedSettingsAccessRoute = AuthedSettingsAccessRouteImport.update({
+  id: '/access',
+  path: '/access',
+  getParentRoute: () => AuthedSettingsRoute,
+} as any)
 const AuthedPropertiesIdRoute = AuthedPropertiesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id': typeof AuthedJobsIdRoute
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
+  '/settings/access': typeof AuthedSettingsAccessRoute
   '/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
   '/settings/notifications': typeof AuthedSettingsNotificationsRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof AuthedJobsIdRoute
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
+  '/settings/access': typeof AuthedSettingsAccessRoute
   '/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
   '/settings/notifications': typeof AuthedSettingsNotificationsRoute
@@ -395,6 +403,7 @@ export interface FileRoutesById {
   '/_authed/jobs/$id': typeof AuthedJobsIdRoute
   '/_authed/jobs/new': typeof AuthedJobsNewRoute
   '/_authed/properties/$id': typeof AuthedPropertiesIdRoute
+  '/_authed/settings/access': typeof AuthedSettingsAccessRoute
   '/_authed/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/_authed/settings/measures': typeof AuthedSettingsMeasuresRoute
   '/_authed/settings/notifications': typeof AuthedSettingsNotificationsRoute
@@ -441,6 +450,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/properties/$id'
+    | '/settings/access'
     | '/settings/integrations'
     | '/settings/measures'
     | '/settings/notifications'
@@ -485,6 +495,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/properties/$id'
+    | '/settings/access'
     | '/settings/integrations'
     | '/settings/measures'
     | '/settings/notifications'
@@ -530,6 +541,7 @@ export interface FileRouteTypes {
     | '/_authed/jobs/$id'
     | '/_authed/jobs/new'
     | '/_authed/properties/$id'
+    | '/_authed/settings/access'
     | '/_authed/settings/integrations'
     | '/_authed/settings/measures'
     | '/_authed/settings/notifications'
@@ -705,6 +717,13 @@ declare module '@tanstack/react-router' {
       path: '/integrations'
       fullPath: '/settings/integrations'
       preLoaderRoute: typeof AuthedSettingsIntegrationsRouteImport
+      parentRoute: typeof AuthedSettingsRoute
+    }
+    '/_authed/settings/access': {
+      id: '/_authed/settings/access'
+      path: '/access'
+      fullPath: '/settings/access'
+      preLoaderRoute: typeof AuthedSettingsAccessRouteImport
       parentRoute: typeof AuthedSettingsRoute
     }
     '/_authed/properties/$id': {
@@ -923,6 +942,7 @@ const AuthedPropertiesRouteWithChildren =
   AuthedPropertiesRoute._addFileChildren(AuthedPropertiesRouteChildren)
 
 interface AuthedSettingsRouteChildren {
+  AuthedSettingsAccessRoute: typeof AuthedSettingsAccessRoute
   AuthedSettingsIntegrationsRoute: typeof AuthedSettingsIntegrationsRoute
   AuthedSettingsMeasuresRoute: typeof AuthedSettingsMeasuresRoute
   AuthedSettingsNotificationsRoute: typeof AuthedSettingsNotificationsRoute
@@ -931,6 +951,7 @@ interface AuthedSettingsRouteChildren {
 }
 
 const AuthedSettingsRouteChildren: AuthedSettingsRouteChildren = {
+  AuthedSettingsAccessRoute: AuthedSettingsAccessRoute,
   AuthedSettingsIntegrationsRoute: AuthedSettingsIntegrationsRoute,
   AuthedSettingsMeasuresRoute: AuthedSettingsMeasuresRoute,
   AuthedSettingsNotificationsRoute: AuthedSettingsNotificationsRoute,
