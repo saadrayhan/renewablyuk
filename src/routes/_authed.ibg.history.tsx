@@ -17,11 +17,11 @@ export const Route = createFileRoute("/_authed/ibg/history")({
 function IbgHistory() {
   const data = useStore();
   const { role, permissions } = useDevRole();
-  if (!can(permissions, "ibg.history.read")) {
+  if (!can(permissions, "ibg.read")) {
     return (
       <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
         <PageHeader eyebrow="IBG" title="IBG history" />
-        <div className="mt-6"><LockedCard title="IBG history" reason={{ kind: "permission", permission: "ibg.history.read" }} /></div>
+        <div className="mt-6"><LockedCard title="IBG history" reason={{ kind: "permission", permission: "ibg.read" }} /></div>
       </div>
     );
   }
