@@ -122,6 +122,8 @@ function SubscriptionSettings() {
           ))}
         </div>
       </section>
+
+      <PaymentMethodDialog open={payOpen} onOpenChange={setPayOpen} onSaved={setLast4} />
     </div>
   );
 }
