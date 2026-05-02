@@ -47,9 +47,14 @@ export function ProfilePopover() {
         <div className="rounded-xl bg-surface p-3">
           <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.06em] text-ink-muted">
             <span>Balance</span>
-            <button className="press inline-flex items-center gap-1 rounded-full bg-foreground px-2 py-0.5 text-[10px] font-medium text-background">
-              <Crown className="size-3" /> Upgrade
-            </button>
+            {!isAdmin && (
+              <Link
+                to="/settings/subscription"
+                className="press inline-flex items-center gap-1 rounded-full bg-foreground px-2 py-0.5 text-[10px] font-medium text-background"
+              >
+                <Crown className="size-3" /> Upgrade
+              </Link>
+            )}
           </div>
           <div className="mt-2 flex items-end justify-between text-sm">
             <span className="text-ink-muted">Total IBGs this month</span>
@@ -74,7 +79,12 @@ export function ProfilePopover() {
         <div className="my-1.5 h-px bg-border" />
 
         <MenuLink to="/settings/profile" icon={Settings} label="Settings" />
-        <MenuLink to="/settings/subscription" icon={CreditCard} label="Subscription" />
+        {!isAdmin && (
+          <MenuLink to="/settings/subscription" icon={CreditCard} label="Subscription" />
+        )}
+        {isOperator && (
+          <MenuLink to="/settings/access" icon={KeyRound} label="View my access" />
+        )}
         <MenuButton
           icon={theme === "dark" ? Sun : Moon}
           label={theme === "dark" ? "Light mode" : "Dark mode"}
