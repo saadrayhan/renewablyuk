@@ -207,4 +207,3 @@ function FundingTracking() {
   );
 }
 
-void LockIcon;
