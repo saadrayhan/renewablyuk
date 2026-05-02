@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { update } from "@/lib/mock/store";
 import { pushAudit } from "@/lib/mock/queries";
 import { useAuth } from "@/lib/auth-context";
-import type { Amendment, IBG } from "@/lib/mock/types";
+import type { AmendmentRequest, IBG } from "@/lib/mock/types";
 
 export function AmendmentReviewSheet({
   open,
