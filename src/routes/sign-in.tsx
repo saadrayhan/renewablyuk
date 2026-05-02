@@ -68,10 +68,10 @@ function SignInPage() {
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
             <Link
-              to="/reset-password"
+              to="/forgot-password"
               className="text-xs text-ink-muted hover:text-foreground"
             >
-              Forgot?
+              Forgot password?
             </Link>
           </div>
           <Input

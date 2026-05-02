@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, FileBadge, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, FileBadge, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { StatePill, JOB_STATES, IBG_STATES, FUNDING_STATES } from "@/components/app/state-pill";
@@ -9,6 +9,11 @@ import { EmptyState } from "@/components/app/empty-state";
 import { useStore, update } from "@/lib/mock/store";
 import { findJob, findCustomer, findProperty, ibgsOfJob, fundingOfJob, pushAudit } from "@/lib/mock/queries";
 import { useAuth } from "@/lib/auth-context";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import type { JobState } from "@/lib/mock/types";
 
 export const Route = createFileRoute("/_authed/jobs/$id")({
@@ -28,11 +33,31 @@ const TRANSITIONS: Partial<Record<JobState, JobState[]>> = {
   closed: ["archived"],
 };
 
+const TRACK: { state: JobState; label: string }[] = [
+  { state: "draft", label: "Draft" },
+  { state: "in-progress", label: "In progress" },
+  { state: "under-validation", label: "Under validation" },
+  { state: "completed", label: "Completed" },
+];
+
+function trackStatus(idx: number, current: JobState) {
+  const order = TRACK.map((t) => t.state);
+  const currentIdx = order.indexOf(current);
+  if (current === "blocked" || current === "cancelled") {
+    return idx <= 1 ? "complete" : "future";
+  }
+  if (currentIdx === -1) return idx === 0 ? "complete" : "future";
+  if (idx < currentIdx) return "complete";
+  if (idx === currentIdx) return "active";
+  return "future";
+}
+
 function JobDetail() {
   const { id } = Route.useParams();
   const data = useStore();
   const job = findJob(data, id);
   const [tab, setTab] = useState<Tab>("overview");
+  const [statusOpen, setStatusOpen] = useState(false);
   const { user } = useAuth();
 
   if (!job) throw notFound();
@@ -50,9 +75,13 @@ function JobDetail() {
       pushAudit(d, "job", id, user.fullName, `Set state ${prev} → ${next}`);
     });
     toast.success(`Job moved to ${JOB_STATES[next].label}`);
+    setStatusOpen(false);
   }
 
   const allowed = TRANSITIONS[job.state] ?? [];
+  const latestIbg = ibgs[0];
+  const latestFunding = funding[0];
+  const branchActive = job.state === "blocked" || job.state === "cancelled";
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
@@ -69,21 +98,60 @@ function JobDetail() {
             {property && <> · <Link to="/properties/$id" params={{ id: property.id }} className="hover:text-foreground">{property.address}</Link></>}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <StatePill meta={JOB_STATES[job.state]} />
-        </div>
+        <StatePill meta={JOB_STATES[job.state]} />
       </div>
 
-      {allowed.length > 0 && (
-        <div className="mt-4 flex flex-wrap items-center gap-1.5">
-          <span className="text-xs text-ink-muted">Move to:</span>
-          {allowed.map((s) => (
-            <button key={s} onClick={() => setState(s)} className="press rounded-full border bg-background px-3 py-1 text-xs font-medium hover:bg-surface">
-              {JOB_STATES[s].label}
-            </button>
-          ))}
+      {/* Status track */}
+      <div className="mt-6 rounded-2xl border bg-card p-4">
+        <div className="flex items-center justify-between">
+          {TRACK.map((step, i) => {
+            const status = trackStatus(i, job.state);
+            const last = i === TRACK.length - 1;
+            return (
+              <div key={step.state} className="flex flex-1 items-start gap-2">
+                <div className="flex flex-col items-center gap-1">
+                  <span
+                    className={
+                      "grid size-4 place-items-center rounded-full transition-colors " +
+                      (status === "complete"
+                        ? "bg-cat-green text-white"
+                        : status === "active"
+                        ? "bg-foreground text-background"
+                        : "bg-tile text-ink-muted")
+                    }
+                  >
+                    {status === "complete" ? <Check className="size-2.5" strokeWidth={3} /> : null}
+                  </span>
+                  <span className={
+                    "text-[10px] font-medium uppercase tracking-wide " +
+                    (status === "active" ? "text-foreground" : "text-ink-muted")
+                  }>
+                    {step.label}
+                  </span>
+                </div>
+                {!last && (
+                  <div className={
+                    "mt-1.5 h-px flex-1 " +
+                    (trackStatus(i + 1, job.state) === "complete" || status === "complete"
+                      ? "bg-cat-green"
+                      : "bg-border")
+                  } />
+                )}
+              </div>
+            );
+          })}
         </div>
-      )}
+
+        {branchActive && (
+          <div className="mt-3 flex items-center gap-2 border-t pt-3">
+            <span className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">Branch:</span>
+            <div className="flex items-center gap-1.5 rounded-full border border-dashed border-destructive/30 bg-destructive/5 px-2.5 py-1 text-[11px] font-medium text-destructive">
+              <span className="size-1.5 rounded-full bg-destructive" />
+              {JOB_STATES[job.state].label}
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="mt-6">
         <UnderlineTabs<Tab>
@@ -154,7 +222,99 @@ function JobDetail() {
           )}
           {tab === "audit" && <AuditTimeline entityType="job" entityId={job.id} />}
         </div>
-        <aside><AuditTimeline entityType="job" entityId={job.id} /></aside>
+
+        <aside className="space-y-3 lg:sticky lg:top-6 lg:self-start">
+          {/* Status panel */}
+          <div className="rounded-2xl border bg-card p-4">
+            <div className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">Status</div>
+            <div className="mt-2"><StatePill meta={JOB_STATES[job.state]} /></div>
+            {allowed.length > 0 && (
+              <Popover open={statusOpen} onOpenChange={setStatusOpen}>
+                <PopoverTrigger asChild>
+                  <button className="press mt-3 inline-flex w-full items-center justify-between rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-surface">
+                    Change status
+                    <ChevronDown className="size-3 text-ink-muted" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="end" sideOffset={6} className="w-56 p-1">
+                  <div className="px-2 pb-1 pt-1.5 text-[10px] font-medium uppercase tracking-wide text-ink-muted">
+                    Move to
+                  </div>
+                  {allowed.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setState(s)}
+                      className="press flex w-full items-center justify-between rounded-md px-2 py-1.5 text-xs hover:bg-surface"
+                    >
+                      <span>{JOB_STATES[s].label}</span>
+                      <ArrowRight className="size-3 text-ink-muted" />
+                    </button>
+                  ))}
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+
+          {/* IBG panel */}
+          <div className="rounded-2xl border bg-card p-4">
+            <div className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">IBG</div>
+            {latestIbg ? (
+              <div className="mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-sm font-medium text-foreground">{latestIbg.ref}</span>
+                  <StatePill meta={IBG_STATES[latestIbg.state]} />
+                </div>
+                <Link
+                  to="/ibg/$id"
+                  params={{ id: latestIbg.id }}
+                  className="press mt-3 inline-flex items-center gap-1 text-xs font-medium text-foreground hover:underline"
+                >
+                  Open <ArrowRight className="size-3" />
+                </Link>
+              </div>
+            ) : (
+              <div className="mt-2">
+                <div className="text-xs text-ink-muted">No IBG yet</div>
+                <Link
+                  to="/ibg/new"
+                  className="press mt-3 inline-flex w-full items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-surface"
+                >
+                  <FileBadge className="size-3" /> Create IBG
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Funding panel */}
+          <div className="rounded-2xl border bg-card p-4">
+            <div className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">Funding</div>
+            {latestFunding ? (
+              <div className="mt-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate text-sm font-medium text-foreground">{latestFunding.scheme}</span>
+                  <StatePill meta={FUNDING_STATES[latestFunding.state]} />
+                </div>
+                <Link
+                  to="/funding/$id"
+                  params={{ id: latestFunding.id }}
+                  className="press mt-3 inline-flex items-center gap-1 text-xs font-medium text-foreground hover:underline"
+                >
+                  Open <ArrowRight className="size-3" />
+                </Link>
+              </div>
+            ) : (
+              <div className="mt-2">
+                <div className="text-xs text-ink-muted">No funding project</div>
+                <Link
+                  to="/funding/match"
+                  className="press mt-3 inline-flex w-full items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-surface"
+                >
+                  <Sparkles className="size-3" /> Find scheme
+                </Link>
+              </div>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   );

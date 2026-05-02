@@ -90,8 +90,14 @@ function NewIbg() {
   if (issuedRef) {
     return (
       <div className="mx-auto w-full max-w-xl px-8 py-16 text-center">
-        <div className="mx-auto grid size-16 place-items-center rounded-2xl bg-cat-green-bg text-cat-green">
-          <CheckCircle2 className="size-8" />
+        <div className="relative mx-auto grid size-16 place-items-center">
+          <span className="ibg-burst ibg-burst-1" />
+          <span className="ibg-burst ibg-burst-2" />
+          <span className="ibg-burst ibg-burst-3" />
+          <span className="ibg-burst ibg-burst-4" />
+          <span className="ibg-pop grid size-16 place-items-center rounded-2xl bg-cat-green-bg text-cat-green">
+            <CheckCircle2 className="size-8" />
+          </span>
         </div>
         <h1 className="mt-5 text-3xl font-semibold tracking-tight text-ink">{issuedRef} issued</h1>
         <p className="mt-2 text-sm text-ink-muted">Certificate and policy generated. Download the PDF below or open the record.</p>

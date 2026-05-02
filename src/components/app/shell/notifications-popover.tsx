@@ -1,11 +1,8 @@
 /**
- * Notifications popover — refined to match the reference:
- *  · "Introducing X" eyebrow + body
- *  · large hero gradient card with title overlay
- *  · timestamp underneath
- *  · scrollable column inside a wider panel
+ * Notifications popover with unread badge.
  */
 
+import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import {
   Popover,
@@ -61,9 +58,32 @@ const NOTES: Note[] = [
   },
 ];
 
+const READ_KEY = "renewably:notifications:read:v1";
+
 export function NotificationsPopover() {
+  const [hasUnread, setHasUnread] = useState(true);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const v = window.localStorage.getItem(READ_KEY);
+      if (v === "1") setHasUnread(false);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  function markRead() {
+    setHasUnread(false);
+    try {
+      window.localStorage.setItem(READ_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+  }
+
   return (
-    <Popover>
+    <Popover onOpenChange={(o) => o && hasUnread && markRead()}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -71,7 +91,9 @@ export function NotificationsPopover() {
           className="press relative grid size-8 place-items-center rounded-full text-ink-muted hover:bg-surface hover:text-foreground"
         >
           <Bell className="size-[18px]" />
-          <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-cat-blue" />
+          {hasUnread && (
+            <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-destructive ring-2 ring-background" />
+          )}
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -83,6 +105,7 @@ export function NotificationsPopover() {
           <div className="text-sm font-semibold text-foreground">What's new</div>
           <button
             type="button"
+            onClick={markRead}
             className="text-[11px] text-ink-muted hover:text-foreground"
           >
             Mark all read

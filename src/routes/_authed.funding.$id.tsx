@@ -1,24 +1,51 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, FileUp, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, FileUp, Send, Check, AlertCircle, Circle, Lock, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update, nid, nref } from "@/lib/mock/store";
 import { findFunding, findJob, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, FUNDING_STATES } from "@/components/app/state-pill";
 import { AuditTimeline } from "@/components/app/audit-timeline";
 import { useAuth } from "@/lib/auth-context";
+import type { FundingState } from "@/lib/mock/types";
 
 export const Route = createFileRoute("/_authed/funding/$id")({
   head: () => ({ meta: [{ title: "Funding project — Renewably UK" }] }),
   component: FundingDetail,
 });
 
+const POST_REVIEW: FundingState[] = ["under-review", "validated", "returned", "ready-for-submission", "submitted"];
+const POST_SUBMIT: FundingState[] = ["submitted", "under-review", "validated", "returned"];
+
 function FundingDetail() {
   const { id } = Route.useParams();
   const data = useStore();
   const f = findFunding(data, id);
   const { user } = useAuth();
+  const nav = useNavigate();
   if (!f) throw notFound();
   const job = findJob(data, f.jobId);
+
+  const steps = [
+    { label: "Company verified", done: true, hint: "Workspace company on file" },
+    { label: "Measure confirmed", done: !!f.measure, hint: f.measure || "Pick a measure" },
+    { label: "Evidence uploaded", done: f.evidence.length >= 1, hint: `${f.evidence.length} file${f.evidence.length === 1 ? "" : "s"}` },
+    { label: "Internal review", done: POST_REVIEW.includes(f.state), hint: POST_REVIEW.includes(f.state) ? "Reviewed" : "Awaiting review" },
+    { label: "Ready for submission", done: false, hint: "All previous steps complete" },
+    { label: "Submitted", done: POST_SUBMIT.includes(f.state), hint: POST_SUBMIT.includes(f.state) ? "Sent to scheme" : "Not yet submitted" },
+  ];
+  // 5th step done when steps 1-4 are all done
+  steps[4].done = steps.slice(0, 4).every((s) => s.done);
+
+  const completed = steps.filter((s) => s.done).length;
+  const ready = steps.slice(0, 5).every((s) => s.done);
+
+  // Animate progress bar on mount
+  const [barWidth, setBarWidth] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => setBarWidth((completed / steps.length) * 100), 30);
+    return () => clearTimeout(t);
+  }, [completed, steps.length]);
 
   function uploadEvidence() {
     const name = prompt("Filename?", "Evidence.pdf");
@@ -47,14 +74,9 @@ function FundingDetail() {
       pushAudit(d, "funding", id, user.fullName, `Submitted to ${x.scheme}`);
       pushAudit(d, "submission", subId, user.fullName, `Created from ${x.ref}`);
     });
-    toast.success("Submitted to scheme — submission record created");
+    toast.success("Submitted to scheme");
+    nav({ to: "/funding/$id/tracking", params: { id } });
   }
-
-  const checklist = [
-    { label: "Evidence uploaded", done: f.evidence.length > 0 },
-    { label: "Job linked", done: !!job },
-    { label: "Scheme selected", done: !!f.scheme },
-  ];
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
@@ -74,22 +96,78 @@ function FundingDetail() {
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           <div className="rounded-2xl border bg-card p-5">
-            <div className="text-sm font-medium text-foreground">Readiness</div>
-            <ul className="mt-3 space-y-2">
-              {checklist.map((c) => (
-                <li key={c.label} className="flex items-center justify-between rounded-xl bg-surface/40 px-3 py-2">
-                  <span className="text-sm text-foreground">{c.label}</span>
-                  <span className={`text-xs font-medium ${c.done ? "text-cat-green" : "text-cat-amber"}`}>{c.done ? "Done" : "Required"}</span>
-                </li>
-              ))}
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium text-foreground">Readiness</div>
+              <div className="text-xs text-ink-muted">{completed} of {steps.length} steps complete</div>
+            </div>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-tile">
+              <div
+                className="h-full rounded-full bg-cat-green transition-[width] duration-[600ms] ease-out"
+                style={{ width: `${barWidth}%` }}
+              />
+            </div>
+
+            <ul className="mt-4 space-y-2">
+              {steps.map((s, i) => {
+                const priorDone = steps.slice(0, i).every((p) => p.done);
+                const locked = !priorDone && !s.done;
+                const status: "done" | "warn" | "todo" | "locked" = s.done
+                  ? "done"
+                  : locked
+                  ? "locked"
+                  : i === 2 && f.evidence.length === 0
+                  ? "warn"
+                  : "todo";
+                const Icon =
+                  status === "done" ? Check :
+                  status === "warn" ? AlertCircle :
+                  status === "locked" ? Lock : Circle;
+                const tone =
+                  status === "done" ? "text-cat-green bg-cat-green-bg" :
+                  status === "warn" ? "text-cat-amber bg-cat-amber-bg" :
+                  status === "locked" ? "text-ink-muted bg-tile" :
+                  "text-ink-muted bg-surface";
+                return (
+                  <li key={s.label} className="flex items-center justify-between rounded-xl bg-surface/40 px-3 py-2">
+                    <div className="flex items-center gap-3">
+                      <span className={`grid size-6 place-items-center rounded-full ${tone}`}>
+                        <Icon className="size-3.5" />
+                      </span>
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{s.label}</div>
+                        <div className="text-xs text-ink-muted">{s.hint}</div>
+                      </div>
+                    </div>
+                    {!s.done && !locked && i === 2 && (
+                      <button onClick={uploadEvidence} className="press text-xs font-medium text-foreground hover:underline">
+                        Upload
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
+
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <button onClick={uploadEvidence} className="press inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-sm">
                 <FileUp className="size-3.5" /> Upload evidence
               </button>
-              <button onClick={submit} disabled={f.state === "submitted"} className="press inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-sm font-medium text-background disabled:opacity-50">
+              <button
+                onClick={submit}
+                disabled={!ready || POST_SUBMIT.includes(f.state)}
+                className="press inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-sm font-medium text-background disabled:cursor-not-allowed disabled:opacity-50"
+              >
                 <Send className="size-3.5" /> Submit to scheme
               </button>
+              {POST_SUBMIT.includes(f.state) && (
+                <Link
+                  to="/funding/$id/tracking"
+                  params={{ id }}
+                  className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-sm font-medium"
+                >
+                  View tracking <ArrowRight className="size-3.5" />
+                </Link>
+              )}
             </div>
           </div>
 

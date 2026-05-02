@@ -13,6 +13,7 @@ import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthedSubmissionsRouteImport } from './routes/_authed.submissions'
@@ -49,6 +50,7 @@ import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.aud
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
 import { Route as AuthedIbgIdAmendmentRouteImport } from './routes/_authed.ibg.$id.amendment'
+import { Route as AuthedFundingIdTrackingRouteImport } from './routes/_authed.funding.$id.tracking'
 import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
 
 const SignUpRoute = SignUpRouteImport.update({
@@ -69,6 +71,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedRoute = AuthedRouteImport.update({
@@ -253,6 +260,11 @@ const AuthedIbgIdAmendmentRoute = AuthedIbgIdAmendmentRouteImport.update({
   path: '/amendment',
   getParentRoute: () => AuthedIbgIdRoute,
 } as any)
+const AuthedFundingIdTrackingRoute = AuthedFundingIdTrackingRouteImport.update({
+  id: '/tracking',
+  path: '/tracking',
+  getParentRoute: () => AuthedFundingIdRoute,
+} as any)
 const AuthedAdminUsersIdRoute = AuthedAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -261,6 +273,7 @@ const AuthedAdminUsersIdRoute = AuthedAdminUsersIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
@@ -283,7 +296,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
-  '/funding/$id': typeof AuthedFundingIdRoute
+  '/funding/$id': typeof AuthedFundingIdRouteWithChildren
   '/funding/match': typeof AuthedFundingMatchRoute
   '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
@@ -299,10 +312,12 @@ export interface FileRoutesByFullPath {
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
@@ -325,7 +340,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
-  '/funding/$id': typeof AuthedFundingIdRoute
+  '/funding/$id': typeof AuthedFundingIdRouteWithChildren
   '/funding/match': typeof AuthedFundingMatchRoute
   '/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/ibg/history': typeof AuthedIbgHistoryRoute
@@ -341,12 +356,14 @@ export interface FileRoutesByTo {
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
@@ -369,7 +386,7 @@ export interface FileRoutesById {
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
-  '/_authed/funding/$id': typeof AuthedFundingIdRoute
+  '/_authed/funding/$id': typeof AuthedFundingIdRouteWithChildren
   '/_authed/funding/match': typeof AuthedFundingMatchRoute
   '/_authed/ibg/$id': typeof AuthedIbgIdRouteWithChildren
   '/_authed/ibg/history': typeof AuthedIbgHistoryRoute
@@ -385,12 +402,14 @@ export interface FileRoutesById {
   '/_authed/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/_authed/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
+  '/_authed/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/_authed/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forgot-password'
     | '/pricing'
     | '/reset-password'
     | '/sign-in'
@@ -429,10 +448,12 @@ export interface FileRouteTypes {
     | '/settings/subscription'
     | '/submissions/$id'
     | '/admin/users/$id'
+    | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/forgot-password'
     | '/pricing'
     | '/reset-password'
     | '/sign-in'
@@ -471,11 +492,13 @@ export interface FileRouteTypes {
     | '/settings/subscription'
     | '/submissions/$id'
     | '/admin/users/$id'
+    | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
   id:
     | '__root__'
     | '/'
     | '/_authed'
+    | '/forgot-password'
     | '/pricing'
     | '/reset-password'
     | '/sign-in'
@@ -514,12 +537,14 @@ export interface FileRouteTypes {
     | '/_authed/settings/subscription'
     | '/_authed/submissions/$id'
     | '/_authed/admin/users/$id'
+    | '/_authed/funding/$id/tracking'
     | '/_authed/ibg/$id/amendment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
@@ -554,6 +579,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed': {
@@ -808,6 +840,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedIbgIdAmendmentRouteImport
       parentRoute: typeof AuthedIbgIdRoute
     }
+    '/_authed/funding/$id/tracking': {
+      id: '/_authed/funding/$id/tracking'
+      path: '/tracking'
+      fullPath: '/funding/$id/tracking'
+      preLoaderRoute: typeof AuthedFundingIdTrackingRouteImport
+      parentRoute: typeof AuthedFundingIdRoute
+    }
     '/_authed/admin/users/$id': {
       id: '/_authed/admin/users/$id'
       path: '/$id'
@@ -832,13 +871,25 @@ const AuthedCustomersRouteWithChildren = AuthedCustomersRoute._addFileChildren(
   AuthedCustomersRouteChildren,
 )
 
+interface AuthedFundingIdRouteChildren {
+  AuthedFundingIdTrackingRoute: typeof AuthedFundingIdTrackingRoute
+}
+
+const AuthedFundingIdRouteChildren: AuthedFundingIdRouteChildren = {
+  AuthedFundingIdTrackingRoute: AuthedFundingIdTrackingRoute,
+}
+
+const AuthedFundingIdRouteWithChildren = AuthedFundingIdRoute._addFileChildren(
+  AuthedFundingIdRouteChildren,
+)
+
 interface AuthedFundingRouteChildren {
-  AuthedFundingIdRoute: typeof AuthedFundingIdRoute
+  AuthedFundingIdRoute: typeof AuthedFundingIdRouteWithChildren
   AuthedFundingMatchRoute: typeof AuthedFundingMatchRoute
 }
 
 const AuthedFundingRouteChildren: AuthedFundingRouteChildren = {
-  AuthedFundingIdRoute: AuthedFundingIdRoute,
+  AuthedFundingIdRoute: AuthedFundingIdRouteWithChildren,
   AuthedFundingMatchRoute: AuthedFundingMatchRoute,
 }
 
@@ -977,6 +1028,7 @@ const AuthedRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
