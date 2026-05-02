@@ -1,7 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Sparkles, MapPin, ArrowRight, Check } from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/app/page-header";
-import { useStore } from "@/lib/mock/store";
+import { useStore, update, nid, nref } from "@/lib/mock/store";
+import { pushAudit } from "@/lib/mock/queries";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authed/funding/match")({
   head: () => ({ meta: [{ title: "Match Hub — Renewably UK" }] }),
@@ -10,7 +13,33 @@ export const Route = createFileRoute("/_authed/funding/match")({
 
 function MatchHub() {
   const data = useStore();
+  const { user } = useAuth();
+  const nav = useNavigate();
   const matches = [...data.fundingMatches].sort((a, b) => b.score - a.score);
+
+  function startProject(scheme: string, measure: string) {
+    const job = data.jobs[0];
+    if (!job) {
+      toast.error("Add a job before creating a funding project");
+      return;
+    }
+    const id = nid("fp");
+    update((d) => {
+      d.fundingProjects.unshift({
+        id,
+        ref: nref("F"),
+        jobId: job.id,
+        scheme,
+        measure,
+        state: "incomplete",
+        createdAt: Date.now(),
+        evidence: [],
+      });
+      pushAudit(d, "funding", id, user.fullName, `Started from Match Hub · ${scheme}`);
+    });
+    toast.success(`Started funding project for ${scheme}`);
+    nav({ to: "/funding/$id", params: { id } });
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1100px] px-4 py-6 md:px-8 md:py-10">
