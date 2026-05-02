@@ -24,7 +24,7 @@ import {
 import { useEffect, useState } from "react";
 
 export function ProfilePopover() {
-  const { user } = useAuth();
+  const { user, isAdmin, isOperator } = useAuth();
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
