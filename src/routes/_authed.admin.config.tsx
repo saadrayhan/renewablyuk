@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/app/page-header";
 import { UnderlineTabs } from "@/components/app/underline-tabs";
+import { TemplateEditorDialog } from "@/components/app/template-editor-dialog";
 
 export const Route = createFileRoute("/_authed/admin/config")({
   head: () => ({ meta: [{ title: "System config — Renewably UK" }] }),
@@ -23,6 +24,7 @@ const SCHEMES = [
 
 function ConfigPage() {
   const [tab, setTab] = useState<"measures" | "templates" | "schemes">("measures");
+  const [editing, setEditing] = useState<{ name: string; desc: string } | null>(null);
   return (
     <div className="mx-auto w-full max-w-[1100px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Admin · System" title="System config" subtitle="Approved measures, notification templates and scheme integrations." />
@@ -57,7 +59,7 @@ function ConfigPage() {
                   <div className="text-sm font-medium text-foreground">{t.name}</div>
                   <div className="text-xs text-ink-muted">{t.desc}</div>
                 </div>
-                <button className="press rounded-full border px-3 py-1 text-xs">Edit</button>
+                <button onClick={() => setEditing(t)} className="press rounded-full border px-3 py-1 text-xs">Edit</button>
               </div>
             ))}
           </div>
@@ -73,6 +75,8 @@ function ConfigPage() {
           </div>
         )}
       </div>
+
+      <TemplateEditorDialog open={!!editing} template={editing} onOpenChange={(v) => { if (!v) setEditing(null); }} />
     </div>
   );
 }

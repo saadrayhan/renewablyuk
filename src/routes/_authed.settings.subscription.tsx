@@ -4,6 +4,7 @@ import { CreditCard, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { StatePill } from "@/components/app/state-pill";
+import { PaymentMethodDialog } from "@/components/app/payment-method-dialog";
 
 export const Route = createFileRoute("/_authed/settings/subscription")({
   head: () => ({ meta: [{ title: "Subscription — Renewably UK" }] }),
@@ -13,6 +14,8 @@ export const Route = createFileRoute("/_authed/settings/subscription")({
 type State = "active" | "payment-failed" | "cancelled";
 
 function SubscriptionSettings() {
+  const [last4, setLast4] = useState("4242");
+  const [payOpen, setPayOpen] = useState(false);
   const [state, setState] = useState<State>("active");
 
   const meta =
@@ -53,14 +56,14 @@ function SubscriptionSettings() {
         <div className="mt-6 grid grid-cols-2 gap-4">
           <Stat label="Current period" value="1 May → 31 May 2026" />
           <Stat label="Next invoice" value="£249.00 on 1 Jun" />
-          <Stat label="Payment method" value="Card •••• 4242" />
+          <Stat label="Payment method" value={`Card •••• ${last4}`} />
           <Stat label="Submissions this month" value="14" />
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-2">
           <button
             type="button"
-            onClick={() => toast.success("Payment method updated")}
+            onClick={() => setPayOpen(true)}
             className="press inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           >
             <CreditCard className="size-4" /> Update payment method
@@ -119,6 +122,8 @@ function SubscriptionSettings() {
           ))}
         </div>
       </section>
+
+      <PaymentMethodDialog open={payOpen} onOpenChange={setPayOpen} onSaved={setLast4} />
     </div>
   );
 }
