@@ -20,6 +20,7 @@ type AuthContextValue = {
   user: MockUser;
   permissions: Permission[];
   isAdmin: boolean;
+  isOperator: boolean;
   loading: false;
 };
 
