@@ -28,7 +28,7 @@ export function AmendmentReviewSheet({
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  amendment: Amendment | null;
+  amendment: AmendmentRequest | null;
   ibg: IBG | null;
 }) {
   const { user } = useAuth();
