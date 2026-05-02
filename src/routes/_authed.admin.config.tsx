@@ -59,7 +59,7 @@ function ConfigPage() {
                   <div className="text-sm font-medium text-foreground">{t.name}</div>
                   <div className="text-xs text-ink-muted">{t.desc}</div>
                 </div>
-                <button className="press rounded-full border px-3 py-1 text-xs">Edit</button>
+                <button onClick={() => setEditing(t)} className="press rounded-full border px-3 py-1 text-xs">Edit</button>
               </div>
             ))}
           </div>
