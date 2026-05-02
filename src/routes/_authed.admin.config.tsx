@@ -75,6 +75,8 @@ function ConfigPage() {
           </div>
         )}
       </div>
+
+      <TemplateEditorDialog open={!!editing} template={editing} onOpenChange={(v) => { if (!v) setEditing(null); }} />
     </div>
   );
 }
