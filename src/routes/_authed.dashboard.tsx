@@ -307,7 +307,20 @@ function OperateDash() {
 function ReadonlyDash() {
   return (
     <>
-      <NewBadgeBanner text="Read-only view of operational data. No edits, no submissions." cta="Browse records" to="/ibg/repository" />
+      <div className="mt-6 rounded-2xl border border-cat-blue/20 bg-cat-blue-bg/40 p-4">
+        <div className="flex items-start gap-3">
+          <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-cat-blue-bg text-cat-blue">
+            <BookOpen className="size-4" />
+          </div>
+          <div>
+            <div className="text-sm font-medium text-foreground">You have read-only access</div>
+            <p className="mt-1 text-xs text-ink-muted">
+              You can browse customers, properties, jobs, IBGs, submissions and the audit trail.
+              You cannot create, edit, submit or approve anything. To upgrade your access, contact your workspace admin.
+            </p>
+          </div>
+        </div>
+      </div>
       <SectionLabel>Browse</SectionLabel>
       <TileGrid tiles={[
         { label: "Customers", to: "/customers", icon: FolderKanban, tone: "blue", desc: "Read-only" },
