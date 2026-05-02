@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ShieldCheck, UserMinus, UserCheck, Ban, ShieldAlert } from "lucide-react";
+import { ArrowLeft, ShieldCheck, UserMinus, UserCheck, Ban, ShieldAlert, Trash2, RotateCcw, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update } from "@/lib/mock/store";
 import { findUser, pushAudit, fmtDate } from "@/lib/mock/queries";
