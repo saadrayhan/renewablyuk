@@ -48,6 +48,46 @@ function UserDetail() {
     });
   }
 
+  function grant(p: Permission) {
+    update((d) => {
+      const x = d.users.find((y) => y.id === id);
+      if (!x || x.permissions.includes(p)) return;
+      x.permissions = [...x.permissions, p];
+      pushAudit(d, "user", id, actor.fullName, `Granted ${p}`);
+    });
+    toast.success("Permission granted");
+  }
+
+  function revoke(p: Permission) {
+    update((d) => {
+      const x = d.users.find((y) => y.id === id);
+      if (!x) return;
+      x.permissions = x.permissions.filter((y) => y !== p);
+      pushAudit(d, "user", id, actor.fullName, `Revoked ${p}`);
+    });
+    toast.success("Permission revoked");
+  }
+
+  function clearAll() {
+    update((d) => {
+      const x = d.users.find((y) => y.id === id);
+      if (!x) return;
+      x.permissions = [];
+      pushAudit(d, "user", id, actor.fullName, "Cleared all custom grants");
+    });
+    toast.success("All custom grants cleared");
+  }
+
+  function resetToRoleDefaults() {
+    update((d) => {
+      const x = d.users.find((y) => y.id === id);
+      if (!x) return;
+      x.permissions = [...DEFAULT_PERMISSIONS[x.role]];
+      pushAudit(d, "user", id, actor.fullName, "Reset to role defaults");
+    });
+    toast.success("Reset to role defaults");
+  }
+
   function applyPreset(presetId: string) {
     const preset = OPERATOR_PRESETS.find((p) => p.id === presetId);
     if (!preset) return;
