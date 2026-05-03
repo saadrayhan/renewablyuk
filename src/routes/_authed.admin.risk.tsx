@@ -23,7 +23,19 @@ function RiskPage() {
   const data = useStore();
   const nav = useNavigate();
   const { permissions } = useDevRole();
+  const { user: actor } = useAuth();
   const [filter, setFilter] = useState<RiskFilter>("all");
+
+  function revokeOverride(id: string, orgId: string) {
+    update((d) => {
+      const o = d.riskOverrides.find((x) => x.id === id);
+      if (!o) return;
+      o.active = false;
+      o.expiresAt = Date.now();
+      pushAudit(d, "user", orgId, actor.fullName, `Override ${o.riskLevel.toUpperCase()} revoked by ${actor.fullName}`, o.reason);
+    });
+    toast.success("Override revoked. IBG access restored to underlying risk state.");
+  }
 
   if (!can(permissions, "risk.read")) {
     return (
