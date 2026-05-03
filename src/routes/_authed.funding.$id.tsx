@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, FileUp, Send, Check, AlertCircle, Circle, Lock, ArrowRight, Link2 } from "lucide-react";
 import { toast } from "sonner";
-import { useStore, update, nid, nref } from "@/lib/mock/store";
+import { useStore, update, nid, nref as _nref } from "@/lib/mock/store";
 import { findFunding, findJob, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, FUNDING_STATES } from "@/components/app/state-pill";
 import { AuditTimeline } from "@/components/app/audit-timeline";
@@ -152,7 +152,7 @@ function FundingDetail() {
                       </div>
                     </div>
                     {!s.done && !locked && i === 2 && (
-                      <button onClick={uploadEvidence} className="press text-xs font-medium text-foreground hover:underline">
+                      <button onClick={() => setEvidenceOpen(true)} className="press text-xs font-medium text-foreground hover:underline">
                         Upload
                       </button>
                     )}
@@ -162,7 +162,7 @@ function FundingDetail() {
             </ul>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button onClick={uploadEvidence} className="press inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-sm">
+              <button onClick={() => setEvidenceOpen(true)} className="press inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-sm">
                 <FileUp className="size-3.5" /> Upload evidence
               </button>
               <button
