@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, FileUp, Send, Check, AlertCircle, Circle, Lock, ArrowRight, Link2 } from "lucide-react";
 import { toast } from "sonner";
-import { useStore, update, nid, nref as _nref } from "@/lib/mock/store";
+import { useStore, update, nid, nref } from "@/lib/mock/store";
 import { findFunding, findJob, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, FUNDING_STATES } from "@/components/app/state-pill";
 import { AuditTimeline } from "@/components/app/audit-timeline";
