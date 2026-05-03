@@ -187,6 +187,7 @@ function JobDetail() {
             </Card>
           )}
           {tab === "documents" && <Card title="Documents"><EmptyState title="No documents uploaded" body="Drop EPCs, surveys and contracts here. Upload is mocked in design mode." /></Card>}
+          {tab === "evidence" && <EvidenceTab jobId={job.id} />}
           {tab === "ibgs" && (
             <Card title="IBGs" action={
               <Link to="/ibg/new" className="press inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium">
