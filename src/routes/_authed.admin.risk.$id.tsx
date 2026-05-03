@@ -186,7 +186,7 @@ function RiskDetail() {
                 </button>
               )}
               {state === "suspended" && (
-                <button onClick={() => toast.info("CRITICAL override requires multi-step review (coming soon)")} className="press inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-cat-rose px-3 py-2 text-xs font-medium text-white">
+                <button onClick={() => setCriticalOpen(true)} className="press inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-cat-rose px-3 py-2 text-xs font-medium text-white">
                   <ShieldAlert className="size-3.5" /> Apply CRITICAL Risk Override
                 </button>
               )}
