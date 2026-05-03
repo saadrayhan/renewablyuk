@@ -20,7 +20,7 @@ function NewIbg() {
   const data = useStore();
   const nav = useNavigate();
   const { user } = useAuth();
-  const { role, permissions, devUserId } = useDevRole();
+  const { role, permissions } = useDevRole();
   const isOperate = role === "installer-operate" || role === "operator" || role === "admin";
 
   if (!can(permissions, "ibg.issue")) {
