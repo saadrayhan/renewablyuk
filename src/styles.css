@@ -132,23 +132,24 @@
   --input:  oklch(0.93 0.002 250);
   --ring:   oklch(0.55 0 0);
 
-  /* Renewably brand green */
-  --brand: oklch(0.62 0.16 152);
+  /* Renewably brand — vivid blue. The ONLY accent across the system. */
+  --brand: oklch(0.55 0.22 264);
   --brand-foreground: oklch(0.99 0 0);
 
-  /* Category illustration palette — soft tile bg + vivid icon ink */
-  --cat-green:     oklch(0.55 0.17 152);
-  --cat-green-bg:  oklch(0.94 0.05 152);
-  --cat-blue:      oklch(0.55 0.18 250);
-  --cat-blue-bg:   oklch(0.94 0.04 250);
-  --cat-amber:     oklch(0.66 0.16 70);
-  --cat-amber-bg:  oklch(0.95 0.06 80);
-  --cat-purple:    oklch(0.55 0.18 295);
-  --cat-purple-bg: oklch(0.94 0.04 295);
-  --cat-rose:      oklch(0.6 0.19 15);
-  --cat-rose-bg:   oklch(0.95 0.04 15);
-  --cat-teal:      oklch(0.6 0.12 195);
-  --cat-teal-bg:   oklch(0.94 0.04 195);
+  /* Category palette — Lightfield monochrome.
+     All "tones" collapse to neutral surfaces; blue is the single accent. */
+  --cat-green:     oklch(0.32 0 0);
+  --cat-green-bg:  oklch(0.965 0 0);
+  --cat-blue:      oklch(0.55 0.22 264);   /* brand blue */
+  --cat-blue-bg:   oklch(0.95 0.04 264);
+  --cat-amber:     oklch(0.32 0 0);
+  --cat-amber-bg:  oklch(0.965 0 0);
+  --cat-purple:    oklch(0.32 0 0);
+  --cat-purple-bg: oklch(0.965 0 0);
+  --cat-rose:      oklch(0.32 0 0);
+  --cat-rose-bg:   oklch(0.965 0 0);
+  --cat-teal:      oklch(0.32 0 0);
+  --cat-teal-bg:   oklch(0.965 0 0);
 
   --chart-1: var(--cat-green);
   --chart-2: var(--cat-blue);
