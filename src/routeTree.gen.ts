@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -27,6 +28,7 @@ import { Route as AuthedFundingRouteImport } from './routes/_authed.funding'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed.dashboard'
 import { Route as AuthedCustomersRouteImport } from './routes/_authed.customers'
 import { Route as AuthedSubmissionsIdRouteImport } from './routes/_authed.submissions.$id'
+import { Route as AuthedSettingsTeamRouteImport } from './routes/_authed.settings.team'
 import { Route as AuthedSettingsSubscriptionRouteImport } from './routes/_authed.settings.subscription'
 import { Route as AuthedSettingsSecurityRouteImport } from './routes/_authed.settings.security'
 import { Route as AuthedSettingsProfileRouteImport } from './routes/_authed.settings.profile'
@@ -59,6 +61,11 @@ import { Route as AuthedFundingIdTrackingRouteImport } from './routes/_authed.fu
 import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
 import { Route as AuthedAdminRiskIdRouteImport } from './routes/_authed.admin.risk.$id'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -147,6 +154,11 @@ const AuthedSubmissionsIdRoute = AuthedSubmissionsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AuthedSubmissionsRoute,
+} as any)
+const AuthedSettingsTeamRoute = AuthedSettingsTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AuthedSettingsRoute,
 } as any)
 const AuthedSettingsSubscriptionRoute =
   AuthedSettingsSubscriptionRouteImport.update({
@@ -314,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/verify': typeof VerifyRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
   '/funding': typeof AuthedFundingRouteWithChildren
@@ -351,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/settings/profile': typeof AuthedSettingsProfileRoute
   '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
+  '/settings/team': typeof AuthedSettingsTeamRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -364,6 +378,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/verify': typeof VerifyRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
   '/funding': typeof AuthedFundingRouteWithChildren
@@ -401,6 +416,7 @@ export interface FileRoutesByTo {
   '/settings/profile': typeof AuthedSettingsProfileRoute
   '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
+  '/settings/team': typeof AuthedSettingsTeamRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -416,6 +432,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/verify': typeof VerifyRoute
   '/_authed/customers': typeof AuthedCustomersRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/funding': typeof AuthedFundingRouteWithChildren
@@ -453,6 +470,7 @@ export interface FileRoutesById {
   '/_authed/settings/profile': typeof AuthedSettingsProfileRoute
   '/_authed/settings/security': typeof AuthedSettingsSecurityRoute
   '/_authed/settings/subscription': typeof AuthedSettingsSubscriptionRoute
+  '/_authed/settings/team': typeof AuthedSettingsTeamRoute
   '/_authed/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/_authed/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -468,6 +486,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify'
     | '/customers'
     | '/dashboard'
     | '/funding'
@@ -505,6 +524,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/security'
     | '/settings/subscription'
+    | '/settings/team'
     | '/submissions/$id'
     | '/admin/risk/$id'
     | '/admin/users/$id'
@@ -518,6 +538,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify'
     | '/customers'
     | '/dashboard'
     | '/funding'
@@ -555,6 +576,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/security'
     | '/settings/subscription'
+    | '/settings/team'
     | '/submissions/$id'
     | '/admin/risk/$id'
     | '/admin/users/$id'
@@ -569,6 +591,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify'
     | '/_authed/customers'
     | '/_authed/dashboard'
     | '/_authed/funding'
@@ -606,6 +629,7 @@ export interface FileRouteTypes {
     | '/_authed/settings/profile'
     | '/_authed/settings/security'
     | '/_authed/settings/subscription'
+    | '/_authed/settings/team'
     | '/_authed/submissions/$id'
     | '/_authed/admin/risk/$id'
     | '/_authed/admin/users/$id'
@@ -621,10 +645,18 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-up': {
       id: '/sign-up'
       path: '/sign-up'
@@ -750,6 +782,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/submissions/$id'
       preLoaderRoute: typeof AuthedSubmissionsIdRouteImport
       parentRoute: typeof AuthedSubmissionsRoute
+    }
+    '/_authed/settings/team': {
+      id: '/_authed/settings/team'
+      path: '/team'
+      fullPath: '/settings/team'
+      preLoaderRoute: typeof AuthedSettingsTeamRouteImport
+      parentRoute: typeof AuthedSettingsRoute
     }
     '/_authed/settings/subscription': {
       id: '/_authed/settings/subscription'
@@ -1046,6 +1085,7 @@ interface AuthedSettingsRouteChildren {
   AuthedSettingsProfileRoute: typeof AuthedSettingsProfileRoute
   AuthedSettingsSecurityRoute: typeof AuthedSettingsSecurityRoute
   AuthedSettingsSubscriptionRoute: typeof AuthedSettingsSubscriptionRoute
+  AuthedSettingsTeamRoute: typeof AuthedSettingsTeamRoute
 }
 
 const AuthedSettingsRouteChildren: AuthedSettingsRouteChildren = {
@@ -1056,6 +1096,7 @@ const AuthedSettingsRouteChildren: AuthedSettingsRouteChildren = {
   AuthedSettingsProfileRoute: AuthedSettingsProfileRoute,
   AuthedSettingsSecurityRoute: AuthedSettingsSecurityRoute,
   AuthedSettingsSubscriptionRoute: AuthedSettingsSubscriptionRoute,
+  AuthedSettingsTeamRoute: AuthedSettingsTeamRoute,
 }
 
 const AuthedSettingsRouteWithChildren = AuthedSettingsRoute._addFileChildren(
@@ -1169,6 +1210,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
