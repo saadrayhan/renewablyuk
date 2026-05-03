@@ -23,7 +23,7 @@ function TeamPage() {
     { label: "View dashboard & jobs", check: () => true },
     { label: "Issue IBGs", check: (r) => DEFAULT_PERMISSIONS[r].includes("ibg.issue") },
     { label: "Submit funding", check: (r) => DEFAULT_PERMISSIONS[r].includes("funding.submit") },
-    { label: "Manage users", check: (r) => DEFAULT_PERMISSIONS[r].includes("users.manage") },
+    { label: "Manage users", check: (r) => DEFAULT_PERMISSIONS[r].includes("users.permissions.assign") },
     { label: "View audit log", check: (r) => DEFAULT_PERMISSIONS[r].includes("audit.read") },
     { label: "Manage risk states", check: (r) => DEFAULT_PERMISSIONS[r].includes("risk.flag") },
   ];
