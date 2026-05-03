@@ -31,7 +31,6 @@ import {
   Shield,
   ShieldAlert,
   Plug,
-  History,
   BarChart2,
   X,
 } from "lucide-react";
