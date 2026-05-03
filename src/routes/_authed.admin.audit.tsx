@@ -5,6 +5,9 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/app/page-header";
 import { useStore } from "@/lib/mock/store";
 import { fmtDate } from "@/lib/mock/queries";
+import { useDevRole } from "@/lib/dev-role";
+import { can } from "@/lib/rbac";
+import { LockedCard } from "@/components/app/locked-card";
 
 export const Route = createFileRoute("/_authed/admin/audit")({
   head: () => ({ meta: [{ title: "Audit log — Renewably UK" }] }),
@@ -13,7 +16,22 @@ export const Route = createFileRoute("/_authed/admin/audit")({
 
 function AuditPage() {
   const data = useStore();
+  const { permissions } = useDevRole();
   const [q, setQ] = useState("");
+  if (!can(permissions, "audit.read")) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10">
+        <PageHeader eyebrow="Admin · Compliance" title="Audit log" />
+        <div className="mt-6">
+          <LockedCard
+            title="Audit log"
+            body="The full audit trail is restricted to compliance reviewers and admins. External read-only stakeholders see scope-limited activity only."
+            reason={{ kind: "permission", permission: "audit.read" }}
+          />
+        </div>
+      </div>
+    );
+  }
   const rows = [...data.audit].sort((a, b) => b.at - a.at).filter((a) => !q || a.actor.toLowerCase().includes(q.toLowerCase()) || a.action.toLowerCase().includes(q.toLowerCase()));
 
   function exportCsv() {
