@@ -32,7 +32,7 @@ function NewIbg() {
   }
 
   // Acting org — use the dev-switched user as proxy organisation
-  const actingUser = data.users.find((u) => u.id === devUserId) ?? data.users[0];
+  const actingUser = data.users.find((u) => u.role === role && u.accountRiskState) ?? data.users.find((u) => u.role === role) ?? data.users[0];
   const accountState = actingUser?.accountRiskState ?? "active";
   const activeOverride = data.riskOverrides.find((o) => o.organisationId === actingUser?.id && o.active && (!o.expiresAt || o.expiresAt > Date.now()));
   const accountAllowsIssue = accountState === "active" || !!activeOverride;
