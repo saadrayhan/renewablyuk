@@ -1,67 +1,87 @@
-# Renewably UK — Risk, IBG v2, UX Fixes & Future Scaffolds
+# Renewably UK — Fix pass + ElevenLabs repolish
 
-This plan implements Sections A (architecture), B (UX fixes), and C (locked future scaffolds) exactly as specified. No design tokens, colour system, or animation style change.
+## A. Why three pages currently crash (root cause)
 
-## Section A — Architecture
+`src/lib/mock/store.tsx` persists seed under `renewably:mock-store:v1`. The latest push added four new top-level arrays — `installationTypes`, `systemTypes`, `riskAssessments`, `riskOverrides` — but never bumped the storage key. Anyone whose browser already has the old payload loads `undefined` for those arrays, and the first `.filter(...)` throws.
 
-### A1. Mock types (`src/lib/mock/types.ts`)
-Add: `AccountRiskState`, `InstallationType`, `SystemType`, `RiskAssessment`, `RiskOverride`. Add optional `accountRiskState` to `User`.
+That single bug is what you're seeing as:
+- `/ibg/new` → "Something went wrong" (uses `data.installationTypes`, `data.systemTypes`)
+- `/admin/config` → same crash (Installation/System tabs)
+- `/admin/risk` → same crash (`data.riskAssessments`, `data.riskOverrides`)
 
-### A2. Seed data (`src/lib/mock/seed.ts` + `store.tsx`)
-- Add `installationTypes` (5 entries) and `systemTypes` (12 entries) per spec mapping.
-- Add `riskAssessments` (4) and `riskOverrides` (1 active HIGH).
-- Mark 2 users as `flagged`, 1 as `paused`.
-- Extend `MockData` type and store actions: `addRiskOverride`, `setUserRiskState`, `addInstallationType`, `archiveInstallationType`, `addSystemType`, `archiveSystemType`, `addEvidence`, `removeEvidence`, `linkJobToFunding`.
+**Fix**: bump the key to `:v2` AND add a defensive merge in `loadData()` that fills any missing top-level array with the seed's version. This way future schema additions never blow up existing previews.
 
-### A3. RBAC (`src/lib/rbac.ts`)
-Add 8 new permissions under new category `Admin · Risk` (risk.read/flag/override.high/override.critical) and `Admin · Configuration` reuse for installation/system types. Admin gets all. Compliance Reviewer: +risk.read, risk.flag. Senior Operator: +risk.read.
+## B. Sidebar / IA questions
 
-### A4. State pill (`src/components/app/state-pill.tsx`)
-Add `RISK_STATES` map per spec.
+1. **Reports lock**. Today `Reports` uses `visibleIf: ["reports.read"]`, which hides it for roles without it. Your screenshot shows it visible-but-no-lock because Operator DOES technically see it (the row was kept visible) but lands on a `LockedCard`. Switch Reports to the `showLockedIfNot` pattern (same as Submissions/Funding) so the row always renders with a lock icon when the role can't read it. Consistent with the rest of the sidebar.
 
-### A5. Sidebar
-Add `Risk & Compliance` (`ShieldAlert`) → `/admin/risk`, gated by `risk.read`, after Onboarding.
+2. **IBG History vs IBG Repository**. They overlap. Plan: **delete `IBG History`** as a top-level item and route. Repository becomes the single source of truth for issued IBGs, with a built-in `History` tab inside `/ibg/repository` (filters: All · Issued · Amended · Superseded · Cancelled). Remove the `History` icon from sidebar. Redirect `/ibg/history` → `/ibg/repository?view=history` to avoid breaking links.
 
-### A6. `/admin/risk` route
-PageHeader, two summary tiles (at-risk accounts, active overrides), CH Monitoring strip (C5), filter pills (All/Flagged/Paused/Suspended with counts), table (Org, Type, Risk, Last Check, Signal, Review →). LockedCard if no `risk.read`.
+3. **Risk "Review" button does nothing visible**. It navigates to `/admin/risk/$id` which renders, but on a small viewport users scroll past the change. Two improvements: (a) add a row hover affordance + cursor; (b) on click, scroll-to-top + flash a 600ms highlight on the detail header so the transition reads. Also add a back chip ("← Risk & Compliance") at the top of the detail page.
 
-### A7. `/admin/risk/$id` route
-Header w/ org name + risk pill + back link. Tabs: Risk History (AuditTimeline), CH Checks (5 mock entries, only for Limited Co.), Overrides (list or EmptyState). Sticky right rail with current state, Apply HIGH (opens sheet), Apply CRITICAL (link), Escalate, Downgrade.
+## C. ElevenLabs visual repolish (Reports + Risk)
 
-### A8. `HighRiskOverrideSheet` component
-Sheet from right (480px). Amber warning banner. Reason textarea (min 20 chars), duration select, acknowledge checkbox. Submit creates `RiskOverride`, audit entry, toast, close. Apply button disabled until valid.
+Current pages drifted from the spec — too much amber, oversize stat tiles, inconsistent card chrome. Re-aligning to the Eleven spirit already used in `/dashboard` and `/admin/users`:
 
-### A9. IBG generator redesign (`/ibg/new`)
-4-step wizard: **Readiness → Subject → Cover → Review**.
-- Step 0 checklist: account status, job link, evidence presence, Installation Type select, System Type dependent select. Continue disabled until all green. Show override badge if active override on org.
-- Step 2 Cover: replace MEASURES & POLICIES with installation/system type dropdowns + Policy Duration (10/25-year).
-- Step 3 Review: include all five fields.
+**Shared rules to re-apply**
+- Cards: `rounded-2xl border bg-card`, internal padding `p-5`, never colored fills for top-level cards.
+- Stat tiles: thin border, mono number `text-3xl font-semibold tracking-tight`, eyebrow `text-[10px] uppercase tracking-[0.08em] text-ink-muted`, tiny tinted icon chip top-right.
+- Tables: `text-[11px] uppercase` header on `bg-surface/40`, row hover `bg-surface/60`, no zebra.
+- Section headers: small icon chip + label like `<Icon /> Funding progress` — NOT colored full-width banner bars.
+- Use `UnderlineTabs` for view switches (already in repo), never pill tabs.
 
-### A10. System config tabs
-Add `Installation types` and `System types` tabs to `/admin/config`. Inline add/edit/archive rows; system types grouped by parent installation type with selector dropdown.
+**Reports `/reports`** — rebuild
+- Header: eyebrow `INSIGHT`, title `Reports`, subtitle, single right-aligned `Export current view` ghost button.
+- 4-column KPI strip (IBGs issued · Active jobs · Funding submitted · Acceptance rate), small sparkline chip in each card.
+- `UnderlineTabs`: IBGs · Pipeline · Funding · Submissions.
+- Per tab: one large chart card (existing `LineSpark`/`BarRow`/`Funnel`/`Pie` already built — restyle to grayscale + single brand accent, drop the orange stripe), then a "Top breakdown" table card.
+- Recent exports: compact list rows, not the giant download glyph in your screenshot.
 
-## Section B — UX Fixes
+**Risk & Compliance `/admin/risk`** — restyle
+- Drop the blue left-border card; replace with a calmer "CH Monitoring" tile row (3 mini-stats inline, tiny status dot, single muted helper line beneath).
+- Stat tiles: 2-up KPI (Accounts at risk · Active overrides) using shared neutral card style (no amber/blue bg).
+- Filter: `UnderlineTabs` (All · Flagged · Paused · Suspended) instead of `FilterPills`, matches Reports.
+- Table: tighten to 5 columns (Org · Type · State · Last check · Action), drop the "Signal" col into a hover popover or move to detail page.
+- Row click on entire row navigates to detail (button stays as visual anchor).
 
-- **B1 Funding evidence**: Replace `prompt()` in `/funding/$id` with EvidenceUploadDialog (filename + category select). Render dashed upload card or list w/ remove. Add Linked Job panel + Change Job dialog.
-- **B2 Permission revoke**: `/admin/users/$id` permissions tab — split into Granted (with red ghost Revoke) and Available (with Grant). "Clear all custom grants" header button. `/admin/permissions` library — expandable user list per permission with per-user Revoke.
-- **B3 List CTAs**: Add `New job/customer/property` dark pill CTAs to respective list page headers. Create `/customers/new`-style `/properties/new` route. Submissions: subtitle clarifying creation source.
-- **B4 Read-only audit**: Remove `audit.read` from `READONLY_PERMS`; add `activity.read.limited`. Update LockedCard copy on `/admin/audit`. Add doc comment above `READONLY_PERMS`.
-- **B5 Amendment confirmation**: After submit on `/ibg/$id/amendment`, render success panel inline (check icon, AMD-id ref, two action buttons) instead of immediate navigation.
+**Risk detail `/admin/risk/$id`** — small lift
+- Add back chip + 600ms highlight-on-mount.
+- 3 tabs in `UnderlineTabs`: History · Companies House · Overrides.
+- Override sheet trigger as ghost button in header, not inside a tab.
 
-## Section C — Future scaffolds (with `ComingSoon` overlay)
+## D. PDF reference
 
-- **C1 `/reports`**: New route + sidebar entry (BarChart2, gated `reports.read` — add permission, admin only). 2x2 cards (IBG, Pipeline, Funding, Submissions) with skeleton chart placeholders. Recent exports table empty state. Disabled Export CSV. Overlay banner.
-- **C2 Job evidence tab**: In `/jobs/$id`, add Evidence tab with 5-row checklist + completion progress bar. ComingSoon overlay.
-- **C3 `/settings/team`**: Members table + Invite (reuse InviteDialog) + Roles comparison table. ComingSoon overlay. Add Team to settings nav.
-- **C4 `/verify` (public)**: Public route under root (not `_authed`), minimal layout, ref input → mock match → green/amber result. ComingSoon overlay.
-- **C5 CH Monitoring strip**: Built into A6 page (no overlay).
+You're right that Reports + Risk drifted. I do still have the ElevenLabs PDF references from earlier in this thread in spec form, but if you want a tighter visual match it would help to **re-attach the PDF** (or a few key screens like the Conversational AI dashboard + their analytics page). I'll match component-for-component if you do.
 
-## Final checks
-Walk DevSwitcher across roles, verify sidebar visibility, IBG readiness gate behaviour with active vs flagged account, permissions split UI, read-only blocked from `/admin/audit`. Report results.
+## E. "Are all features done? What's expandable next?"
 
-## Notes / scope
-- All scaffolds use existing tokens, `ComingSoon`, `EmptyState`, `LockedCard`, `StatePill`, `UnderlineTabs`, `Sheet`, `Dialog` patterns. No token edits.
-- `reports.read` is added to RBAC (admin + senior operator) so the sidebar item gates correctly.
-- `/verify` placed at `src/routes/verify.tsx` (public, sibling of `index.tsx`).
-- Mock store actions added with reducers; types kept in sync.
-- No new third-party deps.
+Status check against your original brief:
+
+Done:
+- Risk types + seed + `/admin/risk` list + detail
+- HighRiskOverrideSheet + EvidenceUploadDialog dialogs
+- IBG 4-step wizard with Readiness gate
+- Funding linked-job change + evidence dialog swap
+- Amendment success state with reference
+- Audit RBAC LockedCard
+- `/properties/new`, system config Installation/System tabs
+- Reports, Team settings, Job evidence tab, Permissions library inline grants, public `/verify`
+
+Skipped or scaffolded only — proposing to finish in this pass:
+- Reports CSV export currently stubs a row; wire it to actually download a real CSV blob.
+- Team capabilities matrix exists but lacks invite/remove flow → connect to `InviteDialog`.
+- Job evidence checklist progress doesn't yet gate the IBG wizard's `evidence` readiness check (it should — current check just counts funding evidence).
+- Risk override expiry isn't surfaced anywhere outside the sheet — add a banner on `/dashboard` for the acting org when an override is active.
+- `verify` page: add a "Not found" state and a "Report misuse" link.
+
+## F. Implementation order (single pass)
+
+1. Bump store key → `:v2`, add defensive merge.
+2. Sidebar: Reports → `showLockedIfNot`; remove History row; redirect `/ibg/history`.
+3. Repository: add internal History tab.
+4. Reports: full restyle per section C.
+5. Risk list + detail: restyle + Review feedback.
+6. Wire the 5 finishing items in section E.
+7. Update `DESIGN_SPEC.md` Section 8 with the changes.
+
+After this I'll click through every changed page in the preview and confirm clean.

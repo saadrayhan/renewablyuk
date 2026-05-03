@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ShieldAlert, ArrowUp, ArrowDown, Check, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update } from "@/lib/mock/store";
@@ -30,6 +30,12 @@ function RiskDetail() {
   const u = findUser(data, id);
   const [tab, setTab] = useState<Tab>("history");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [flash, setFlash] = useState(true);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    const t = setTimeout(() => setFlash(false), 700);
+    return () => clearTimeout(t);
+  }, [id]);
 
   if (!can(permissions, "risk.read")) {
     return <div className="mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-10"><LockedCard title="Account risk" reason={{ kind: "permission", permission: "risk.read" }} /></div>;
@@ -68,7 +74,7 @@ function RiskDetail() {
         <ArrowLeft className="size-3.5" /> Risk & Compliance
       </Link>
 
-      <div className="mt-3 flex items-start justify-between gap-6">
+      <div className={`mt-3 flex items-start justify-between gap-6 rounded-2xl px-3 py-2 transition-colors duration-700 ${flash ? "bg-cat-amber-bg/40" : "bg-transparent"}`}>
         <div>
           <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">Account · {isLtd ? "Limited Co." : "Sole Trader"}</div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">{u.name}</h1>

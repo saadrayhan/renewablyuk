@@ -15,20 +15,36 @@ import {
 } from "react";
 import { seed, type SeedData } from "./seed";
 
-const KEY = "renewably:mock-store:v1";
+const KEY = "renewably:mock-store:v2";
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
 let DATA: SeedData | null = null;
 
+/**
+ * Defensive merge: any top-level array/object missing from a stale
+ * persisted payload is filled in from a fresh seed. Prevents schema
+ * additions from crashing existing previews.
+ */
+function reconcile(stored: Partial<SeedData>): SeedData {
+  const fresh = seed() as Record<string, unknown>;
+  const merged = { ...fresh, ...stored } as Record<string, unknown>;
+  for (const k of Object.keys(fresh)) {
+    if (merged[k] == null) merged[k] = fresh[k];
+  }
+  return merged as SeedData;
+}
+
 function loadData(): SeedData {
   if (DATA) return DATA;
   if (typeof window !== "undefined") {
     try {
+      // Drop legacy keys
+      window.localStorage.removeItem("renewably:mock-store:v1");
       const raw = window.localStorage.getItem(KEY);
       if (raw) {
-        DATA = JSON.parse(raw) as SeedData;
+        DATA = reconcile(JSON.parse(raw) as Partial<SeedData>);
         return DATA;
       }
     } catch {
