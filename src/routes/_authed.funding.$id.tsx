@@ -58,17 +58,19 @@ function FundingDetail() {
     return () => clearTimeout(t);
   }, [completed, steps.length]);
 
-  function uploadEvidence() {
-    const name = prompt("Filename?", "Evidence.pdf");
-    if (!name) return;
-    const cat = prompt("Category?", "Survey") ?? "Survey";
+  const [evidenceOpen, setEvidenceOpen] = useState(false);
+  const [linkJobOpen, setLinkJobOpen] = useState(false);
+
+  function changeJob(newJobId: string) {
     update((d) => {
       const x = d.fundingProjects.find((p) => p.id === id);
       if (!x) return;
-      x.evidence.push({ id: nid("ev"), name, category: cat, uploadedAt: Date.now() });
-      pushAudit(d, "funding", id, user.fullName, `Uploaded evidence ${name}`);
+      const prev = x.jobId;
+      x.jobId = newJobId;
+      pushAudit(d, "funding", id, user.fullName, `Re-linked to job`, `${prev} → ${newJobId}`);
     });
-    toast.success("Evidence uploaded");
+    toast.success("Job updated");
+    setLinkJobOpen(false);
   }
 
   function submit() {
