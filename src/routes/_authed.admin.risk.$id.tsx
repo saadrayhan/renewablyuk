@@ -204,6 +204,7 @@ function RiskDetail() {
       </div>
 
       <HighRiskOverrideSheet open={sheetOpen} onOpenChange={setSheetOpen} organisationId={u.id} organisationName={u.name} />
+      <CriticalRiskOverrideSheet open={criticalOpen} onOpenChange={setCriticalOpen} organisationId={u.id} organisationName={u.name} />
     </div>
   );
 }
