@@ -37,7 +37,18 @@ function PropertiesList() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
-      <PageHeader eyebrow="Projects" title="Properties" subtitle="Sites linked to a customer. Each property hosts jobs." />
+      <PageHeader
+        eyebrow="Projects"
+        title="Properties"
+        subtitle="Sites linked to a customer. Each property hosts jobs."
+        actions={
+          can(permissions, "properties.create") ? (
+            <Link to="/properties/new" className="press inline-flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-2 text-sm font-medium text-background">
+              <Plus className="size-4" /> New property
+            </Link>
+          ) : null
+        }
+      />
 
       <div className="mt-6 flex items-center justify-between gap-3">
         <FilterPills
