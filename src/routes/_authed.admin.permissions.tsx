@@ -33,10 +33,22 @@ type Tab = "library" | "presets" | "requests";
 
 function PermissionsPage() {
   const data = useStore();
+  const { user: actor } = useAuth();
   const [tab, setTab] = useState<Tab>("library");
   const [cat, setCat] = useState<PermissionCategory>(PERMISSION_CATEGORIES[0]);
   const [assignPerm, setAssignPerm] = useState<Permission | null>(null);
   const [assignPreset, setAssignPreset] = useState<string | null>(null);
+  const [expandedPerm, setExpandedPerm] = useState<Permission | null>(null);
+
+  function revokeFromUser(userId: string, perm: Permission, userName: string) {
+    update((d) => {
+      const x = d.users.find((y) => y.id === userId);
+      if (!x) return;
+      x.permissions = x.permissions.filter((p) => p !== perm);
+      pushAudit(d, "user", userId, actor.fullName, `Revoked ${perm}`);
+    });
+    toast.success(`Revoked from ${userName}`);
+  }
 
   const filtered = PERMISSIONS.filter((p) => p.category === cat);
   const pending = data.permissionRequests.filter((r) => r.state === "pending");
