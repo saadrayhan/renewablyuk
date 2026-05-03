@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, FileUp, Send, Check, AlertCircle, Circle, Lock, ArrowRight } from "lucide-react";
+import { ArrowLeft, FileUp, Send, Check, AlertCircle, Circle, Lock, ArrowRight, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update, nid, nref } from "@/lib/mock/store";
 import { findFunding, findJob, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, FUNDING_STATES } from "@/components/app/state-pill";
 import { AuditTimeline } from "@/components/app/audit-timeline";
+import { EvidenceUploadDialog } from "@/components/app/evidence-upload-dialog";
 import { useAuth } from "@/lib/auth-context";
 import type { FundingState } from "@/lib/mock/types";
 
