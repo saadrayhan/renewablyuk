@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BarChart2, Download, FileBadge, Sparkles, Send, Lock } from "lucide-react";
+import { BarChart2, Download, FileBadge, Sparkles, Send, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/app/page-header";
 import { useStore } from "@/lib/mock/store";
 import { useDevRole } from "@/lib/dev-role";
