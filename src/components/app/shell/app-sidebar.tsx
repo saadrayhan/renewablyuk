@@ -64,7 +64,6 @@ const main: NavItem[] = [
     icon: FileBadge,
     showLockedIfNot: ["ibg.issue"],
   },
-  { label: "IBG History", to: "/ibg/history", icon: History },
   {
     label: "IBG Repository",
     to: "/ibg/repository",
@@ -87,7 +86,7 @@ const main: NavItem[] = [
     label: "Reports",
     to: "/reports",
     icon: BarChart2,
-    visibleIf: ["reports.read"],
+    showLockedIfNot: ["reports.read"],
   },
 ];
 
