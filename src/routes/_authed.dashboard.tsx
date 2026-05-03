@@ -59,9 +59,24 @@ function AdminDash() {
   const onboardingPending = data.onboarding.filter((o) => o.state !== "activated");
   const amendmentsPending = data.amendments.filter((a) => a.state === "pending");
   const recent = data.activity.slice(0, 6);
+  const activeOverrides = data.riskOverrides.filter((o) => o.active);
+  const accountsAtRisk = data.users.filter((u) => u.accountRiskState && u.accountRiskState !== "active").length;
 
   return (
     <>
+      {activeOverrides.length > 0 && (
+        <Link to="/admin/risk" className="press mt-8 flex items-start justify-between gap-3 rounded-2xl border border-cat-amber/40 bg-cat-amber-bg/40 px-4 py-3 hover:bg-cat-amber-bg/60">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 size-4 text-cat-amber" />
+            <div>
+              <div className="text-sm font-medium text-foreground">{activeOverrides.length} active risk override{activeOverrides.length === 1 ? "" : "s"}</div>
+              <div className="text-[11px] text-ink-muted">{accountsAtRisk} account{accountsAtRisk === 1 ? "" : "s"} currently at risk · review and revoke as needed.</div>
+            </div>
+          </div>
+          <ArrowRight className="size-4 text-ink-muted" />
+        </Link>
+      )}
+
       <NewBadgeBanner
         text="Permission Library v2 — assign capabilities to operators in one click."
         cta="Open library"

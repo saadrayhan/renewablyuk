@@ -1,12 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ShieldAlert, Activity, ArrowRight } from "lucide-react";
+import { ShieldAlert, Activity, ArrowRight, CheckCircle2, AlertTriangle, PauseCircle, XCircle, Undo2 } from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/app/page-header";
-import { useStore } from "@/lib/mock/store";
+import { useStore, update } from "@/lib/mock/store";
+import { pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, RISK_STATES } from "@/components/app/state-pill";
 import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { LockedCard } from "@/components/app/locked-card";
 import { useDevRole } from "@/lib/dev-role";
+import { useAuth } from "@/lib/auth-context";
 import { can } from "@/lib/rbac";
 
 export const Route = createFileRoute("/_authed/admin/risk")({
@@ -20,7 +23,19 @@ function RiskPage() {
   const data = useStore();
   const nav = useNavigate();
   const { permissions } = useDevRole();
+  const { user: actor } = useAuth();
   const [filter, setFilter] = useState<RiskFilter>("all");
+
+  function revokeOverride(id: string, orgId: string) {
+    update((d) => {
+      const o = d.riskOverrides.find((x) => x.id === id);
+      if (!o) return;
+      o.active = false;
+      o.expiresAt = Date.now();
+      pushAudit(d, "user", orgId, actor.fullName, `Override ${o.riskLevel.toUpperCase()} revoked by ${actor.fullName}`, o.reason);
+    });
+    toast.success("Override revoked. IBG access restored to underlying risk state.");
+  }
 
   if (!can(permissions, "risk.read")) {
     return (
@@ -69,6 +84,56 @@ function RiskPage() {
           <Mini label="New signals (7d)" value={String(newSignals)} />
         </div>
       </div>
+
+      {/* Lifecycle diagram */}
+      <div className="mt-6 rounded-2xl border bg-card p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium text-foreground">Account state lifecycle</div>
+            <div className="text-[11px] text-ink-muted">Automatic transitions driven by Companies House signals (limited companies) and internal signals (sole traders).</div>
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-4">
+          <LifecycleNode tone="green" Icon={CheckCircle2} label="Active" trigger="Default. No risk signals in last 30 days." />
+          <LifecycleNode tone="amber" Icon={AlertTriangle} label="Flagged" trigger="1 medium signal — e.g. late accounts, repeated amendments." />
+          <LifecycleNode tone="amber" Icon={PauseCircle} label="Paused" trigger="High signal or 2+ flagged events. New IBG issuance blocked." last={false} />
+          <LifecycleNode tone="rose" Icon={XCircle} label="Suspended" trigger="Critical signal — strike-off, dissolution, fraud. All actions blocked." last />
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-[11px] text-ink-muted">
+          <span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-cat-amber" /> HIGH override required from Flagged or Paused</span>
+          <span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-cat-rose" /> CRITICAL override (dual-approval) required from Suspended</span>
+        </div>
+      </div>
+
+      {/* Active overrides panel */}
+      {activeOverrides > 0 && (
+        <div className="mt-4 overflow-hidden rounded-2xl border bg-card">
+          <div className="flex items-center justify-between border-b bg-surface/40 px-5 py-3">
+            <div className="text-sm font-medium text-foreground">Active overrides</div>
+            <span className="text-[11px] text-ink-muted">{activeOverrides} in effect</span>
+          </div>
+          <div className="divide-y">
+            {data.riskOverrides.filter((o) => o.active).map((o) => {
+              const org = data.users.find((u) => u.id === o.organisationId);
+              return (
+                <div key={o.id} className="flex items-start justify-between gap-4 px-5 py-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${o.riskLevel === "high" ? "bg-cat-amber-bg text-cat-amber" : "bg-cat-rose-bg text-cat-rose"}`}>{o.riskLevel.toUpperCase()}</span>
+                      <button onClick={() => org && nav({ to: "/admin/risk/$id", params: { id: org.id } })} className="press text-sm font-medium text-foreground hover:underline">{org?.name ?? "Unknown"}</button>
+                    </div>
+                    <div className="mt-1 line-clamp-1 text-xs text-ink-muted">{o.reason}</div>
+                    <div className="mt-0.5 text-[11px] text-ink-muted">By {o.createdBy} · applied {fmtDate(o.createdAt)}{o.expiresAt ? ` · expires ${fmtDate(o.expiresAt)}` : " · indefinite"}</div>
+                  </div>
+                  <button onClick={() => revokeOverride(o.id, o.organisationId)} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs">
+                    <Undo2 className="size-3" /> Revoke
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <UnderlineTabs<RiskFilter>
@@ -143,6 +208,35 @@ function Mini({ label, value }: { label: string; value: string }) {
     <div className="text-right">
       <div className="text-[10px] uppercase tracking-wide text-ink-muted">{label}</div>
       <div className="text-sm font-medium tabular-nums text-foreground">{value}</div>
+    </div>
+  );
+}
+
+const TONE_BG: Record<string, string> = {
+  green: "bg-cat-green-bg text-cat-green",
+  amber: "bg-cat-amber-bg text-cat-amber",
+  rose: "bg-cat-rose-bg text-cat-rose",
+};
+
+function LifecycleNode({
+  tone, Icon, label, trigger, last,
+}: {
+  tone: "green" | "amber" | "rose";
+  Icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  trigger: string;
+  last?: boolean;
+}) {
+  return (
+    <div className="relative rounded-xl border bg-surface/40 p-3">
+      <div className="flex items-center gap-2">
+        <span className={`grid size-7 place-items-center rounded-lg ${TONE_BG[tone]}`}><Icon className="size-3.5" /></span>
+        <div className="text-sm font-medium text-foreground">{label}</div>
+      </div>
+      <div className="mt-2 text-[11px] leading-relaxed text-ink-muted">{trigger}</div>
+      {!last && (
+        <ArrowRight className="absolute -right-3 top-1/2 hidden size-3.5 -translate-y-1/2 text-ink-muted md:block" />
+      )}
     </div>
   );
 }
