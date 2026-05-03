@@ -198,6 +198,8 @@ export type ManagedUser = {
   invitedAt: number;
   lastActive?: number;
   banReason?: string;
+  accountRiskState?: "active" | "flagged" | "paused" | "suspended";
+  entityType?: "limited" | "sole-trader";
 };
 
 export type PermissionRequest = {
@@ -250,4 +252,44 @@ export type FundingMatch = {
   measures: string[];
   state: "active" | "opportunity" | "no-match";
   region: string;
+};
+
+/* ─── Risk & compliance ─────────────────────────────────────────── */
+
+export type AccountRiskState = "active" | "flagged" | "paused" | "suspended";
+
+export type InstallationType = {
+  id: string;
+  name: string;
+  status: "active" | "archived";
+};
+
+export type SystemType = {
+  id: string;
+  installationTypeId: string;
+  name: string;
+  status: "active" | "archived";
+};
+
+export type RiskAssessment = {
+  id: string;
+  organisationId: string; // user id (organisation root user)
+  state: AccountRiskState;
+  signalType: "companies-house" | "internal";
+  signalDetail: string;
+  severity: "low" | "medium" | "high" | "critical";
+  createdAt: number;
+  resolvedAt?: number;
+};
+
+export type RiskOverride = {
+  id: string;
+  organisationId: string;
+  riskLevel: "high" | "critical";
+  reason: string;
+  justification?: string;
+  createdBy: string;
+  createdAt: number;
+  expiresAt?: number;
+  active: boolean;
 };

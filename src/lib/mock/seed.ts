@@ -13,6 +13,10 @@ import type {
   FundingMatch,
   PermissionRequest,
   Integration,
+  InstallationType,
+  SystemType,
+  RiskAssessment,
+  RiskOverride,
 } from "./types";
 
 const now = 1746115200000; // 2026-05-01 stable
@@ -381,6 +385,8 @@ export function seed() {
       ],
       invitedAt: now - 120 * day,
       lastActive: now - 2 * day,
+      accountRiskState: "flagged",
+      entityType: "limited",
     },
     {
       id: "usr_003",
@@ -407,6 +413,8 @@ export function seed() {
       permissions: [],
       invitedAt: now - 90 * day,
       lastActive: now,
+      accountRiskState: "active",
+      entityType: "limited",
     },
     {
       id: "usr_005",
@@ -417,6 +425,8 @@ export function seed() {
       permissions: [],
       invitedAt: now - 50 * day,
       lastActive: now - 4 * day,
+      accountRiskState: "flagged",
+      entityType: "sole-trader",
     },
     {
       id: "usr_006",
@@ -427,6 +437,8 @@ export function seed() {
       permissions: [],
       invitedAt: now - 70 * day,
       lastActive: now - 5 * day,
+      accountRiskState: "paused",
+      entityType: "limited",
     },
     {
       id: "usr_007",
@@ -558,6 +570,50 @@ export function seed() {
     { key: "webhooks", name: "Webhooks", category: "Developer", description: "Receive HTTP callbacks for every record-chain event.", connected: false },
   ];
 
+  const installationTypes: InstallationType[] = [
+    { id: "it_solar", name: "Solar PV System", status: "active" },
+    { id: "it_hp", name: "Heat Pump System", status: "active" },
+    { id: "it_ins", name: "Insulation Package", status: "active" },
+    { id: "it_ev", name: "EV Charging System", status: "active" },
+    { id: "it_vent", name: "Ventilation System", status: "active" },
+  ];
+
+  const systemTypes: SystemType[] = [
+    { id: "st_solar_roof", installationTypeId: "it_solar", name: "Roof-mounted Monocrystalline", status: "active" },
+    { id: "st_solar_ground", installationTypeId: "it_solar", name: "Ground-mounted Polycrystalline", status: "active" },
+    { id: "st_solar_bipv", installationTypeId: "it_solar", name: "Integrated BIPV", status: "active" },
+    { id: "st_hp_mono", installationTypeId: "it_hp", name: "Air Source (Monobloc)", status: "active" },
+    { id: "st_hp_split", installationTypeId: "it_hp", name: "Air Source (Split)", status: "active" },
+    { id: "st_hp_ground", installationTypeId: "it_hp", name: "Ground Source Borehole", status: "active" },
+    { id: "st_ins_cwi", installationTypeId: "it_ins", name: "Cavity Wall", status: "active" },
+    { id: "st_ins_ewi", installationTypeId: "it_ins", name: "External Wall", status: "active" },
+    { id: "st_ins_loft", installationTypeId: "it_ins", name: "Loft", status: "active" },
+    { id: "st_ev_7", installationTypeId: "it_ev", name: "Single Phase 7kW", status: "active" },
+    { id: "st_ev_22", installationTypeId: "it_ev", name: "Three Phase 22kW", status: "active" },
+    { id: "st_vent_mvhr", installationTypeId: "it_vent", name: "MVHR", status: "active" },
+    { id: "st_vent_mev", installationTypeId: "it_vent", name: "MEV", status: "active" },
+  ];
+
+  const riskAssessments: RiskAssessment[] = [
+    { id: "ra_001", organisationId: "usr_002", state: "flagged", signalType: "companies-house", signalDetail: "Late accounts flag (overdue 14 days)", severity: "medium", createdAt: now - 3 * day },
+    { id: "ra_002", organisationId: "usr_005", state: "flagged", signalType: "internal", signalDetail: "Manual flag — repeated amendment requests", severity: "medium", createdAt: now - 5 * day },
+    { id: "ra_003", organisationId: "usr_006", state: "paused", signalType: "companies-house", signalDetail: "Officer changes filed", severity: "high", createdAt: now - 7 * day },
+    { id: "ra_004", organisationId: "usr_004", state: "active", signalType: "companies-house", signalDetail: "Confirmation statement on file", severity: "low", createdAt: now - 14 * day, resolvedAt: now - 13 * day },
+  ];
+
+  const riskOverrides: RiskOverride[] = [
+    {
+      id: "ro_001",
+      organisationId: "usr_002",
+      riskLevel: "high",
+      reason: "Active ECO4 batch in delivery — 14-day window to complete pilot.",
+      createdBy: "Alex Reed",
+      createdAt: now - 2 * day,
+      expiresAt: now + 12 * day,
+      active: true,
+    },
+  ];
+
   return {
     customers,
     properties,
@@ -573,6 +629,10 @@ export function seed() {
     fundingMatches,
     permissionRequests,
     integrations,
+    installationTypes,
+    systemTypes,
+    riskAssessments,
+    riskOverrides,
   };
 }
 
