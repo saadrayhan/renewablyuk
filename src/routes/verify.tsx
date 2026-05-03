@@ -76,9 +76,9 @@ function VerifyPage() {
         </div>
       )}
 
-      <div className="mt-10 flex items-center gap-2 rounded-full border bg-background px-4 py-2 text-xs text-ink-muted">
-        <Lock className="size-3.5" /> Public verification beta — full lookup launching soon
-      </div>
+      <p className="mt-10 text-center text-[11px] text-ink-muted">
+        Verification confirms the certificate was issued through Renewably UK. For full policy detail, contact the issuing installer.
+      </p>
     </main>
   );
 }

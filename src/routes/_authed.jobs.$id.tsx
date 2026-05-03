@@ -21,7 +21,15 @@ export const Route = createFileRoute("/_authed/jobs/$id")({
   component: JobDetail,
 });
 
-type Tab = "overview" | "documents" | "ibgs" | "funding" | "audit";
+type Tab = "overview" | "documents" | "evidence" | "ibgs" | "funding" | "audit";
+
+const EVIDENCE_CHECKLIST: { key: string; label: string; required: boolean }[] = [
+  { key: "mcs", label: "MCS Certificate", required: true },
+  { key: "epc", label: "EPC (before & after)", required: true },
+  { key: "photos", label: "Installation photos (min 3)", required: true },
+  { key: "retrofit", label: "Retrofit Assessment", required: false },
+  { key: "declaration", label: "Customer declaration", required: true },
+];
 
 const TRANSITIONS: Partial<Record<JobState, JobState[]>> = {
   draft: ["in-progress", "cancelled"],
@@ -160,6 +168,7 @@ function JobDetail() {
           options={[
             { value: "overview", label: "Overview" },
             { value: "documents", label: "Documents" },
+            { value: "evidence", label: "Evidence" },
             { value: "ibgs", label: "IBGs", count: ibgs.length },
             { value: "funding", label: "Funding", count: funding.length },
             { value: "audit", label: "Audit" },
@@ -178,6 +187,7 @@ function JobDetail() {
             </Card>
           )}
           {tab === "documents" && <Card title="Documents"><EmptyState title="No documents uploaded" body="Drop EPCs, surveys and contracts here. Upload is mocked in design mode." /></Card>}
+          {tab === "evidence" && <EvidenceTab jobId={job.id} />}
           {tab === "ibgs" && (
             <Card title="IBGs" action={
               <Link to="/ibg/new" className="press inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium">
@@ -336,6 +346,64 @@ function Detail({ label, value }: { label: string; value: React.ReactNode }) {
     <div className="flex items-center justify-between border-b py-2.5 last:border-b-0">
       <div className="text-xs uppercase tracking-wide text-ink-muted">{label}</div>
       <div className="text-sm text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function EvidenceTab({ jobId }: { jobId: string }) {
+  const [items, setItems] = useState<Record<string, { name: string; status: "pending" | "uploaded" | "rejected" } | null>>(() => {
+    const init: Record<string, { name: string; status: "pending" | "uploaded" | "rejected" } | null> = {};
+    EVIDENCE_CHECKLIST.forEach((c) => { init[c.key] = null; });
+    return init;
+  });
+  function upload(key: string, label: string) {
+    const name = `${label.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${jobId.slice(-4)}.pdf`;
+    setItems((p) => ({ ...p, [key]: { name, status: "uploaded" } }));
+    toast.success(`${label} uploaded`);
+  }
+  function remove(key: string) {
+    setItems((p) => ({ ...p, [key]: null }));
+  }
+  const required = EVIDENCE_CHECKLIST.filter((c) => c.required);
+  const requiredDone = required.filter((c) => items[c.key]?.status === "uploaded").length;
+  const pct = Math.round((requiredDone / required.length) * 100);
+  return (
+    <div className="rounded-2xl border bg-card">
+      <div className="border-b px-5 py-4">
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-medium text-foreground">Evidence checklist</div>
+          <div className="text-xs text-ink-muted">{requiredDone} of {required.length} required ({pct}%)</div>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-tile">
+          <div className="h-full rounded-full bg-cat-green transition-[width] duration-500" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+      <div className="divide-y">
+        {EVIDENCE_CHECKLIST.map((c) => {
+          const it = items[c.key];
+          const tone = it?.status === "uploaded" ? "text-cat-green bg-cat-green-bg" : "text-ink-muted bg-tile";
+          return (
+            <div key={c.key} className="flex items-center justify-between gap-3 px-5 py-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-foreground">{c.label}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${c.required ? "bg-cat-amber-bg text-cat-amber" : "bg-tile text-ink-muted"}`}>{c.required ? "Required" : "Optional"}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${tone}`}>{it?.status ?? "pending"}</span>
+                </div>
+                {it && <div className="mt-0.5 text-[11px] text-ink-muted">{it.name}</div>}
+              </div>
+              {it ? (
+                <button onClick={() => remove(c.key)} className="press rounded-full border bg-background px-3 py-1 text-xs">Remove</button>
+              ) : (
+                <button onClick={() => upload(c.key, c.label)} className="press rounded-full bg-foreground px-3 py-1 text-xs font-medium text-background">Upload</button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="border-t bg-surface/40 px-5 py-2.5 text-[11px] text-ink-muted">
+        Uploaded evidence is automatically validated against the IBG issuance gate.
+      </div>
     </div>
   );
 }
