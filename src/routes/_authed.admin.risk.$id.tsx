@@ -9,6 +9,7 @@ import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { EmptyState } from "@/components/app/empty-state";
 import { LockedCard } from "@/components/app/locked-card";
 import { HighRiskOverrideSheet } from "@/components/app/high-risk-override-sheet";
+import { CriticalRiskOverrideSheet } from "@/components/app/critical-risk-override-sheet";
 import { useDevRole } from "@/lib/dev-role";
 import { can } from "@/lib/rbac";
 import { useAuth } from "@/lib/auth-context";
