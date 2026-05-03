@@ -31,6 +31,7 @@ function RiskDetail() {
   const u = findUser(data, id);
   const [tab, setTab] = useState<Tab>("history");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [criticalOpen, setCriticalOpen] = useState(false);
   const [flash, setFlash] = useState(true);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
