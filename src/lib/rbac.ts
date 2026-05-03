@@ -125,7 +125,16 @@ export type Permission =
   // Admin · System
   | "config.read"
   | "config.edit"
-  | "permissions.library.manage";
+  | "permissions.library.manage"
+  // Admin · Risk
+  | "risk.read"
+  | "risk.flag"
+  | "risk.override.high"
+  | "risk.override.critical"
+  | "installation-types.read"
+  | "installation-types.manage"
+  | "system-types.read"
+  | "system-types.manage";
 
 export type PermissionCategory =
   | "Projects"
@@ -137,6 +146,7 @@ export type PermissionCategory =
   | "Admin · Users"
   | "Admin · Compliance"
   | "Admin · Onboarding"
+  | "Admin · Risk"
   | "Admin · System";
 
 export type PermissionDef = {
@@ -205,6 +215,15 @@ export const PERMISSIONS: PermissionDef[] = [
   { id: "config.read", label: "View system config", category: "Admin · System", description: "Read platform configuration." },
   { id: "config.edit", label: "Edit system config", category: "Admin · System", description: "Modify platform settings." },
   { id: "permissions.library.manage", label: "Manage permission library", category: "Admin · System", description: "Curate the catalogue of assignable permissions." },
+  { id: "installation-types.read", label: "View installation types", category: "Admin · System", description: "See the catalogue of installation types." },
+  { id: "installation-types.manage", label: "Manage installation types", category: "Admin · System", description: "Create, edit and archive installation types." },
+  { id: "system-types.read", label: "View system types", category: "Admin · System", description: "See system types under each installation type." },
+  { id: "system-types.manage", label: "Manage system types", category: "Admin · System", description: "Create, edit and archive system types." },
+  // Admin · Risk
+  { id: "risk.read", label: "View risk dashboard", category: "Admin · Risk", description: "Open the Risk & Compliance panel and account risk profiles." },
+  { id: "risk.flag", label: "Flag accounts", category: "Admin · Risk", description: "Apply manual risk flags to accounts." },
+  { id: "risk.override.high", label: "Apply HIGH risk override", category: "Admin · Risk", description: "Override a flagged or paused account to restore IBG access." },
+  { id: "risk.override.critical", label: "Apply CRITICAL risk override", category: "Admin · Risk", description: "Override a suspended account — multi-step review required." },
 ];
 
 export const PERMISSION_CATEGORIES: PermissionCategory[] = [
@@ -217,6 +236,7 @@ export const PERMISSION_CATEGORIES: PermissionCategory[] = [
   "Admin · Users",
   "Admin · Compliance",
   "Admin · Onboarding",
+  "Admin · Risk",
   "Admin · System",
 ];
 
