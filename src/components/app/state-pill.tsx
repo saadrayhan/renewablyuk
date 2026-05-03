@@ -99,6 +99,13 @@ export const ONBOARDING_STATES: Record<string, StateMeta> = {
   activated: ACTIVE("Activated"),
 };
 
+export const RISK_STATES: Record<string, StateMeta> = {
+  active: ACTIVE("Active"),
+  flagged: WARN("Flagged"),
+  paused: WARN("Paused"),
+  suspended: ERR("Suspended"),
+};
+
 const TONE_CLASSES: Record<PillTone, string> = {
   active: "bg-cat-green-bg text-cat-green",
   warning: "bg-cat-amber-bg text-cat-amber",
