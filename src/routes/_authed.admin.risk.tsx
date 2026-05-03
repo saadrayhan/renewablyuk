@@ -1,12 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ShieldAlert, Activity, ArrowRight } from "lucide-react";
+import { ShieldAlert, Activity, ArrowRight, CheckCircle2, AlertTriangle, PauseCircle, XCircle, Undo2 } from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/app/page-header";
-import { useStore } from "@/lib/mock/store";
+import { useStore, update } from "@/lib/mock/store";
+import { pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, RISK_STATES } from "@/components/app/state-pill";
 import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { LockedCard } from "@/components/app/locked-card";
 import { useDevRole } from "@/lib/dev-role";
+import { useAuth } from "@/lib/auth-context";
 import { can } from "@/lib/rbac";
 
 export const Route = createFileRoute("/_authed/admin/risk")({
