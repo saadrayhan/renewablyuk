@@ -21,7 +21,15 @@ export const Route = createFileRoute("/_authed/jobs/$id")({
   component: JobDetail,
 });
 
-type Tab = "overview" | "documents" | "ibgs" | "funding" | "audit";
+type Tab = "overview" | "documents" | "evidence" | "ibgs" | "funding" | "audit";
+
+const EVIDENCE_CHECKLIST: { key: string; label: string; required: boolean }[] = [
+  { key: "mcs", label: "MCS Certificate", required: true },
+  { key: "epc", label: "EPC (before & after)", required: true },
+  { key: "photos", label: "Installation photos (min 3)", required: true },
+  { key: "retrofit", label: "Retrofit Assessment", required: false },
+  { key: "declaration", label: "Customer declaration", required: true },
+];
 
 const TRANSITIONS: Partial<Record<JobState, JobState[]>> = {
   draft: ["in-progress", "cancelled"],
