@@ -168,6 +168,7 @@ function JobDetail() {
           options={[
             { value: "overview", label: "Overview" },
             { value: "documents", label: "Documents" },
+            { value: "evidence", label: "Evidence" },
             { value: "ibgs", label: "IBGs", count: ibgs.length },
             { value: "funding", label: "Funding", count: funding.length },
             { value: "audit", label: "Audit" },
