@@ -35,9 +35,9 @@ function ReportsPage() {
 
   const ibgStats = useMemo(() => {
     const issued = data.ibgs.filter((i) => i.state === "issued").length;
-    const pending = data.ibgs.filter((i) => i.state === "pending-amendment").length;
+    const pending = data.ibgs.filter((i) => i.state === "amended").length;
     const cancelled = data.ibgs.filter((i) => i.state === "cancelled").length;
-    const month = data.ibgs.filter((i) => Date.now() - i.issuedAt < 30 * 86400000).length;
+    const month = data.ibgs.filter((i) => i.issuedAt && Date.now() - i.issuedAt < 30 * 86400000).length;
     return { issued, pending, cancelled, month };
   }, [data.ibgs]);
 
