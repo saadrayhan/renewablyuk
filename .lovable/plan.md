@@ -1,88 +1,67 @@
-# Final Polish + Full DESIGN_SPEC.md
+# Renewably UK — Risk, IBG v2, UX Fixes & Future Scaffolds
 
-You asked: verify everything is wired, polish anything loose, and ship a complete spec doc inside the repo so any AI can rebuild it. Here is the plan.
+This plan implements Sections A (architecture), B (UX fixes), and C (locked future scaffolds) exactly as specified. No design tokens, colour system, or animation style change.
 
-## Part A — Polish sweep (verify + tighten)
+## Section A — Architecture
 
-### 1. Verify every new dialog opens from the right place
+### A1. Mock types (`src/lib/mock/types.ts`)
+Add: `AccountRiskState`, `InstallationType`, `SystemType`, `RiskAssessment`, `RiskOverride`. Add optional `accountRiskState` to `User`.
 
-Walk each entry point and confirm a real trigger exists. Where missing, wire it up.
+### A2. Seed data (`src/lib/mock/seed.ts` + `store.tsx`)
+- Add `installationTypes` (5 entries) and `systemTypes` (12 entries) per spec mapping.
+- Add `riskAssessments` (4) and `riskOverrides` (1 active HIGH).
+- Mark 2 users as `flagged`, 1 as `paused`.
+- Extend `MockData` type and store actions: `addRiskOverride`, `setUserRiskState`, `addInstallationType`, `archiveInstallationType`, `addSystemType`, `archiveSystemType`, `addEvidence`, `removeEvidence`, `linkJobToFunding`.
 
-| Dialog | Expected trigger | Status / action |
-|---|---|---|
-| `InviteDialog` | Sidebar "Invite team members" card | Verify it now opens the modal (was a link). Fix if still a `<Link>`. |
-| `TwoFactorDialog` | `/settings/security` "Enable 2FA" button + `/settings/profile` 2FA row | Verify both. Profile row should deep-link to `/settings/security`. |
-| `PaymentMethodDialog` | `/settings/subscription` "Update payment method" | Verify it returns last 4 and updates UI. |
-| `TemplateEditorDialog` | `/admin/config` notification template rows | Verify Edit opens dialog with variables. |
-| `AmendmentReviewSheet` | `/admin/amendments` row click / Review button | Verify it opens, reject path requires reason. |
+### A3. RBAC (`src/lib/rbac.ts`)
+Add 8 new permissions under new category `Admin · Risk` (risk.read/flag/override.high/override.critical) and `Admin · Configuration` reuse for installation/system types. Admin gets all. Compliance Reviewer: +risk.read, risk.flag. Senior Operator: +risk.read.
 
-### 2. Verify permission gates render `LockedCard` for restricted roles
+### A4. State pill (`src/components/app/state-pill.tsx`)
+Add `RISK_STATES` map per spec.
 
-Switch to `readonly` via the dev role switcher and confirm each route renders the locked state, not raw content:
+### A5. Sidebar
+Add `Risk & Compliance` (`ShieldAlert`) → `/admin/risk`, gated by `risk.read`, after Onboarding.
 
-- `/projects`, `/submissions`, `/customers`, `/jobs`, `/properties`, `/ibg/history`
+### A6. `/admin/risk` route
+PageHeader, two summary tiles (at-risk accounts, active overrides), CH Monitoring strip (C5), filter pills (All/Flagged/Paused/Suspended with counts), table (Org, Type, Risk, Last Check, Signal, Review →). LockedCard if no `risk.read`.
 
-For `operator` role, confirm permitted areas show content and ungranted ones show locked.
+### A7. `/admin/risk/$id` route
+Header w/ org name + risk pill + back link. Tabs: Risk History (AuditTimeline), CH Checks (5 mock entries, only for Limited Co.), Overrides (list or EmptyState). Sticky right rail with current state, Apply HIGH (opens sheet), Apply CRITICAL (link), Escalate, Downgrade.
 
-### 3. Visual tightness pass
+### A8. `HighRiskOverrideSheet` component
+Sheet from right (480px). Amber warning banner. Reason textarea (min 20 chars), duration select, acknowledge checkbox. Submit creates `RiskOverride`, audit entry, toast, close. Apply button disabled until valid.
 
-Targeted, surgical fixes only — no token changes:
+### A9. IBG generator redesign (`/ibg/new`)
+4-step wizard: **Readiness → Subject → Cover → Review**.
+- Step 0 checklist: account status, job link, evidence presence, Installation Type select, System Type dependent select. Continue disabled until all green. Show override badge if active override on org.
+- Step 2 Cover: replace MEASURES & POLICIES with installation/system type dropdowns + Policy Duration (10/25-year).
+- Step 3 Review: include all five fields.
 
-- **Empty states**: every list route (`projects`, `submissions`, `customers`, `jobs`, `properties`, `ibg/history`, `admin/amendments`, `admin/audit`, `admin/activity`) gets a real `EmptyState` when filtered results are zero (not just when the dataset is empty).
-- **Padding consistency**: all `_authed.*` route roots use the same outer `mx-auto w-full max-w-[1280px] px-4 py-6 md:px-8 md:py-8` shell. Audit and align.
-- **Micro-copy**: replace generic "No data" with action-led copy (e.g. "No submissions yet — start one from a job"). Add a primary CTA in each empty state where it makes sense.
-- **Sidebar**: ensure the Invite trigger looks identical to the previous link (no layout shift) and the 2FA "Enabled" pill in profile updates immediately after enabling.
-- **Settings nav**: confirm "Security" and "My access" use the same icon/active treatment as the rest.
+### A10. System config tabs
+Add `Installation types` and `System types` tabs to `/admin/config`. Inline add/edit/archive rows; system types grouped by parent installation type with selector dropdown.
 
-### 4. Add the small sub-pages still missing
+## Section B — UX Fixes
 
-Audit nav for any "coming soon" or dead targets and either build minimal real pages or remove from nav. Specifically check:
+- **B1 Funding evidence**: Replace `prompt()` in `/funding/$id` with EvidenceUploadDialog (filename + category select). Render dashed upload card or list w/ remove. Add Linked Job panel + Change Job dialog.
+- **B2 Permission revoke**: `/admin/users/$id` permissions tab — split into Granted (with red ghost Revoke) and Available (with Grant). "Clear all custom grants" header button. `/admin/permissions` library — expandable user list per permission with per-user Revoke.
+- **B3 List CTAs**: Add `New job/customer/property` dark pill CTAs to respective list page headers. Create `/customers/new`-style `/properties/new` route. Submissions: subtitle clarifying creation source.
+- **B4 Read-only audit**: Remove `audit.read` from `READONLY_PERMS`; add `activity.read.limited`. Update LockedCard copy on `/admin/audit`. Add doc comment above `READONLY_PERMS`.
+- **B5 Amendment confirmation**: After submit on `/ibg/$id/amendment`, render success panel inline (check icon, AMD-id ref, two action buttons) instead of immediate navigation.
 
-- `/admin/onboarding` — confirm it renders something useful, not a stub.
-- `/settings/measures` and `/settings/notifications` — confirm they are real, not placeholders.
-- Any sidebar item whose target route file does not exist → remove from sidebar.
+## Section C — Future scaffolds (with `ComingSoon` overlay)
 
-If a stub is found, build a minimal real page using existing patterns (`PageHeader`, `SectionCard`, mock store data) — no new tokens, no design changes.
+- **C1 `/reports`**: New route + sidebar entry (BarChart2, gated `reports.read` — add permission, admin only). 2x2 cards (IBG, Pipeline, Funding, Submissions) with skeleton chart placeholders. Recent exports table empty state. Disabled Export CSV. Overlay banner.
+- **C2 Job evidence tab**: In `/jobs/$id`, add Evidence tab with 5-row checklist + completion progress bar. ComingSoon overlay.
+- **C3 `/settings/team`**: Members table + Invite (reuse InviteDialog) + Roles comparison table. ComingSoon overlay. Add Team to settings nav.
+- **C4 `/verify` (public)**: Public route under root (not `_authed`), minimal layout, ref input → mock match → green/amber result. ComingSoon overlay.
+- **C5 CH Monitoring strip**: Built into A6 page (no overlay).
 
-## Part B — DESIGN_SPEC.md (replace existing)
+## Final checks
+Walk DevSwitcher across roles, verify sidebar visibility, IBG readiness gate behaviour with active vs flagged account, permissions split UI, read-only blocked from `/admin/audit`. Report results.
 
-Overwrite `DESIGN_SPEC.md` at the repo root with one self-contained markdown document containing all seven sections in the order you specified. Sections 1–4, 6, 7 are written from scratch against the current codebase. Section 5 inlines every source file verbatim.
-
-### Section 5 file order (inlined complete, no truncation)
-
-1. **Config & root**
-   - `package.json`, `tsconfig.json`, `vite.config.ts`, `wrangler.jsonc`, `components.json`, `eslint.config.js`, `.prettierrc`
-   - `src/styles.css`
-   - `src/router.tsx`, `src/routes/__root.tsx`
-2. **Lib (domain core)**
-   - `src/lib/utils.ts`, `src/lib/use-hydrated.ts`, `src/lib/auth-context.tsx`, `src/lib/dev-role.tsx`, `src/lib/rbac.ts`
-   - `src/lib/mock/types.ts`, `src/lib/mock/seed.ts`, `src/lib/mock/store.tsx`, `src/lib/mock/queries.ts`
-3. **Shell & shared app components** (`src/components/app/**`)
-   - shell: `app-sidebar.tsx`, `top-bar.tsx`, `breadcrumbs.tsx`, `notifications-popover.tsx`, `profile-popover.tsx`, `workspace-switcher.tsx`, `sidebar-context.tsx`
-   - shared: `page-header.tsx`, `section-card.tsx`, `state-pill.tsx`, `data-table.tsx`, `filter-pills.tsx`, `empty-state.tsx`, `locked-card.tsx`, `coming-soon.tsx`, `audit-timeline.tsx`, `underline-tabs.tsx`, `dev-switcher.tsx`, `command-palette.tsx`
-   - dialogs: `invite-dialog.tsx`, `two-factor-dialog.tsx`, `payment-method-dialog.tsx`, `template-editor-dialog.tsx`, `amendment-review-sheet.tsx`
-4. **Auth shell** — `src/components/auth/auth-layout.tsx`
-5. **All `src/routes/*.tsx`** (alphabetical, including `_authed.*`, public auth routes, `index.tsx`, `pricing.tsx`)
-6. **`src/components/ui/*`** (shadcn primitives) — listed by filename. To keep the spec usable I will inline the *project-customised* primitives in full and note the rest as "stock shadcn/ui — install via `npx shadcn add <name>`" with the import list. This avoids 4k+ lines of unmodified shadcn that any builder can regenerate. **Confirm if you'd rather have every shadcn file inlined too — say so when approving and I'll dump them all.**
-7. **Supabase glue** — `src/integrations/supabase/client.ts`, `client.server.ts`, `auth-middleware.ts`, `types.ts`
-8. **Auto-generated** — `src/routeTree.gen.ts` noted as auto-generated by the TanStack Router Vite plugin (not inlined; it is regenerated on build).
-
-### Sections 1, 2, 3, 4, 6, 7 source of truth
-
-- **Section 2** pulls every token from `src/styles.css` verbatim (HSL values, fonts, easings, motion durations).
-- **Section 3** documents every component in `src/components/app/**` with props, variants, classes, and Sonner / Sheet / Dialog wiring.
-- **Section 4** walks every route file, listing layout shell, sub-tabs, role gating, and conditional visibility.
-- **Section 6** is a no-code rebuild walkthrough referencing the exact tokens and component order.
-- **Section 7** delivers one prompt per major surface (Sign-in, Dashboard, Funding detail, IBG wizard, Admin Permissions, Settings, Command palette, Notifications, etc.).
-
-## Deliverables
-
-- Updated source files from Part A (only where polish is needed).
-- `DESIGN_SPEC.md` overwritten with the full document.
-- Final reply summarises what was changed in the polish pass and confirms the spec is in `DESIGN_SPEC.md` at the repo root.
-
-## One open call
-
-Section 5 length: do you want **every** `src/components/ui/*` shadcn primitive inlined in full (adds ~3–5k lines of mostly-stock code), or is "stock shadcn, install via `npx shadcn add`" acceptable for the unmodified ones? Default if you don't say: inline the customised ones, list-only for stock.
-
-Approve and I'll execute.
+## Notes / scope
+- All scaffolds use existing tokens, `ComingSoon`, `EmptyState`, `LockedCard`, `StatePill`, `UnderlineTabs`, `Sheet`, `Dialog` patterns. No token edits.
+- `reports.read` is added to RBAC (admin + senior operator) so the sidebar item gates correctly.
+- `/verify` placed at `src/routes/verify.tsx` (public, sibling of `index.tsx`).
+- Mock store actions added with reducers; types kept in sync.
+- No new third-party deps.
