@@ -211,3 +211,32 @@ function Mini({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+const TONE_BG: Record<string, string> = {
+  green: "bg-cat-green-bg text-cat-green",
+  amber: "bg-cat-amber-bg text-cat-amber",
+  rose: "bg-cat-rose-bg text-cat-rose",
+};
+
+function LifecycleNode({
+  tone, Icon, label, trigger, last,
+}: {
+  tone: "green" | "amber" | "rose";
+  Icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  trigger: string;
+  last?: boolean;
+}) {
+  return (
+    <div className="relative rounded-xl border bg-surface/40 p-3">
+      <div className="flex items-center gap-2">
+        <span className={`grid size-7 place-items-center rounded-lg ${TONE_BG[tone]}`}><Icon className="size-3.5" /></span>
+        <div className="text-sm font-medium text-foreground">{label}</div>
+      </div>
+      <div className="mt-2 text-[11px] leading-relaxed text-ink-muted">{trigger}</div>
+      {!last && (
+        <ArrowRight className="absolute -right-3 top-1/2 hidden size-3.5 -translate-y-1/2 text-ink-muted md:block" />
+      )}
+    </div>
+  );
+}
