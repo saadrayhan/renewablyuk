@@ -88,26 +88,50 @@ function PermissionsPage() {
             <div className="divide-y">
               {filtered.map((p) => {
                 const grantedTo = data.users.filter((u) => u.permissions.includes(p.id));
+                const expanded = expandedPerm === p.id;
                 return (
-                  <div key={p.id} className="flex items-center justify-between gap-4 px-5 py-3">
-                    <div className="min-w-0">
-                      <div className="text-sm font-medium text-foreground">{p.label}</div>
-                      <div className="text-xs text-ink-muted">{p.description}</div>
-                      <div className="mt-1 text-[11px] text-ink-muted">
-                        Granted to {grantedTo.length} user{grantedTo.length === 1 ? "" : "s"}
+                  <div key={p.id} className="px-5 py-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-foreground">{p.label}</div>
+                        <div className="text-xs text-ink-muted">{p.description}</div>
+                        <button
+                          onClick={() => setExpandedPerm(expanded ? null : p.id)}
+                          className="press mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-foreground hover:underline"
+                          disabled={grantedTo.length === 0}
+                        >
+                          Granted to {grantedTo.length} user{grantedTo.length === 1 ? "" : "s"}
+                          {grantedTo.length > 0 && <span className="text-ink-muted">{expanded ? "▲" : "▼"}</span>}
+                        </button>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <code className="hidden rounded-md bg-tile px-2 py-0.5 text-[11px] text-ink-muted md:inline">{p.id}</code>
+                        <button
+                          onClick={() => setAssignPerm(p.id)}
+                          className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background"
+                        >
+                          <UserPlus className="size-3" /> Assign
+                        </button>
                       </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <code className="hidden rounded-md bg-tile px-2 py-0.5 text-[11px] text-ink-muted md:inline">
-                        {p.id}
-                      </code>
-                      <button
-                        onClick={() => setAssignPerm(p.id)}
-                        className="press inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background"
-                      >
-                        <UserPlus className="size-3" /> Assign
-                      </button>
-                    </div>
+                    {expanded && grantedTo.length > 0 && (
+                      <div className="mt-3 divide-y rounded-xl border bg-surface/40">
+                        {grantedTo.map((u) => (
+                          <div key={u.id} className="flex items-center justify-between px-3 py-2">
+                            <div className="text-xs">
+                              <span className="font-medium text-foreground">{u.name}</span>
+                              <span className="text-ink-muted"> · {u.email}</span>
+                            </div>
+                            <button
+                              onClick={() => revokeFromUser(u.id, p.id, u.name)}
+                              className="press inline-flex items-center gap-1 rounded-full border border-cat-rose/30 bg-cat-rose-bg px-2.5 py-0.5 text-[11px] text-cat-rose"
+                            >
+                              <X className="size-3" /> Revoke from {u.name.split(" ")[0]}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}
