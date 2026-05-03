@@ -29,8 +29,10 @@ import {
   SlidersHorizontal,
   Lock,
   Shield,
+  ShieldAlert,
   Plug,
   History,
+  BarChart2,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -81,11 +83,18 @@ const main: NavItem[] = [
     icon: Sparkles,
     showLockedIfNot: ["funding.match.read", "funding.projects.read"],
   },
+  {
+    label: "Reports",
+    to: "/reports",
+    icon: BarChart2,
+    visibleIf: ["reports.read"],
+  },
 ];
 
 const adminGroup: NavItem[] = [
   { label: "Users", to: "/admin/users", icon: Users, visibleIf: ["users.read"] },
   { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
+  { label: "Risk & Compliance", to: "/admin/risk", icon: ShieldAlert, visibleIf: ["risk.read"] },
   { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
   { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
   { label: "Audit log", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
