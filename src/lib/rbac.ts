@@ -279,6 +279,7 @@ export const OPERATOR_PRESETS: OperatorPreset[] = [
       "funding.match.read", "funding.projects.read", "funding.projects.create",
       "funding.evidence.upload", "funding.submit",
       "reports.read", "reports.export",
+      "risk.read",
     ],
   },
   {
@@ -294,6 +295,7 @@ export const OPERATOR_PRESETS: OperatorPreset[] = [
       "audit.read", "audit.export", "activity.read",
       "amendments.queue.read", "amendments.review",
       "ibg.amendment.approve",
+      "risk.read", "risk.flag",
     ],
   },
 ];
@@ -302,13 +304,16 @@ export const OPERATOR_PRESETS: OperatorPreset[] = [
 
 const ALL: Permission[] = PERMISSIONS.map((p) => p.id);
 
+/**
+ * External stakeholders — read access to operational records only.
+ * No audit log, no admin functions. They get a limited activity scope only.
+ */
 const READONLY_PERMS: Permission[] = [
   "customers.read", "properties.read", "jobs.read",
   "ibg.read", "ibg.repository.read", "ibg.history.full",
   "submissions.read",
   "funding.projects.read",
   "reports.read",
-  "audit.read",
 ];
 
 const ACCESS_PERMS: Permission[] = [
