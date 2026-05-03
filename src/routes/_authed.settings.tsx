@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { User, Bell, CreditCard, Wrench, Plug, ShieldCheck, KeyRound } from "lucide-react";
+import { User, Bell, CreditCard, Wrench, Plug, ShieldCheck, KeyRound, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 
@@ -23,6 +23,7 @@ function SettingsLayout() {
     { to: "/settings/subscription", label: "Subscription", icon: CreditCard, show: showSubscription },
     { to: "/settings/integrations", label: "Integrations", icon: Plug, show: isAdmin || user.role === "installer-operate" },
     { to: "/settings/measures", label: "Measures", icon: Wrench, show: true },
+    { to: "/settings/team", label: "Team", icon: Users, show: isAdmin || user.role === "installer-operate" },
   ].filter((i) => i.show);
 
   // /settings root → redirect to profile via showing the profile content.

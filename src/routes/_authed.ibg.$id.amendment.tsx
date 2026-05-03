@@ -1,6 +1,6 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update, nid } from "@/lib/mock/store";
 import { findIbg, pushAudit } from "@/lib/mock/queries";
@@ -18,11 +18,11 @@ function Amendment() {
   const data = useStore();
   const ibg = findIbg(data, id);
   const { user } = useAuth();
-  const nav = useNavigate();
   const [field, setField] = useState(FIELDS[0]);
   const [oldValue, setOldValue] = useState("");
   const [newValue, setNewValue] = useState("");
   const [reason, setReason] = useState("");
+  const [submittedRef, setSubmittedRef] = useState<string | null>(null);
 
   if (!ibg) throw notFound();
 
@@ -40,7 +40,25 @@ function Amendment() {
       pushAudit(d, "amendment", amdId, user.fullName, `Requested amendment to ${field}`, reason);
     });
     toast.success("Amendment request sent for admin review");
-    nav({ to: "/ibg/$id", params: { id } });
+    setSubmittedRef(amdId.toUpperCase().replace("AMD_", "AMD-"));
+  }
+
+  if (submittedRef) {
+    return (
+      <div className="mx-auto w-full max-w-xl px-8 py-16 text-center">
+        <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-cat-green-bg text-cat-green">
+          <CheckCircle2 className="size-8" />
+        </span>
+        <h1 className="mt-5 text-3xl font-semibold tracking-tight text-ink">Request submitted</h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          Reference <span className="font-medium text-foreground">{submittedRef}</span> · sent to compliance review.
+        </p>
+        <div className="mt-6 flex items-center justify-center gap-2">
+          <Link to="/ibg/$id" params={{ id }} className="press rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background">Back to {ibg.ref}</Link>
+          <Link to="/ibg/repository" className="press rounded-full border bg-background px-4 py-2 text-sm font-medium">Open repository</Link>
+        </div>
+      </div>
+    );
   }
 
   return (

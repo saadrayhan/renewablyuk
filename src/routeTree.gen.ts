@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -18,6 +19,7 @@ import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthedSubmissionsRouteImport } from './routes/_authed.submissions'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed.settings'
+import { Route as AuthedReportsRouteImport } from './routes/_authed.reports'
 import { Route as AuthedPropertiesRouteImport } from './routes/_authed.properties'
 import { Route as AuthedProjectsRouteImport } from './routes/_authed.projects'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed.onboarding'
@@ -26,6 +28,7 @@ import { Route as AuthedFundingRouteImport } from './routes/_authed.funding'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed.dashboard'
 import { Route as AuthedCustomersRouteImport } from './routes/_authed.customers'
 import { Route as AuthedSubmissionsIdRouteImport } from './routes/_authed.submissions.$id'
+import { Route as AuthedSettingsTeamRouteImport } from './routes/_authed.settings.team'
 import { Route as AuthedSettingsSubscriptionRouteImport } from './routes/_authed.settings.subscription'
 import { Route as AuthedSettingsSecurityRouteImport } from './routes/_authed.settings.security'
 import { Route as AuthedSettingsProfileRouteImport } from './routes/_authed.settings.profile'
@@ -33,6 +36,7 @@ import { Route as AuthedSettingsNotificationsRouteImport } from './routes/_authe
 import { Route as AuthedSettingsMeasuresRouteImport } from './routes/_authed.settings.measures'
 import { Route as AuthedSettingsIntegrationsRouteImport } from './routes/_authed.settings.integrations'
 import { Route as AuthedSettingsAccessRouteImport } from './routes/_authed.settings.access'
+import { Route as AuthedPropertiesNewRouteImport } from './routes/_authed.properties.new'
 import { Route as AuthedPropertiesIdRouteImport } from './routes/_authed.properties.$id'
 import { Route as AuthedJobsNewRouteImport } from './routes/_authed.jobs.new'
 import { Route as AuthedJobsIdRouteImport } from './routes/_authed.jobs.$id'
@@ -57,6 +61,11 @@ import { Route as AuthedFundingIdTrackingRouteImport } from './routes/_authed.fu
 import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
 import { Route as AuthedAdminRiskIdRouteImport } from './routes/_authed.admin.risk.$id'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -101,6 +110,11 @@ const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedReportsRoute = AuthedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedPropertiesRoute = AuthedPropertiesRouteImport.update({
   id: '/properties',
   path: '/properties',
@@ -141,6 +155,11 @@ const AuthedSubmissionsIdRoute = AuthedSubmissionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthedSubmissionsRoute,
 } as any)
+const AuthedSettingsTeamRoute = AuthedSettingsTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AuthedSettingsRoute,
+} as any)
 const AuthedSettingsSubscriptionRoute =
   AuthedSettingsSubscriptionRouteImport.update({
     id: '/subscription',
@@ -178,6 +197,11 @@ const AuthedSettingsAccessRoute = AuthedSettingsAccessRouteImport.update({
   id: '/access',
   path: '/access',
   getParentRoute: () => AuthedSettingsRoute,
+} as any)
+const AuthedPropertiesNewRoute = AuthedPropertiesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthedPropertiesRoute,
 } as any)
 const AuthedPropertiesIdRoute = AuthedPropertiesIdRouteImport.update({
   id: '/$id',
@@ -302,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/verify': typeof VerifyRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
   '/funding': typeof AuthedFundingRouteWithChildren
@@ -309,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
+  '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
   '/admin/activity': typeof AuthedAdminActivityRoute
@@ -330,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id': typeof AuthedJobsIdRoute
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
+  '/properties/new': typeof AuthedPropertiesNewRoute
   '/settings/access': typeof AuthedSettingsAccessRoute
   '/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
@@ -337,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/settings/profile': typeof AuthedSettingsProfileRoute
   '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
+  '/settings/team': typeof AuthedSettingsTeamRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -350,6 +378,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/verify': typeof VerifyRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
   '/funding': typeof AuthedFundingRouteWithChildren
@@ -357,6 +386,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
+  '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
   '/admin/activity': typeof AuthedAdminActivityRoute
@@ -378,6 +408,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof AuthedJobsIdRoute
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
+  '/properties/new': typeof AuthedPropertiesNewRoute
   '/settings/access': typeof AuthedSettingsAccessRoute
   '/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
@@ -385,6 +416,7 @@ export interface FileRoutesByTo {
   '/settings/profile': typeof AuthedSettingsProfileRoute
   '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
+  '/settings/team': typeof AuthedSettingsTeamRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -400,6 +432,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/verify': typeof VerifyRoute
   '/_authed/customers': typeof AuthedCustomersRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/funding': typeof AuthedFundingRouteWithChildren
@@ -407,6 +440,7 @@ export interface FileRoutesById {
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/projects': typeof AuthedProjectsRoute
   '/_authed/properties': typeof AuthedPropertiesRouteWithChildren
+  '/_authed/reports': typeof AuthedReportsRoute
   '/_authed/settings': typeof AuthedSettingsRouteWithChildren
   '/_authed/submissions': typeof AuthedSubmissionsRouteWithChildren
   '/_authed/admin/activity': typeof AuthedAdminActivityRoute
@@ -428,6 +462,7 @@ export interface FileRoutesById {
   '/_authed/jobs/$id': typeof AuthedJobsIdRoute
   '/_authed/jobs/new': typeof AuthedJobsNewRoute
   '/_authed/properties/$id': typeof AuthedPropertiesIdRoute
+  '/_authed/properties/new': typeof AuthedPropertiesNewRoute
   '/_authed/settings/access': typeof AuthedSettingsAccessRoute
   '/_authed/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/_authed/settings/measures': typeof AuthedSettingsMeasuresRoute
@@ -435,6 +470,7 @@ export interface FileRoutesById {
   '/_authed/settings/profile': typeof AuthedSettingsProfileRoute
   '/_authed/settings/security': typeof AuthedSettingsSecurityRoute
   '/_authed/settings/subscription': typeof AuthedSettingsSubscriptionRoute
+  '/_authed/settings/team': typeof AuthedSettingsTeamRoute
   '/_authed/submissions/$id': typeof AuthedSubmissionsIdRoute
   '/_authed/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
@@ -450,6 +486,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify'
     | '/customers'
     | '/dashboard'
     | '/funding'
@@ -457,6 +494,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/projects'
     | '/properties'
+    | '/reports'
     | '/settings'
     | '/submissions'
     | '/admin/activity'
@@ -478,6 +516,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/properties/$id'
+    | '/properties/new'
     | '/settings/access'
     | '/settings/integrations'
     | '/settings/measures'
@@ -485,6 +524,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/security'
     | '/settings/subscription'
+    | '/settings/team'
     | '/submissions/$id'
     | '/admin/risk/$id'
     | '/admin/users/$id'
@@ -498,6 +538,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify'
     | '/customers'
     | '/dashboard'
     | '/funding'
@@ -505,6 +546,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/projects'
     | '/properties'
+    | '/reports'
     | '/settings'
     | '/submissions'
     | '/admin/activity'
@@ -526,6 +568,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/properties/$id'
+    | '/properties/new'
     | '/settings/access'
     | '/settings/integrations'
     | '/settings/measures'
@@ -533,6 +576,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/security'
     | '/settings/subscription'
+    | '/settings/team'
     | '/submissions/$id'
     | '/admin/risk/$id'
     | '/admin/users/$id'
@@ -547,6 +591,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify'
     | '/_authed/customers'
     | '/_authed/dashboard'
     | '/_authed/funding'
@@ -554,6 +599,7 @@ export interface FileRouteTypes {
     | '/_authed/onboarding'
     | '/_authed/projects'
     | '/_authed/properties'
+    | '/_authed/reports'
     | '/_authed/settings'
     | '/_authed/submissions'
     | '/_authed/admin/activity'
@@ -575,6 +621,7 @@ export interface FileRouteTypes {
     | '/_authed/jobs/$id'
     | '/_authed/jobs/new'
     | '/_authed/properties/$id'
+    | '/_authed/properties/new'
     | '/_authed/settings/access'
     | '/_authed/settings/integrations'
     | '/_authed/settings/measures'
@@ -582,6 +629,7 @@ export interface FileRouteTypes {
     | '/_authed/settings/profile'
     | '/_authed/settings/security'
     | '/_authed/settings/subscription'
+    | '/_authed/settings/team'
     | '/_authed/submissions/$id'
     | '/_authed/admin/risk/$id'
     | '/_authed/admin/users/$id'
@@ -597,10 +645,18 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-up': {
       id: '/sign-up'
       path: '/sign-up'
@@ -664,6 +720,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedSettingsRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/reports': {
+      id: '/_authed/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthedReportsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/properties': {
       id: '/_authed/properties'
       path: '/properties'
@@ -720,6 +783,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedSubmissionsIdRouteImport
       parentRoute: typeof AuthedSubmissionsRoute
     }
+    '/_authed/settings/team': {
+      id: '/_authed/settings/team'
+      path: '/team'
+      fullPath: '/settings/team'
+      preLoaderRoute: typeof AuthedSettingsTeamRouteImport
+      parentRoute: typeof AuthedSettingsRoute
+    }
     '/_authed/settings/subscription': {
       id: '/_authed/settings/subscription'
       path: '/subscription'
@@ -768,6 +838,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/access'
       preLoaderRoute: typeof AuthedSettingsAccessRouteImport
       parentRoute: typeof AuthedSettingsRoute
+    }
+    '/_authed/properties/new': {
+      id: '/_authed/properties/new'
+      path: '/new'
+      fullPath: '/properties/new'
+      preLoaderRoute: typeof AuthedPropertiesNewRouteImport
+      parentRoute: typeof AuthedPropertiesRoute
     }
     '/_authed/properties/$id': {
       id: '/_authed/properties/$id'
@@ -989,10 +1066,12 @@ const AuthedJobsRouteWithChildren = AuthedJobsRoute._addFileChildren(
 
 interface AuthedPropertiesRouteChildren {
   AuthedPropertiesIdRoute: typeof AuthedPropertiesIdRoute
+  AuthedPropertiesNewRoute: typeof AuthedPropertiesNewRoute
 }
 
 const AuthedPropertiesRouteChildren: AuthedPropertiesRouteChildren = {
   AuthedPropertiesIdRoute: AuthedPropertiesIdRoute,
+  AuthedPropertiesNewRoute: AuthedPropertiesNewRoute,
 }
 
 const AuthedPropertiesRouteWithChildren =
@@ -1006,6 +1085,7 @@ interface AuthedSettingsRouteChildren {
   AuthedSettingsProfileRoute: typeof AuthedSettingsProfileRoute
   AuthedSettingsSecurityRoute: typeof AuthedSettingsSecurityRoute
   AuthedSettingsSubscriptionRoute: typeof AuthedSettingsSubscriptionRoute
+  AuthedSettingsTeamRoute: typeof AuthedSettingsTeamRoute
 }
 
 const AuthedSettingsRouteChildren: AuthedSettingsRouteChildren = {
@@ -1016,6 +1096,7 @@ const AuthedSettingsRouteChildren: AuthedSettingsRouteChildren = {
   AuthedSettingsProfileRoute: AuthedSettingsProfileRoute,
   AuthedSettingsSecurityRoute: AuthedSettingsSecurityRoute,
   AuthedSettingsSubscriptionRoute: AuthedSettingsSubscriptionRoute,
+  AuthedSettingsTeamRoute: AuthedSettingsTeamRoute,
 }
 
 const AuthedSettingsRouteWithChildren = AuthedSettingsRoute._addFileChildren(
@@ -1076,6 +1157,7 @@ interface AuthedRouteChildren {
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedProjectsRoute: typeof AuthedProjectsRoute
   AuthedPropertiesRoute: typeof AuthedPropertiesRouteWithChildren
+  AuthedReportsRoute: typeof AuthedReportsRoute
   AuthedSettingsRoute: typeof AuthedSettingsRouteWithChildren
   AuthedSubmissionsRoute: typeof AuthedSubmissionsRouteWithChildren
   AuthedAdminActivityRoute: typeof AuthedAdminActivityRoute
@@ -1100,6 +1182,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedProjectsRoute: AuthedProjectsRoute,
   AuthedPropertiesRoute: AuthedPropertiesRouteWithChildren,
+  AuthedReportsRoute: AuthedReportsRoute,
   AuthedSettingsRoute: AuthedSettingsRouteWithChildren,
   AuthedSubmissionsRoute: AuthedSubmissionsRouteWithChildren,
   AuthedAdminActivityRoute: AuthedAdminActivityRoute,
@@ -1127,6 +1210,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
