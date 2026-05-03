@@ -13,6 +13,10 @@ import type {
   FundingMatch,
   PermissionRequest,
   Integration,
+  InstallationType,
+  SystemType,
+  RiskAssessment,
+  RiskOverride,
 } from "./types";
 
 const now = 1746115200000; // 2026-05-01 stable
@@ -407,6 +411,8 @@ export function seed() {
       permissions: [],
       invitedAt: now - 90 * day,
       lastActive: now,
+      accountRiskState: "active",
+      entityType: "limited",
     },
     {
       id: "usr_005",
@@ -417,6 +423,8 @@ export function seed() {
       permissions: [],
       invitedAt: now - 50 * day,
       lastActive: now - 4 * day,
+      accountRiskState: "flagged",
+      entityType: "sole-trader",
     },
     {
       id: "usr_006",
@@ -427,6 +435,8 @@ export function seed() {
       permissions: [],
       invitedAt: now - 70 * day,
       lastActive: now - 5 * day,
+      accountRiskState: "paused",
+      entityType: "limited",
     },
     {
       id: "usr_007",
