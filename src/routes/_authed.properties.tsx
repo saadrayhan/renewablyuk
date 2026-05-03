@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Home as HomeIcon } from "lucide-react";
+import { Search, Home as HomeIcon, Plus } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
 import { useStore } from "@/lib/mock/store";
 import { StatePill, RECORD_STATES } from "@/components/app/state-pill";
