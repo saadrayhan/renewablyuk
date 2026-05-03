@@ -185,6 +185,25 @@ function FundingDetail() {
           </div>
 
           <div className="rounded-2xl border bg-card">
+            <div className="flex items-center justify-between border-b px-5 py-3">
+              <div className="text-sm font-medium">Linked job</div>
+              <button onClick={() => setLinkJobOpen(true)} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1 text-xs">
+                <Link2 className="size-3" /> Change
+              </button>
+            </div>
+            <div className="px-5 py-4">
+              {job ? (
+                <Link to="/jobs/$id" params={{ id: job.id }} className="block">
+                  <div className="text-sm font-medium text-foreground">{job.ref} · {job.measure}</div>
+                  <div className="text-xs text-ink-muted">Owner {job.owner} · {job.startDate}</div>
+                </Link>
+              ) : (
+                <div className="text-sm text-ink-muted">No job linked.</div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border bg-card">
             <div className="border-b px-5 py-3 text-sm font-medium">Evidence</div>
             <div className="divide-y">
               {f.evidence.length === 0 ? (
@@ -203,6 +222,31 @@ function FundingDetail() {
         </div>
         <AuditTimeline entityType="funding" entityId={f.id} />
       </div>
+
+      <EvidenceUploadDialog open={evidenceOpen} onOpenChange={setEvidenceOpen} fundingId={id} />
+
+      {linkJobOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-foreground/40 p-4" onClick={() => setLinkJobOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-2xl border bg-card p-5">
+            <div className="text-sm font-medium text-foreground">Change linked job</div>
+            <p className="mt-1 text-xs text-ink-muted">Move this funding project to a different job.</p>
+            <div className="mt-3 max-h-[320px] divide-y overflow-y-auto rounded-xl border">
+              {data.jobs.map((j) => (
+                <button key={j.id} onClick={() => changeJob(j.id)} className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-surface ${j.id === f.jobId ? "bg-surface" : ""}`}>
+                  <div>
+                    <div className="font-medium text-foreground">{j.ref} · {j.measure}</div>
+                    <div className="text-[11px] text-ink-muted">{j.owner} · {j.startDate}</div>
+                  </div>
+                  {j.id === f.jobId && <span className="text-[11px] text-ink-muted">Current</span>}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 flex justify-end">
+              <button onClick={() => setLinkJobOpen(false)} className="press rounded-full border bg-background px-3 py-1.5 text-xs">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
