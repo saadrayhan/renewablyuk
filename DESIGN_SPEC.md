@@ -18947,3 +18947,49 @@ DO NOT use a centred modal — use a right-side Sheet.
 ---
 
 *End of specification.*
+
+---
+
+## Section 8 — Latest Update (Risk, Reports, Team, Verify)
+
+This patch finalises the polish pass. Three previously-locked screens are now real.
+
+### 8.1 Reports — `/reports`
+- Permission gate: `reports.read` (LockedCard otherwise).
+- `UnderlineTabs` with four views: IBGs, Job pipeline, Funding, Submissions.
+- Each tab renders a `ReportCard` with 4 stat tiles + a chart:
+  - IBGs: `LineSpark` SVG polyline (issued/month/pending/cancelled).
+  - Pipeline: horizontal `BarRow` (active/completed/blocked/archived).
+  - Funding: `Funnel` SVG (started/in-review/submitted) using `var(--cat-amber)`.
+  - Submissions: `Pie` SVG using cat-green, cat-rose, cat-blue.
+- "Export current view" button populates an in-memory list rendered in a "Recent exports" card with download stubs.
+- No coming-soon overlay.
+
+### 8.2 Team — `/settings/team`
+- Members table: Name, Role (`ROLE_META[role].label`), Status (`StatePill` from `USER_STATES`), Last active (`fmtDate(invitedAt)`), Permissions count.
+- Role capabilities matrix: rows are capabilities, columns are roles (admin / operator / installer-operate / installer-access / readonly). Cells are `Check` (cat-green) or `X` (muted).
+- Capability checks read from `DEFAULT_PERMISSIONS[role]` (e.g. `ibg.issue`, `funding.submit`, `users.permissions.assign`, `audit.read`, `risk.flag`).
+- Header CTA: "Invite member" opens existing `InviteDialog`.
+- No coming-soon overlay.
+
+### 8.3 Verify — `/verify` (public)
+- Public route, no auth, no sidebar.
+- Centred max-w-xl layout with Renewably mark + title.
+- Mock lookup: any input starting with `IBG-` returns a green `ShieldCheck` panel with measure/address/issuedAt; otherwise amber `AlertCircle` panel.
+- Footer line replaces the previous "beta" lock chip with descriptive copy.
+
+### 8.4 Job evidence tab — `/jobs/$id`
+- New tab `evidence` between Documents and IBGs.
+- `EVIDENCE_CHECKLIST` constant: `mcs` (req), `epc` (req), `photos` (req), `retrofit` (opt), `declaration` (req).
+- Each row: required/optional pill (cat-amber/tile), status pill (pending/uploaded/rejected), Upload/Remove button.
+- Header progress bar shows `requiredDone / required.length` as a percentage in cat-green.
+- Footer caption: "Uploaded evidence is automatically validated against the IBG issuance gate."
+
+### 8.5 Permissions library inline revoke — `/admin/permissions`
+- Each permission row's "Granted to N users" line is now a button that toggles an inline panel listing each granted user with a "Revoke from {first name}" action.
+- `revokeFromUser()` mutates the store, pushes an audit entry, and toasts.
+- Library and per-user pages stay in sync via the shared mock store.
+
+### 8.6 Tokens / animation
+- No new tokens. Charts use existing `var(--cat-green|amber|blue|rose)` and `bg-tile`.
+- All transitions reuse existing `transition-[width] duration-500` and `press` utility.
