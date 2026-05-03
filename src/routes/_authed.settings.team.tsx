@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ShieldCheck, Send, Check, X } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
 import { useStore } from "@/lib/mock/store";
-import { ROLE_META, PERMISSIONS, DEFAULT_PERMISSIONS, type RoleId } from "@/lib/rbac";
+import { ROLE_META, PERMISSIONS, DEFAULT_PERMISSIONS, type Role as RoleId } from "@/lib/rbac";
 import { StatePill, USER_STATES } from "@/components/app/state-pill";
 import { InviteDialog } from "@/components/app/invite-dialog";
 import { fmtDate } from "@/lib/mock/queries";
