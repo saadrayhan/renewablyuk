@@ -45,6 +45,7 @@ import { Route as AuthedFundingIdRouteImport } from './routes/_authed.funding.$i
 import { Route as AuthedCustomersNewRouteImport } from './routes/_authed.customers.new'
 import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customers.$id'
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
+import { Route as AuthedAdminRiskRouteImport } from './routes/_authed.admin.risk'
 import { Route as AuthedAdminPermissionsRouteImport } from './routes/_authed.admin.permissions'
 import { Route as AuthedAdminOnboardingRouteImport } from './routes/_authed.admin.onboarding'
 import { Route as AuthedAdminConfigRouteImport } from './routes/_authed.admin.config'
@@ -54,6 +55,7 @@ import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.
 import { Route as AuthedIbgIdAmendmentRouteImport } from './routes/_authed.ibg.$id.amendment'
 import { Route as AuthedFundingIdTrackingRouteImport } from './routes/_authed.funding.$id.tracking'
 import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
+import { Route as AuthedAdminRiskIdRouteImport } from './routes/_authed.admin.risk.$id'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -237,6 +239,11 @@ const AuthedAdminUsersRoute = AuthedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminRiskRoute = AuthedAdminRiskRouteImport.update({
+  id: '/admin/risk',
+  path: '/admin/risk',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminPermissionsRoute = AuthedAdminPermissionsRouteImport.update({
   id: '/admin/permissions',
   path: '/admin/permissions',
@@ -282,6 +289,11 @@ const AuthedAdminUsersIdRoute = AuthedAdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthedAdminUsersRoute,
 } as any)
+const AuthedAdminRiskIdRoute = AuthedAdminRiskIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthedAdminRiskRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -305,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/admin/config': typeof AuthedAdminConfigRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
+  '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
@@ -325,6 +338,7 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
+  '/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
   '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
@@ -351,6 +365,7 @@ export interface FileRoutesByTo {
   '/admin/config': typeof AuthedAdminConfigRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
+  '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
@@ -371,6 +386,7 @@ export interface FileRoutesByTo {
   '/settings/security': typeof AuthedSettingsSecurityRoute
   '/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/submissions/$id': typeof AuthedSubmissionsIdRoute
+  '/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
   '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
@@ -399,6 +415,7 @@ export interface FileRoutesById {
   '/_authed/admin/config': typeof AuthedAdminConfigRoute
   '/_authed/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/_authed/admin/permissions': typeof AuthedAdminPermissionsRoute
+  '/_authed/admin/risk': typeof AuthedAdminRiskRouteWithChildren
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
@@ -419,6 +436,7 @@ export interface FileRoutesById {
   '/_authed/settings/security': typeof AuthedSettingsSecurityRoute
   '/_authed/settings/subscription': typeof AuthedSettingsSubscriptionRoute
   '/_authed/submissions/$id': typeof AuthedSubmissionsIdRoute
+  '/_authed/admin/risk/$id': typeof AuthedAdminRiskIdRoute
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
   '/_authed/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/_authed/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
@@ -447,6 +465,7 @@ export interface FileRouteTypes {
     | '/admin/config'
     | '/admin/onboarding'
     | '/admin/permissions'
+    | '/admin/risk'
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
@@ -467,6 +486,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/settings/subscription'
     | '/submissions/$id'
+    | '/admin/risk/$id'
     | '/admin/users/$id'
     | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
@@ -493,6 +513,7 @@ export interface FileRouteTypes {
     | '/admin/config'
     | '/admin/onboarding'
     | '/admin/permissions'
+    | '/admin/risk'
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
@@ -513,6 +534,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/settings/subscription'
     | '/submissions/$id'
+    | '/admin/risk/$id'
     | '/admin/users/$id'
     | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
@@ -540,6 +562,7 @@ export interface FileRouteTypes {
     | '/_authed/admin/config'
     | '/_authed/admin/onboarding'
     | '/_authed/admin/permissions'
+    | '/_authed/admin/risk'
     | '/_authed/admin/users'
     | '/_authed/customers/$id'
     | '/_authed/customers/new'
@@ -560,6 +583,7 @@ export interface FileRouteTypes {
     | '/_authed/settings/security'
     | '/_authed/settings/subscription'
     | '/_authed/submissions/$id'
+    | '/_authed/admin/risk/$id'
     | '/_authed/admin/users/$id'
     | '/_authed/funding/$id/tracking'
     | '/_authed/ibg/$id/amendment'
@@ -829,6 +853,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminUsersRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/risk': {
+      id: '/_authed/admin/risk'
+      path: '/admin/risk'
+      fullPath: '/admin/risk'
+      preLoaderRoute: typeof AuthedAdminRiskRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/permissions': {
       id: '/_authed/admin/permissions'
       path: '/admin/permissions'
@@ -891,6 +922,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/users/$id'
       preLoaderRoute: typeof AuthedAdminUsersIdRouteImport
       parentRoute: typeof AuthedAdminUsersRoute
+    }
+    '/_authed/admin/risk/$id': {
+      id: '/_authed/admin/risk/$id'
+      path: '/$id'
+      fullPath: '/admin/risk/$id'
+      preLoaderRoute: typeof AuthedAdminRiskIdRouteImport
+      parentRoute: typeof AuthedAdminRiskRoute
     }
   }
 }
@@ -995,6 +1033,18 @@ const AuthedSubmissionsRouteChildren: AuthedSubmissionsRouteChildren = {
 const AuthedSubmissionsRouteWithChildren =
   AuthedSubmissionsRoute._addFileChildren(AuthedSubmissionsRouteChildren)
 
+interface AuthedAdminRiskRouteChildren {
+  AuthedAdminRiskIdRoute: typeof AuthedAdminRiskIdRoute
+}
+
+const AuthedAdminRiskRouteChildren: AuthedAdminRiskRouteChildren = {
+  AuthedAdminRiskIdRoute: AuthedAdminRiskIdRoute,
+}
+
+const AuthedAdminRiskRouteWithChildren = AuthedAdminRiskRoute._addFileChildren(
+  AuthedAdminRiskRouteChildren,
+)
+
 interface AuthedAdminUsersRouteChildren {
   AuthedAdminUsersIdRoute: typeof AuthedAdminUsersIdRoute
 }
@@ -1034,6 +1084,7 @@ interface AuthedRouteChildren {
   AuthedAdminConfigRoute: typeof AuthedAdminConfigRoute
   AuthedAdminOnboardingRoute: typeof AuthedAdminOnboardingRoute
   AuthedAdminPermissionsRoute: typeof AuthedAdminPermissionsRoute
+  AuthedAdminRiskRoute: typeof AuthedAdminRiskRouteWithChildren
   AuthedAdminUsersRoute: typeof AuthedAdminUsersRouteWithChildren
   AuthedIbgIdRoute: typeof AuthedIbgIdRouteWithChildren
   AuthedIbgHistoryRoute: typeof AuthedIbgHistoryRoute
@@ -1057,6 +1108,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminConfigRoute: AuthedAdminConfigRoute,
   AuthedAdminOnboardingRoute: AuthedAdminOnboardingRoute,
   AuthedAdminPermissionsRoute: AuthedAdminPermissionsRoute,
+  AuthedAdminRiskRoute: AuthedAdminRiskRouteWithChildren,
   AuthedAdminUsersRoute: AuthedAdminUsersRouteWithChildren,
   AuthedIbgIdRoute: AuthedIbgIdRouteWithChildren,
   AuthedIbgHistoryRoute: AuthedIbgHistoryRoute,
