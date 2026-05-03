@@ -74,7 +74,7 @@ function RiskDetail() {
         <ArrowLeft className="size-3.5" /> Risk & Compliance
       </Link>
 
-      <div className="mt-3 flex items-start justify-between gap-6">
+      <div className={`mt-3 flex items-start justify-between gap-6 rounded-2xl px-3 py-2 transition-colors duration-700 ${flash ? "bg-cat-amber-bg/40" : "bg-transparent"}`}>
         <div>
           <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">Account · {isLtd ? "Limited Co." : "Sole Trader"}</div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">{u.name}</h1>
