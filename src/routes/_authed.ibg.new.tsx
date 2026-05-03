@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Download, FileBadge } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Download, FileBadge, Check, AlertCircle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useStore, update, nid, nref } from "@/lib/mock/store";
 import { pushAudit } from "@/lib/mock/queries";
@@ -14,14 +14,13 @@ export const Route = createFileRoute("/_authed/ibg/new")({
   component: NewIbg,
 });
 
-const MEASURES = ["Air Source Heat Pump", "Solar PV", "Loft Insulation", "Cavity Wall Insulation", "EV Charger"];
 const POLICIES = ["10-year IBG", "25-year IBG"];
 
 function NewIbg() {
   const data = useStore();
   const nav = useNavigate();
   const { user } = useAuth();
-  const { role, permissions } = useDevRole();
+  const { role, permissions, devUserId } = useDevRole();
   const isOperate = role === "installer-operate" || role === "operator" || role === "admin";
 
   if (!can(permissions, "ibg.issue")) {
@@ -32,27 +31,53 @@ function NewIbg() {
     );
   }
 
+  // Acting org — use the dev-switched user as proxy organisation
+  const actingUser = data.users.find((u) => u.id === devUserId) ?? data.users[0];
+  const accountState = actingUser?.accountRiskState ?? "active";
+  const activeOverride = data.riskOverrides.find((o) => o.organisationId === actingUser?.id && o.active && (!o.expiresAt || o.expiresAt > Date.now()));
+  const accountAllowsIssue = accountState === "active" || !!activeOverride;
+
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     customerId: isOperate ? data.customers[0]?.id ?? "" : "",
-    customerName: "", propertyAddress: "",
-    measure: MEASURES[0], policyType: POLICIES[0],
+    customerName: "",
+    propertyAddress: "",
+    jobId: "",
+    installationTypeId: "",
+    systemTypeId: "",
+    policyType: POLICIES[0],
   });
+  const [propertyId, setPropertyId] = useState("");
   const [issuedRef, setIssuedRef] = useState<string | null>(null);
   const [issuedId, setIssuedId] = useState<string | null>(null);
 
   const props = data.properties.filter((p) => p.customerId === form.customerId);
-  const [propertyId, setPropertyId] = useState("");
+  const customerJobs = data.jobs.filter((j) => j.customerId === form.customerId);
+  const linkedJob = data.jobs.find((j) => j.id === form.jobId);
+  const fundingForJob = data.fundingProjects.find((p) => p.jobId === form.jobId);
+  const evidenceCount = fundingForJob?.evidence.length ?? 0;
+
+  const installationTypes = data.installationTypes.filter((t) => t.status === "active");
+  const systemTypes = useMemo(
+    () => data.systemTypes.filter((s) => s.status === "active" && s.installationTypeId === form.installationTypeId),
+    [data.systemTypes, form.installationTypeId],
+  );
+
+  const readinessChecks = [
+    { key: "account", label: "Account in good standing", ok: accountAllowsIssue, hint: accountAllowsIssue ? (activeOverride ? "Active HIGH override applied" : "Account active") : `Account is ${accountState} — issuance blocked` },
+    { key: "subject", label: isOperate ? "Customer & property selected" : "Customer & address provided", ok: isOperate ? !!(form.customerId && propertyId) : !!(form.customerName && form.propertyAddress), hint: "Select the subject of the guarantee" },
+    { key: "job", label: "Linked to a job", ok: isOperate ? !!form.jobId : true, hint: isOperate ? (form.jobId ? `Linked to ${linkedJob?.ref}` : "Pick the job this IBG covers") : "Standalone (Access tier)" },
+    { key: "evidence", label: "Supporting evidence on file", ok: isOperate ? evidenceCount > 0 : true, hint: isOperate ? (evidenceCount > 0 ? `${evidenceCount} file${evidenceCount === 1 ? "" : "s"}` : "No evidence linked yet — review before issue") : "Not required" },
+    { key: "system", label: "Installation & system type set", ok: !!form.installationTypeId && !!form.systemTypeId, hint: "Required for cover" },
+  ];
+  const readinessOk = readinessChecks.every((c) => c.ok);
 
   function next() {
-    if (step === 0) {
-      if (isOperate) {
-        if (!form.customerId || !propertyId) { toast.error("Pick a customer and property"); return; }
-      } else {
-        if (!form.customerName || !form.propertyAddress) { toast.error("Customer and address required"); return; }
-      }
+    if (step === 0 && !readinessOk) {
+      toast.error("Resolve all readiness checks before continuing");
+      return;
     }
-    setStep((s) => s + 1);
+    setStep((s) => Math.min(3, s + 1));
   }
 
   function issue() {
@@ -60,14 +85,19 @@ function NewIbg() {
     const ref = nref("IBG");
     const customer = data.customers.find((c) => c.id === form.customerId);
     const prop = data.properties.find((p) => p.id === propertyId);
+    const installation = data.installationTypes.find((t) => t.id === form.installationTypeId);
+    const system = data.systemTypes.find((s) => s.id === form.systemTypeId);
+    const measure = `${installation?.name ?? "—"} · ${system?.name ?? "—"}`;
     update((d) => {
       d.ibgs.unshift({
         id, ref,
         customerId: form.customerId || undefined,
         propertyId: propertyId || undefined,
+        jobId: form.jobId || undefined,
         customerName: customer?.name ?? form.customerName,
         propertyAddress: prop ? `${prop.address}, ${prop.postcode}` : form.propertyAddress,
-        measure: form.measure, policyType: form.policyType,
+        measure,
+        policyType: form.policyType,
         state: "issued",
         issuedAt: Date.now(), createdAt: Date.now(),
         issuedBy: user.fullName,
@@ -80,7 +110,7 @@ function NewIbg() {
   }
 
   function download() {
-    const blob = new Blob([`Renewably UK\nIBG Certificate\nReference: ${issuedRef}\nIssued by: ${user.fullName}\nMeasure: ${form.measure}\nPolicy: ${form.policyType}`], { type: "text/plain" });
+    const blob = new Blob([`Renewably UK\nIBG Certificate\nReference: ${issuedRef}\nIssued by: ${user.fullName}\nPolicy: ${form.policyType}`], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url; a.download = `${issuedRef}.txt`; a.click();
@@ -130,16 +160,52 @@ function NewIbg() {
         </div>
       </div>
 
-      <Stepper step={step} total={3} labels={["Subject", "Cover", "Review"]} />
+      {activeOverride && (
+        <div className="mt-4 flex items-start gap-2 rounded-2xl border border-cat-amber/40 bg-cat-amber-bg/50 px-4 py-3 text-xs text-cat-amber">
+          <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+          <div>
+            <div className="font-medium">HIGH risk override active</div>
+            <div className="opacity-90">{activeOverride.reason} — applied by {activeOverride.createdBy}</div>
+          </div>
+        </div>
+      )}
+
+      <Stepper step={step} total={4} labels={["Readiness", "Subject", "Cover", "Review"]} />
 
       <div className="mt-6 rounded-2xl border bg-card p-6">
         {step === 0 && (
+          <div className="space-y-3">
+            <div className="text-sm font-medium text-foreground">Readiness checks</div>
+            <p className="text-xs text-ink-muted">All five checks must pass before issuance is allowed.</p>
+            <ul className="mt-2 space-y-2">
+              {readinessChecks.map((c) => {
+                const Icon = c.ok ? Check : c.key === "account" && !accountAllowsIssue ? ShieldAlert : AlertCircle;
+                const tone = c.ok ? "text-cat-green bg-cat-green-bg" : c.key === "account" && !accountAllowsIssue ? "text-cat-rose bg-cat-rose-bg" : "text-cat-amber bg-cat-amber-bg";
+                return (
+                  <li key={c.key} className="flex items-center justify-between rounded-xl bg-surface/40 px-3 py-2">
+                    <div className="flex items-center gap-3">
+                      <span className={`grid size-6 place-items-center rounded-full ${tone}`}>
+                        <Icon className="size-3.5" />
+                      </span>
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{c.label}</div>
+                        <div className="text-xs text-ink-muted">{c.hint}</div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        {step === 1 && (
           <div className="space-y-4">
             <div className="text-sm font-medium text-foreground">Subject of the guarantee</div>
             {isOperate ? (
               <>
                 <Field label="Customer">
-                  <select value={form.customerId} onChange={(e) => { setForm({ ...form, customerId: e.target.value }); setPropertyId(""); }} className={inputCls}>
+                  <select value={form.customerId} onChange={(e) => { setForm({ ...form, customerId: e.target.value, jobId: "" }); setPropertyId(""); }} className={inputCls}>
                     {data.customers.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.ref})</option>)}
                   </select>
                 </Field>
@@ -147,6 +213,12 @@ function NewIbg() {
                   <select value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className={inputCls}>
                     <option value="">Select…</option>
                     {props.map((p) => <option key={p.id} value={p.id}>{p.address} · {p.postcode}</option>)}
+                  </select>
+                </Field>
+                <Field label="Linked job">
+                  <select value={form.jobId} onChange={(e) => setForm({ ...form, jobId: e.target.value })} className={inputCls}>
+                    <option value="">Select…</option>
+                    {customerJobs.map((j) => <option key={j.id} value={j.id}>{j.ref} · {j.measure}</option>)}
                   </select>
                 </Field>
               </>
@@ -158,27 +230,38 @@ function NewIbg() {
             )}
           </div>
         )}
-        {step === 1 && (
+
+        {step === 2 && (
           <div className="space-y-4">
             <div className="text-sm font-medium text-foreground">Cover</div>
-            <Field label="Measure">
-              <select value={form.measure} onChange={(e) => setForm({ ...form, measure: e.target.value })} className={inputCls}>
-                {MEASURES.map((m) => <option key={m}>{m}</option>)}
+            <Field label="Installation type">
+              <select value={form.installationTypeId} onChange={(e) => setForm({ ...form, installationTypeId: e.target.value, systemTypeId: "" })} className={inputCls}>
+                <option value="">Select…</option>
+                {installationTypes.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </Field>
-            <Field label="Policy type">
+            <Field label="System type">
+              <select value={form.systemTypeId} onChange={(e) => setForm({ ...form, systemTypeId: e.target.value })} disabled={!form.installationTypeId} className={inputCls + " disabled:opacity-50"}>
+                <option value="">{form.installationTypeId ? "Select…" : "Pick installation type first"}</option>
+                {systemTypes.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </Field>
+            <Field label="Policy duration">
               <select value={form.policyType} onChange={(e) => setForm({ ...form, policyType: e.target.value })} className={inputCls}>
                 {POLICIES.map((p) => <option key={p}>{p}</option>)}
               </select>
             </Field>
           </div>
         )}
-        {step === 2 && (
+
+        {step === 3 && (
           <div className="space-y-3">
             <div className="text-sm font-medium text-foreground">Review</div>
             <Row label="Customer" value={isOperate ? data.customers.find((c) => c.id === form.customerId)?.name : form.customerName} />
             <Row label="Property" value={isOperate ? data.properties.find((p) => p.id === propertyId)?.address : form.propertyAddress} />
-            <Row label="Measure" value={form.measure} />
+            <Row label="Linked job" value={linkedJob ? `${linkedJob.ref} · ${linkedJob.measure}` : "—"} />
+            <Row label="Installation type" value={data.installationTypes.find((t) => t.id === form.installationTypeId)?.name} />
+            <Row label="System type" value={data.systemTypes.find((s) => s.id === form.systemTypeId)?.name} />
             <Row label="Policy" value={form.policyType} />
             <Row label="Issued by" value={user.fullName} />
           </div>
@@ -188,9 +271,9 @@ function NewIbg() {
           <button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-sm font-medium disabled:opacity-40">
             <ArrowLeft className="size-3.5" /> Back
           </button>
-          {step < 2 ? (
-            <button onClick={next} className="press inline-flex items-center gap-1 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background">
-              Next <ArrowRight className="size-3.5" />
+          {step < 3 ? (
+            <button onClick={next} disabled={step === 0 && !readinessOk} className="press inline-flex items-center gap-1 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50">
+              Continue <ArrowRight className="size-3.5" />
             </button>
           ) : (
             <button onClick={issue} className="press rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background">Issue IBG</button>
