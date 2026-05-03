@@ -18,6 +18,7 @@ import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthedSubmissionsRouteImport } from './routes/_authed.submissions'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed.settings'
+import { Route as AuthedReportsRouteImport } from './routes/_authed.reports'
 import { Route as AuthedPropertiesRouteImport } from './routes/_authed.properties'
 import { Route as AuthedProjectsRouteImport } from './routes/_authed.projects'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed.onboarding'
@@ -33,6 +34,7 @@ import { Route as AuthedSettingsNotificationsRouteImport } from './routes/_authe
 import { Route as AuthedSettingsMeasuresRouteImport } from './routes/_authed.settings.measures'
 import { Route as AuthedSettingsIntegrationsRouteImport } from './routes/_authed.settings.integrations'
 import { Route as AuthedSettingsAccessRouteImport } from './routes/_authed.settings.access'
+import { Route as AuthedPropertiesNewRouteImport } from './routes/_authed.properties.new'
 import { Route as AuthedPropertiesIdRouteImport } from './routes/_authed.properties.$id'
 import { Route as AuthedJobsNewRouteImport } from './routes/_authed.jobs.new'
 import { Route as AuthedJobsIdRouteImport } from './routes/_authed.jobs.$id'
@@ -99,6 +101,11 @@ const AuthedSubmissionsRoute = AuthedSubmissionsRouteImport.update({
 const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedReportsRoute = AuthedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedPropertiesRoute = AuthedPropertiesRouteImport.update({
@@ -178,6 +185,11 @@ const AuthedSettingsAccessRoute = AuthedSettingsAccessRouteImport.update({
   id: '/access',
   path: '/access',
   getParentRoute: () => AuthedSettingsRoute,
+} as any)
+const AuthedPropertiesNewRoute = AuthedPropertiesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthedPropertiesRoute,
 } as any)
 const AuthedPropertiesIdRoute = AuthedPropertiesIdRouteImport.update({
   id: '/$id',
@@ -309,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
+  '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
   '/admin/activity': typeof AuthedAdminActivityRoute
@@ -330,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id': typeof AuthedJobsIdRoute
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
+  '/properties/new': typeof AuthedPropertiesNewRoute
   '/settings/access': typeof AuthedSettingsAccessRoute
   '/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
@@ -357,6 +371,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
+  '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
   '/admin/activity': typeof AuthedAdminActivityRoute
@@ -378,6 +393,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof AuthedJobsIdRoute
   '/jobs/new': typeof AuthedJobsNewRoute
   '/properties/$id': typeof AuthedPropertiesIdRoute
+  '/properties/new': typeof AuthedPropertiesNewRoute
   '/settings/access': typeof AuthedSettingsAccessRoute
   '/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/settings/measures': typeof AuthedSettingsMeasuresRoute
@@ -407,6 +423,7 @@ export interface FileRoutesById {
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/projects': typeof AuthedProjectsRoute
   '/_authed/properties': typeof AuthedPropertiesRouteWithChildren
+  '/_authed/reports': typeof AuthedReportsRoute
   '/_authed/settings': typeof AuthedSettingsRouteWithChildren
   '/_authed/submissions': typeof AuthedSubmissionsRouteWithChildren
   '/_authed/admin/activity': typeof AuthedAdminActivityRoute
@@ -428,6 +445,7 @@ export interface FileRoutesById {
   '/_authed/jobs/$id': typeof AuthedJobsIdRoute
   '/_authed/jobs/new': typeof AuthedJobsNewRoute
   '/_authed/properties/$id': typeof AuthedPropertiesIdRoute
+  '/_authed/properties/new': typeof AuthedPropertiesNewRoute
   '/_authed/settings/access': typeof AuthedSettingsAccessRoute
   '/_authed/settings/integrations': typeof AuthedSettingsIntegrationsRoute
   '/_authed/settings/measures': typeof AuthedSettingsMeasuresRoute
@@ -457,6 +475,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/projects'
     | '/properties'
+    | '/reports'
     | '/settings'
     | '/submissions'
     | '/admin/activity'
@@ -478,6 +497,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/properties/$id'
+    | '/properties/new'
     | '/settings/access'
     | '/settings/integrations'
     | '/settings/measures'
@@ -505,6 +525,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/projects'
     | '/properties'
+    | '/reports'
     | '/settings'
     | '/submissions'
     | '/admin/activity'
@@ -526,6 +547,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/properties/$id'
+    | '/properties/new'
     | '/settings/access'
     | '/settings/integrations'
     | '/settings/measures'
@@ -554,6 +576,7 @@ export interface FileRouteTypes {
     | '/_authed/onboarding'
     | '/_authed/projects'
     | '/_authed/properties'
+    | '/_authed/reports'
     | '/_authed/settings'
     | '/_authed/submissions'
     | '/_authed/admin/activity'
@@ -575,6 +598,7 @@ export interface FileRouteTypes {
     | '/_authed/jobs/$id'
     | '/_authed/jobs/new'
     | '/_authed/properties/$id'
+    | '/_authed/properties/new'
     | '/_authed/settings/access'
     | '/_authed/settings/integrations'
     | '/_authed/settings/measures'
@@ -662,6 +686,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthedSettingsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/reports': {
+      id: '/_authed/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthedReportsRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/properties': {
@@ -768,6 +799,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/access'
       preLoaderRoute: typeof AuthedSettingsAccessRouteImport
       parentRoute: typeof AuthedSettingsRoute
+    }
+    '/_authed/properties/new': {
+      id: '/_authed/properties/new'
+      path: '/new'
+      fullPath: '/properties/new'
+      preLoaderRoute: typeof AuthedPropertiesNewRouteImport
+      parentRoute: typeof AuthedPropertiesRoute
     }
     '/_authed/properties/$id': {
       id: '/_authed/properties/$id'
@@ -989,10 +1027,12 @@ const AuthedJobsRouteWithChildren = AuthedJobsRoute._addFileChildren(
 
 interface AuthedPropertiesRouteChildren {
   AuthedPropertiesIdRoute: typeof AuthedPropertiesIdRoute
+  AuthedPropertiesNewRoute: typeof AuthedPropertiesNewRoute
 }
 
 const AuthedPropertiesRouteChildren: AuthedPropertiesRouteChildren = {
   AuthedPropertiesIdRoute: AuthedPropertiesIdRoute,
+  AuthedPropertiesNewRoute: AuthedPropertiesNewRoute,
 }
 
 const AuthedPropertiesRouteWithChildren =
@@ -1076,6 +1116,7 @@ interface AuthedRouteChildren {
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedProjectsRoute: typeof AuthedProjectsRoute
   AuthedPropertiesRoute: typeof AuthedPropertiesRouteWithChildren
+  AuthedReportsRoute: typeof AuthedReportsRoute
   AuthedSettingsRoute: typeof AuthedSettingsRouteWithChildren
   AuthedSubmissionsRoute: typeof AuthedSubmissionsRouteWithChildren
   AuthedAdminActivityRoute: typeof AuthedAdminActivityRoute
@@ -1100,6 +1141,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedProjectsRoute: AuthedProjectsRoute,
   AuthedPropertiesRoute: AuthedPropertiesRouteWithChildren,
+  AuthedReportsRoute: AuthedReportsRoute,
   AuthedSettingsRoute: AuthedSettingsRouteWithChildren,
   AuthedSubmissionsRoute: AuthedSubmissionsRouteWithChildren,
   AuthedAdminActivityRoute: AuthedAdminActivityRoute,
