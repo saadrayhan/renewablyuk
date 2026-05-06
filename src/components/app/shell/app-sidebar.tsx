@@ -119,24 +119,20 @@ const adminGroups: AdminGroup[] = [
   {
     label: "Configuration",
     items: [
-      { label: "Installation & System Types", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
-      { label: "Measures & Warranty", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
-      { label: "Evidence Requirements", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
-      { label: "Funding Schemes", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+      { label: "Configuration", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
     ],
   },
   {
     label: "Risk & Compliance",
     items: [
       { label: "Risk Monitoring", to: "/admin/risk", icon: ShieldAlert, visibleIf: ["risk.read"] },
-      { label: "Overrides", to: "/admin/risk", icon: Shield, visibleIf: ["risk.read"] },
       { label: "Audit Logs", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
     ],
   },
   {
     label: "Integrations",
     items: [
-      { label: "External APIs", to: "/settings/integrations", icon: Plug, visibleIf: ["config.read"] },
+      { label: "Integrations Hub", to: "/admin/integrations", icon: Plug, visibleIf: ["config.read"] },
       { label: "Stripe Events", to: "/admin/stripe-events", icon: Receipt, visibleIf: ["config.read"] },
       { label: "CRM / HubSpot", to: "/admin/crm", icon: Workflow, visibleIf: ["config.read"] },
     ],
@@ -145,8 +141,8 @@ const adminGroups: AdminGroup[] = [
     label: "System",
     items: [
       { label: "Access Control", to: "/admin/permissions", icon: Library, visibleIf: ["permissions.library.manage"] },
-      { label: "Feature Flags", to: "/admin/config", icon: ToggleRight, visibleIf: ["config.read"] },
-      { label: "System Settings", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+      { label: "Feature Flags", to: "/admin/feature-flags", icon: ToggleRight, visibleIf: ["config.read"] },
+      { label: "System Settings", to: "/admin/system-settings", icon: SlidersHorizontal, visibleIf: ["config.read"] },
     ],
   },
 ];
@@ -335,7 +331,7 @@ function Row({
         "group relative flex items-center gap-2.5 overflow-hidden rounded-lg text-sm",
         collapsed ? "mx-auto h-9 w-9 justify-center" : "px-2.5 py-1.5",
         active
-          ? "bg-sidebar-accent text-foreground before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full before:bg-brand"
+          ? "bg-sidebar-accent text-foreground before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-foreground"
           : "text-ink-muted hover:bg-sidebar-accent hover:text-foreground",
       )}
     >
