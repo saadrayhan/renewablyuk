@@ -25,7 +25,16 @@ const SCHEMES = [
   { name: "Home Upgrade Grant", status: "Opportunity" },
 ];
 
-type Tab = "measures" | "templates" | "schemes" | "installation" | "system";
+type Tab = "measures" | "templates" | "schemes" | "installation" | "system" | "evidence";
+
+const EVIDENCE_RULES: { name: string; scope: "Installation" | "Project" | "Company"; required: boolean; desc: string }[] = [
+  { name: "Pre-install survey photos", scope: "Installation", required: true, desc: "Min 4 photos of the property prior to works." },
+  { name: "Post-install commissioning report", scope: "Installation", required: true, desc: "Signed engineer's commissioning sheet." },
+  { name: "MCS certificate", scope: "Project", required: true, desc: "Required for funding submission across all schemes." },
+  { name: "Building Regulations notification", scope: "Project", required: true, desc: "BR notification reference number." },
+  { name: "Insurance certificate", scope: "Company", required: true, desc: "Public liability £5m+, current." },
+  { name: "Companies House filings", scope: "Company", required: false, desc: "Auto-checked daily for limited companies." },
+];
 
 function ConfigPage() {
   const data = useStore();
