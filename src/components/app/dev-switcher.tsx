@@ -131,7 +131,7 @@ export function DevSwitcher() {
                   className={cn(
                     "press flex items-start gap-2 rounded-xl border bg-background px-2.5 py-2 text-left transition-colors",
                     role === r
-                      ? "border-foreground bg-surface"
+                      ? "border-[var(--brand-blue)] bg-[var(--brand-blue-tint)]"
                       : "border-transparent hover:bg-surface",
                   )}
                 >
