@@ -46,25 +46,25 @@ function TeamPage() {
         <div className="border-b px-5 py-3 text-sm font-medium">Members ({team.length})</div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Name</th>
-              <th className="px-4 py-2.5 text-left">Role</th>
-              <th className="px-4 py-2.5 text-left">Status</th>
-              <th className="px-4 py-2.5 text-left">Last active</th>
-              <th className="px-4 py-2.5 text-right">Permissions</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Name</th>
+              <th className="px-3 py-2.5 text-left">Role</th>
+              <th className="px-3 py-2.5 text-left">Status</th>
+              <th className="px-3 py-2.5 text-left">Last active</th>
+              <th className="px-3 py-2.5 text-right">Permissions</th>
             </tr>
           </thead>
           <tbody>
             {team.map((u) => (
               <tr key={u.id} className="border-b last:border-b-0 hover:bg-surface/40">
-                <td className="px-4 py-3">
+                <td className="px-3 py-3.5">
                   <div className="font-medium text-foreground">{u.name}</div>
                   <div className="text-xs text-ink-muted">{u.email}</div>
                 </td>
-                <td className="px-4 py-3 text-foreground">{ROLE_META[u.role].label}</td>
-                <td className="px-4 py-3"><StatePill meta={USER_STATES[u.status]} /></td>
-                <td className="px-4 py-3 text-ink-muted">{u.invitedAt ? fmtDate(u.invitedAt) : "—"}</td>
-                <td className="px-4 py-3 text-right text-ink-muted">{u.permissions.length} of {PERMISSIONS.length}</td>
+                <td className="px-3 py-3.5 text-foreground">{ROLE_META[u.role].label}</td>
+                <td className="px-3 py-3.5"><StatePill meta={USER_STATES[u.status]} /></td>
+                <td className="px-3 py-3.5 text-ink-muted">{u.invitedAt ? fmtDate(u.invitedAt) : "—"}</td>
+                <td className="px-3 py-3.5 text-right text-ink-muted">{u.permissions.length} of {PERMISSIONS.length}</td>
               </tr>
             ))}
           </tbody>
@@ -76,8 +76,8 @@ function TeamPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-                <th className="px-4 py-2.5 text-left">Capability</th>
+              <tr className="border-b text-[12px] font-medium text-ink-muted">
+                <th className="px-3 py-2.5 text-left">Capability</th>
                 {roles.map((r) => (
                   <th key={r} className="px-4 py-2.5 text-center">
                     <div className="inline-flex items-center gap-1"><ShieldCheck className="size-3 text-cat-blue" /> {ROLE_META[r].label}</div>

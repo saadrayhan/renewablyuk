@@ -155,15 +155,15 @@ function RiskPage() {
         />
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-2xl border bg-card">
+      <div className="mt-5 w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Organisation</th>
-              <th className="px-4 py-2.5 text-left">Type</th>
-              <th className="px-4 py-2.5 text-left">Risk state</th>
-              <th className="px-4 py-2.5 text-left">Last check</th>
-              <th className="px-4 py-2.5 text-right">Action</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Organisation</th>
+              <th className="px-3 py-2.5 text-left">Type</th>
+              <th className="px-3 py-2.5 text-left">Risk state</th>
+              <th className="px-3 py-2.5 text-left">Last check</th>
+              <th className="px-3 py-2.5 text-right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -175,11 +175,11 @@ function RiskPage() {
                   onClick={() => nav({ to: "/admin/risk/$id", params: { id: u.id } })}
                   className="cursor-pointer border-b last:border-b-0 transition-colors hover:bg-surface/60"
                 >
-                  <td className="px-4 py-3 font-medium text-foreground">{u.name}</td>
-                  <td className="px-4 py-3 text-ink-muted">{isLtd ? "Limited Co." : "Sole trader"}</td>
-                  <td className="px-4 py-3"><StatePill meta={RISK_STATES[u.accountRiskState ?? "active"]} /></td>
-                  <td className="px-4 py-3 text-ink-muted">{isLtd ? "Today 09:14" : "Internal"}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-3 py-3.5 font-medium text-foreground">{u.name}</td>
+                  <td className="px-3 py-3.5 text-ink-muted">{isLtd ? "Limited Co." : "Sole trader"}</td>
+                  <td className="px-3 py-3.5"><StatePill meta={RISK_STATES[u.accountRiskState ?? "active"]} /></td>
+                  <td className="px-3 py-3.5 text-ink-muted">{isLtd ? "Today 09:14" : "Internal"}</td>
+                  <td className="px-3 py-3.5 text-right">
                     <span className="press inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs font-medium">
                       Review <ArrowRight className="size-3" />
                     </span>

@@ -57,29 +57,29 @@ function CronPage() {
         actions={<Button variant="secondary" size="sm">Refresh statuses</Button>}
       />
 
-      <div className="overflow-hidden rounded-2xl border bg-card">
+      <div className="w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Job</th>
-              <th className="px-4 py-2.5 text-left">Schedule</th>
-              <th className="px-4 py-2.5 text-left">Last run</th>
-              <th className="px-4 py-2.5 text-left">Next run</th>
-              <th className="px-4 py-2.5 text-left">Duration</th>
-              <th className="px-4 py-2.5 text-left">Status</th>
-              <th className="px-4 py-2.5 text-left">Enabled</th>
-              <th className="px-4 py-2.5 text-right">Actions</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Job</th>
+              <th className="px-3 py-2.5 text-left">Schedule</th>
+              <th className="px-3 py-2.5 text-left">Last run</th>
+              <th className="px-3 py-2.5 text-left">Next run</th>
+              <th className="px-3 py-2.5 text-left">Duration</th>
+              <th className="px-3 py-2.5 text-left">Status</th>
+              <th className="px-3 py-2.5 text-left">Enabled</th>
+              <th className="px-3 py-2.5 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {jobs.map((j) => (
               <tr key={j.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                <td className="px-4 py-3 font-medium text-foreground">{j.name}</td>
-                <td className="px-4 py-3 text-ink-muted">{j.schedule}</td>
-                <td className="px-4 py-3 text-ink-muted">{j.lastRun}</td>
-                <td className="px-4 py-3 text-ink-muted">{j.nextRun}</td>
-                <td className="px-4 py-3 text-ink-muted">{j.duration}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-3.5 font-medium text-foreground">{j.name}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{j.schedule}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{j.lastRun}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{j.nextRun}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{j.duration}</td>
+                <td className="px-3 py-3.5">
                   <span className={cn(
                     "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
                     j.status === "Healthy" ? "bg-cat-green-bg text-cat-green" : "bg-cat-amber-bg text-cat-amber",
@@ -88,7 +88,7 @@ function CronPage() {
                     {j.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-3.5">
                   <Switch
                     checked={!j.paused}
                     onCheckedChange={(v) => setJobs((xs) => xs.map((x) => x.id === j.id ? { ...x, paused: !v } : x))}

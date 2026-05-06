@@ -39,19 +39,19 @@ function CompaniesPage() {
         subtitle="Manage installer organisations and company account status."
       />
 
-      <div className="mt-6 overflow-hidden rounded-2xl border bg-card">
+      <div className="mt-6 w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Company Name</th>
-              <th className="px-4 py-2.5 text-left">Company Number</th>
-              <th className="px-4 py-2.5 text-left">Business Type</th>
-              <th className="px-4 py-2.5 text-left">Account Status</th>
-              <th className="px-4 py-2.5 text-left">Membership</th>
-              <th className="px-4 py-2.5 text-left">Risk Level</th>
-              <th className="px-4 py-2.5 text-left">Billing</th>
-              <th className="px-4 py-2.5 text-left">IBG Access</th>
-              <th className="px-4 py-2.5 text-right">Actions</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Company Name</th>
+              <th className="px-3 py-2.5 text-left">Company Number</th>
+              <th className="px-3 py-2.5 text-left">Business Type</th>
+              <th className="px-3 py-2.5 text-left">Account Status</th>
+              <th className="px-3 py-2.5 text-left">Membership</th>
+              <th className="px-3 py-2.5 text-left">Risk Level</th>
+              <th className="px-3 py-2.5 text-left">Billing</th>
+              <th className="px-3 py-2.5 text-left">IBG Access</th>
+              <th className="px-3 py-2.5 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -67,32 +67,32 @@ function CompaniesPage() {
                 : "bg-cat-green-bg text-cat-green";
               return (
                 <tr key={c.id} onClick={() => nav({ to: "/admin/companies/$id", params: { id: c.id } })} className="cursor-pointer border-b last:border-b-0 transition-colors hover:bg-surface/60">
-                  <td className="px-4 py-3 font-medium text-foreground">
+                  <td className="px-3 py-3.5 font-medium text-foreground">
                     <span className="inline-flex items-center gap-2">
                       <span className={`size-2 rounded-full ${isLtd ? "bg-cat-purple" : "bg-ink-muted"}`} />
                       {c.name}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-mono text-[11px] text-ink-muted">{isLtd ? `0${(7000000 + parseInt(c.id.slice(-3) || "1", 10)).toString().slice(0, 7)}` : "—"}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-3.5 font-mono text-[11px] text-ink-muted">{isLtd ? `0${(7000000 + parseInt(c.id.slice(-3) || "1", 10)).toString().slice(0, 7)}` : "—"}</td>
+                  <td className="px-3 py-3.5">
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${isLtd ? "bg-cat-blue-bg text-cat-blue" : "bg-tile text-ink-muted"}`}>{isLtd ? "Limited Company" : "Sole Trader"}</span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-3.5">
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${accountBadge(c.accountRiskState)}`}>{(c.accountRiskState ?? "active").replace(/^./, (m) => m.toUpperCase())}</span>
                   </td>
-                  <td className="px-4 py-3 text-foreground">{membership}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-3.5 text-foreground">{membership}</td>
+                  <td className="px-3 py-3.5">
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${riskCls}`}>{risk}</span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-3.5">
                     <span className="rounded-full bg-cat-green-bg px-2 py-0.5 text-[11px] font-medium text-cat-green">Active</span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-3.5">
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${c.accountRiskState === "suspended" || c.accountRiskState === "paused" ? "bg-tile text-ink-muted" : "bg-cat-green-bg text-cat-green"}`}>
                       {c.accountRiskState === "suspended" || c.accountRiskState === "paused" ? "Disabled" : "Enabled"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                  <td className="px-3 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
                     <div className="inline-flex items-center gap-1 text-ink-muted">
                       <button title="View" className="press grid size-7 place-items-center rounded-md hover:bg-surface hover:text-foreground"><Eye className="size-3.5" /></button>
                       <button title="Edit" className="press grid size-7 place-items-center rounded-md hover:bg-surface hover:text-foreground"><Pencil className="size-3.5" /></button>

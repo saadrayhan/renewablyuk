@@ -72,26 +72,26 @@ function MembershipPage() {
       <Section title="Subscriptions">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Company</th>
-              <th className="px-4 py-2.5 text-left">Membership</th>
-              <th className="px-4 py-2.5 text-left">Status</th>
-              <th className="px-4 py-2.5 text-left">Last Payment</th>
-              <th className="px-4 py-2.5 text-left">Next Billing</th>
-              <th className="px-4 py-2.5 text-left">Failures</th>
-              <th className="px-4 py-2.5 text-right">Actions</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Company</th>
+              <th className="px-3 py-2.5 text-left">Membership</th>
+              <th className="px-3 py-2.5 text-left">Status</th>
+              <th className="px-3 py-2.5 text-left">Last Payment</th>
+              <th className="px-3 py-2.5 text-left">Next Billing</th>
+              <th className="px-3 py-2.5 text-left">Failures</th>
+              <th className="px-3 py-2.5 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {SUBS.map((s) => (
               <tr key={s.co} className="border-b last:border-b-0">
-                <td className="px-4 py-3 font-medium text-foreground">{s.co}</td>
-                <td className="px-4 py-3">{s.level}</td>
-                <td className="px-4 py-3"><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(s.status)}`}>{s.status}</span></td>
-                <td className="px-4 py-3 text-ink-muted">{s.last}</td>
-                <td className="px-4 py-3 text-ink-muted">{s.next}</td>
-                <td className="px-4 py-3 tabular-nums">{s.fails}</td>
-                <td className="px-4 py-3 text-right text-xs text-ink-muted">{s.action}</td>
+                <td className="px-3 py-3.5 font-medium text-foreground">{s.co}</td>
+                <td className="px-3 py-3.5">{s.level}</td>
+                <td className="px-3 py-3.5"><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(s.status)}`}>{s.status}</span></td>
+                <td className="px-3 py-3.5 text-ink-muted">{s.last}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{s.next}</td>
+                <td className="px-3 py-3.5 tabular-nums">{s.fails}</td>
+                <td className="px-3 py-3.5 text-right text-xs text-ink-muted">{s.action}</td>
               </tr>
             ))}
           </tbody>
@@ -109,24 +109,24 @@ export function EventsTable({ rows = EVENTS }: { rows?: typeof EVENTS }) {
   return (
     <table className="w-full text-sm">
       <thead>
-        <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-          <th className="px-4 py-2.5 text-left">Timestamp</th>
-          <th className="px-4 py-2.5 text-left">Event Type</th>
-          <th className="px-4 py-2.5 text-left">Status</th>
-          <th className="px-4 py-2.5 text-left">Customer</th>
-          <th className="px-4 py-2.5 text-left">Details</th>
-          <th className="px-4 py-2.5 text-right">Actions</th>
+        <tr className="border-b text-[12px] font-medium text-ink-muted">
+          <th className="px-3 py-2.5 text-left">Timestamp</th>
+          <th className="px-3 py-2.5 text-left">Event Type</th>
+          <th className="px-3 py-2.5 text-left">Status</th>
+          <th className="px-3 py-2.5 text-left">Customer</th>
+          <th className="px-3 py-2.5 text-left">Details</th>
+          <th className="px-3 py-2.5 text-right">Actions</th>
         </tr>
       </thead>
       <tbody>
         {rows.map((e) => (
           <tr key={e.ts + e.type} className="border-b last:border-b-0">
-            <td className="px-4 py-3 text-ink-muted">{e.ts}</td>
-            <td className="px-4 py-3 font-mono text-[11px]">{e.type}</td>
-            <td className="px-4 py-3"><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(e.status)}`}>{e.status}</span></td>
-            <td className="px-4 py-3">{e.customer}</td>
-            <td className="px-4 py-3 text-ink-muted">{e.details}</td>
-            <td className="px-4 py-3 text-right text-xs text-ink-muted">View</td>
+            <td className="px-3 py-3.5 text-ink-muted">{e.ts}</td>
+            <td className="px-3 py-3.5 font-mono text-[11px]">{e.type}</td>
+            <td className="px-3 py-3.5"><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusCls(e.status)}`}>{e.status}</span></td>
+            <td className="px-3 py-3.5">{e.customer}</td>
+            <td className="px-3 py-3.5 text-ink-muted">{e.details}</td>
+            <td className="px-3 py-3.5 text-right text-xs text-ink-muted">View</td>
           </tr>
         ))}
       </tbody>

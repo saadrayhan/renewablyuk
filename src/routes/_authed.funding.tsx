@@ -47,13 +47,13 @@ function FundingHub() {
         <div className="mt-3 overflow-hidden rounded-xl border">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-                <th className="px-4 py-2.5 text-left">Ref</th>
-                <th className="px-4 py-2.5 text-left">Scheme</th>
-                <th className="px-4 py-2.5 text-left">Job</th>
-                <th className="px-4 py-2.5 text-left">Measure</th>
-                <th className="px-4 py-2.5 text-left">Created</th>
-                <th className="px-4 py-2.5 text-right">State</th>
+              <tr className="border-b text-[12px] font-medium text-ink-muted">
+                <th className="px-3 py-2.5 text-left">Ref</th>
+                <th className="px-3 py-2.5 text-left">Scheme</th>
+                <th className="px-3 py-2.5 text-left">Job</th>
+                <th className="px-3 py-2.5 text-left">Measure</th>
+                <th className="px-3 py-2.5 text-left">Created</th>
+                <th className="px-3 py-2.5 text-right">State</th>
               </tr>
             </thead>
             <tbody>
@@ -61,12 +61,12 @@ function FundingHub() {
                 const j = findJob(data, f.jobId);
                 return (
                   <tr key={f.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                    <td className="px-4 py-3"><Link to="/funding/$id" params={{ id: f.id }} className="font-medium text-foreground hover:underline">{f.ref}</Link></td>
-                    <td className="px-4 py-3 text-foreground">{f.scheme}</td>
-                    <td className="px-4 py-3 text-ink-muted">{j?.ref ?? "—"}</td>
-                    <td className="px-4 py-3 text-foreground">{f.measure}</td>
-                    <td className="px-4 py-3 text-ink-muted">{fmtDate(f.createdAt)}</td>
-                    <td className="px-4 py-3 text-right"><StatePill meta={FUNDING_STATES[f.state]} /></td>
+                    <td className="px-3 py-3.5"><Link to="/funding/$id" params={{ id: f.id }} className="font-medium text-foreground hover:underline">{f.ref}</Link></td>
+                    <td className="px-3 py-3.5 text-foreground">{f.scheme}</td>
+                    <td className="px-3 py-3.5 text-ink-muted">{j?.ref ?? "—"}</td>
+                    <td className="px-3 py-3.5 text-foreground">{f.measure}</td>
+                    <td className="px-3 py-3.5 text-ink-muted">{fmtDate(f.createdAt)}</td>
+                    <td className="px-3 py-3.5 text-right"><StatePill meta={FUNDING_STATES[f.state]} /></td>
                   </tr>
                 );
               })}

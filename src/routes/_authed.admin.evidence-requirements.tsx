@@ -73,36 +73,36 @@ function EvidencePage() {
         ]}
       />
 
-      <div className="overflow-hidden rounded-2xl border bg-card">
+      <div className="w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Rule</th>
-              <th className="px-4 py-2.5 text-left">Scope</th>
-              <th className="px-4 py-2.5 text-left">Installation</th>
-              <th className="px-4 py-2.5 text-left">Scheme</th>
-              <th className="px-4 py-2.5 text-left">Standard</th>
-              <th className="px-4 py-2.5 text-left">Required</th>
-              <th className="px-4 py-2.5 text-left">Effective</th>
-              <th className="px-4 py-2.5 text-left">Status</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Rule</th>
+              <th className="px-3 py-2.5 text-left">Scope</th>
+              <th className="px-3 py-2.5 text-left">Installation</th>
+              <th className="px-3 py-2.5 text-left">Scheme</th>
+              <th className="px-3 py-2.5 text-left">Standard</th>
+              <th className="px-3 py-2.5 text-left">Required</th>
+              <th className="px-3 py-2.5 text-left">Effective</th>
+              <th className="px-3 py-2.5 text-left">Status</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((r) => (
               <tr key={r.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                <td className="px-4 py-3">
+                <td className="px-3 py-3.5">
                   <div className="font-medium text-foreground">{r.name}</div>
                   <div className="font-mono text-[10px] text-ink-muted">{r.id}</div>
                 </td>
-                <td className="px-4 py-3 text-ink-muted">{r.scope}</td>
-                <td className="px-4 py-3 text-ink-muted">{r.installation}</td>
-                <td className="px-4 py-3 text-ink-muted">{r.funding}</td>
-                <td className="px-4 py-3 text-ink-muted">{r.standard}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-3.5 text-ink-muted">{r.scope}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{r.installation}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{r.funding}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{r.standard}</td>
+                <td className="px-3 py-3.5">
                   <Switch checked={r.required} onCheckedChange={(v) => setRules((xs) => xs.map((x) => x.id === r.id ? { ...x, required: v } : x))} />
                 </td>
-                <td className="px-4 py-3 text-ink-muted">{r.effective}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-3.5 text-ink-muted">{r.effective}</td>
+                <td className="px-3 py-3.5">
                   <span className={cn(
                     "inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium",
                     r.status === "Active" ? "bg-cat-green-bg text-cat-green" : "bg-tile text-ink-muted",

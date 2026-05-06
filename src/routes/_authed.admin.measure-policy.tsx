@@ -52,31 +52,31 @@ function MeasurePolicy() {
         actions={<Button>New policy version</Button>}
       />
 
-      <div className="overflow-hidden rounded-2xl border bg-card">
+      <div className="w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Measure</th>
-              <th className="px-4 py-2.5 text-left">Duration</th>
-              <th className="px-4 py-2.5 text-left">Start rule</th>
-              <th className="px-4 py-2.5 text-right">Base</th>
-              <th className="px-4 py-2.5 text-right">Access tier</th>
-              <th className="px-4 py-2.5 text-right">Operate tier</th>
-              <th className="px-4 py-2.5 text-left">Version</th>
-              <th className="px-4 py-2.5 text-left">Effective</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Measure</th>
+              <th className="px-3 py-2.5 text-left">Duration</th>
+              <th className="px-3 py-2.5 text-left">Start rule</th>
+              <th className="px-3 py-2.5 text-right">Base</th>
+              <th className="px-3 py-2.5 text-right">Access tier</th>
+              <th className="px-3 py-2.5 text-right">Operate tier</th>
+              <th className="px-3 py-2.5 text-left">Version</th>
+              <th className="px-3 py-2.5 text-left">Effective</th>
             </tr>
           </thead>
           <tbody>
             {SEED.map((p) => (
               <tr key={p.id} onClick={() => setOpen(p)} className="cursor-pointer border-b last:border-b-0 hover:bg-surface/60">
-                <td className="px-4 py-3 font-medium text-foreground">{p.measure}</td>
-                <td className="px-4 py-3 text-ink-muted">{p.durationYears} yrs</td>
-                <td className="px-4 py-3 text-ink-muted">{p.startRule}</td>
-                <td className="px-4 py-3 text-right">£{p.basePrice}</td>
-                <td className="px-4 py-3 text-right">£{p.accessPrice}</td>
-                <td className="px-4 py-3 text-right">£{p.operatePrice}</td>
-                <td className="px-4 py-3 font-mono text-[12px] text-ink-muted">{p.version}</td>
-                <td className="px-4 py-3 text-ink-muted">{p.effectiveFrom}</td>
+                <td className="px-3 py-3.5 font-medium text-foreground">{p.measure}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{p.durationYears} yrs</td>
+                <td className="px-3 py-3.5 text-ink-muted">{p.startRule}</td>
+                <td className="px-3 py-3.5 text-right">£{p.basePrice}</td>
+                <td className="px-3 py-3.5 text-right">£{p.accessPrice}</td>
+                <td className="px-3 py-3.5 text-right">£{p.operatePrice}</td>
+                <td className="px-3 py-3.5 font-mono text-[12px] text-ink-muted">{p.version}</td>
+                <td className="px-3 py-3.5 text-ink-muted">{p.effectiveFrom}</td>
               </tr>
             ))}
           </tbody>
