@@ -12,7 +12,7 @@ export function UnderlineTabs<T extends string>({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-center gap-1 border-b", className)}>
+    <div className={cn("flex h-10 items-center gap-1 border-b", className)}>
       {options.map((opt) => {
         const active = value === opt.value;
         const Icon = opt.icon;
@@ -22,7 +22,7 @@ export function UnderlineTabs<T extends string>({
             type="button"
             onClick={() => onChange(opt.value)}
             className={cn(
-              "press relative -mb-px flex items-center gap-1.5 px-3 py-2.5 text-sm transition-colors",
+              "press relative -mb-px flex h-10 items-center gap-1.5 px-3 text-[13px] font-medium transition-colors",
               active ? "text-foreground" : "text-ink-muted hover:text-foreground",
             )}
           >
@@ -36,7 +36,7 @@ export function UnderlineTabs<T extends string>({
                 {opt.count}
               </span>
             )}
-            {active && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-brand-blue" />}
+            {active && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-foreground" />}
           </button>
         );
       })}

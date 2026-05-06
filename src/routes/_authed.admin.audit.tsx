@@ -61,25 +61,25 @@ function AuditPage() {
         </div>
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-2xl border bg-card">
+      <div className="mt-5 w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-              <th className="px-4 py-2.5 text-left">Date</th>
-              <th className="px-4 py-2.5 text-left">Actor</th>
-              <th className="px-4 py-2.5 text-left">Action</th>
-              <th className="px-4 py-2.5 text-left">Entity</th>
-              <th className="px-4 py-2.5 text-left">Detail</th>
+            <tr className="border-b text-[12px] font-medium text-ink-muted">
+              <th className="px-3 py-2.5 text-left">Date</th>
+              <th className="px-3 py-2.5 text-left">Actor</th>
+              <th className="px-3 py-2.5 text-left">Action</th>
+              <th className="px-3 py-2.5 text-left">Entity</th>
+              <th className="px-3 py-2.5 text-left">Detail</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y">
             {rows.map((a) => (
-              <tr key={a.id} className="border-b last:border-b-0">
-                <td className="px-4 py-3 text-ink-muted">{fmtDate(a.at)}</td>
-                <td className="px-4 py-3 text-foreground">{a.actor}</td>
-                <td className="px-4 py-3 text-foreground">{a.action}</td>
-                <td className="px-4 py-3"><span className="rounded-full bg-tile px-2 py-0.5 text-[11px] text-ink-muted">{a.entityType}</span></td>
-                <td className="px-4 py-3 text-ink-muted">{a.detail ?? "—"}</td>
+              <tr key={a.id} className="hover:bg-surface/60">
+                <td className="px-3 py-3.5 text-ink-muted">{fmtDate(a.at)}</td>
+                <td className="px-3 py-3.5 text-foreground">{a.actor}</td>
+                <td className="px-3 py-3.5 text-foreground">{a.action}</td>
+                <td className="px-3 py-3.5"><span className="rounded-full bg-tile px-2 py-0.5 text-[11px] text-ink-muted">{a.entityType}</span></td>
+                <td className="px-3 py-3.5 text-ink-muted">{a.detail ?? "—"}</td>
               </tr>
             ))}
           </tbody>
