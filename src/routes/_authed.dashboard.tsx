@@ -488,6 +488,22 @@ function UpgradeCard() {
   );
 }
 
+function HealthRow({ label, status, detail }: { label: string; status: "ok" | "warn" | "error"; detail: string }) {
+  const tone = status === "ok" ? "bg-cat-green" : status === "warn" ? "bg-cat-amber" : "bg-cat-rose";
+  return (
+    <div className="flex items-center justify-between rounded-2xl border bg-card p-4">
+      <div className="flex items-center gap-2.5">
+        <span className={`size-2 rounded-full ${tone}`} />
+        <div>
+          <div className="text-sm font-medium text-foreground">{label}</div>
+          <div className="text-[11px] text-ink-muted">{detail}</div>
+        </div>
+      </div>
+      <CheckCircle2 className="size-4 text-cat-green" />
+    </div>
+  );
+}
+
 function workspaceName(role: string) {
   if (role === "admin") return "Renewably HQ";
   if (role === "operator") return "Renewably Ops";
