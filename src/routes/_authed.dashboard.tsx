@@ -51,8 +51,6 @@ function DashboardPage() {
 function GreetingHero({ name, role, greeting }: { name: string; role: string; greeting: string }) {
   return (
     <div className="relative">
-      <GradientOrb variant="mint" size={420} className="-left-24 -top-24 opacity-50" />
-      <GradientOrb variant="peach" size={360} className="right-0 -top-20 opacity-40" />
       <div className="relative">
         <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
           {workspaceName(role)}
