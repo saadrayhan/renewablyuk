@@ -73,7 +73,7 @@ function AdminDash() {
   return (
     <>
       {activeOverrides.length > 0 && (
-        <Link to="/admin/risk" className="press mt-8 flex items-start justify-between gap-3 rounded-2xl border border-cat-amber/40 bg-cat-amber-bg/40 px-4 py-3 hover:bg-cat-amber-bg/60">
+        <Link to="/admin/risk" className="press mt-8 flex items-start justify-between gap-3 rounded-2xl border bg-surface/50 px-4 py-3 hover:bg-surface">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 size-4 text-cat-amber" />
             <div>
@@ -85,21 +85,44 @@ function AdminDash() {
         </Link>
       )}
 
-      <NewBadgeBanner
-        text="Permission Library v2 — assign capabilities to operators in one click."
-        cta="Open library"
-        to="/admin/permissions"
-      />
-
       <SectionLabel>Quick actions</SectionLabel>
-      <TileGrid tiles={[
-        { label: "Users", to: "/admin/users", icon: Users, tone: "purple", desc: "Invite, assign roles, grant permissions" },
-        { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, tone: "amber", desc: `${onboardingPending.length} accounts to review` },
-        { label: "Amendments", to: "/admin/amendments", icon: FileWarning, tone: "rose", desc: `${amendmentsPending.length} pending` },
-        { label: "Audit log", to: "/admin/audit", icon: ScrollText, tone: "blue", desc: "Compliance trail" },
-        { label: "Activity", to: "/admin/activity", icon: Activity, tone: "green", desc: "Live platform feed" },
-        { label: "Permissions", to: "/admin/permissions", icon: Database, tone: "teal", desc: "Library + presets" },
-      ]} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <QuickAction to="/admin/onboarding" icon={ClipboardList} label="Approve users" count={onboardingPending.length} sub="pending" />
+        <QuickAction to="/admin/risk" icon={ShieldCheck} label="Review high risk" count={accountsAtRisk} sub="accounts" />
+        <QuickAction to="/admin/amendments" icon={FileWarning} label="Approve amendments" count={amendmentsPending.length} sub="requests" />
+        <QuickAction to="/admin/membership" icon={CreditCard} label="Failed payments" count={2} sub="accounts" />
+      </div>
+
+      <SectionRow title="Companies & users" to="/admin/companies" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Metric label="Total companies" value={totalCompanies} />
+        <Metric label="Operate plan" value={operateCount} />
+        <Metric label="Access plan" value={accessCount} />
+        <Metric label="Onboarding" value={onboardingPending.length} pillTone="amber" pillText={`${onboardingPending.length} pending`} />
+      </div>
+
+      <SectionRow title="Risk overview" to="/admin/risk" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Metric label="Flagged" value={flaggedCount} pillTone={flaggedCount ? "amber" : undefined} />
+        <Metric label="Paused" value={pausedCount} pillTone={pausedCount ? "amber" : undefined} />
+        <Metric label="Suspended" value={suspendedCount} pillTone={suspendedCount ? "rose" : undefined} />
+        <Metric label="Active overrides" value={activeOverrides.length} />
+      </div>
+
+      <SectionRow title="IBG activity" to="/ibg/repository" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Metric label="IBGs total" value={ibgsTotal} />
+        <Metric label="Issued (30d)" value={ibgsThisMonth} />
+        <Metric label="Amendments" value={amendmentsPending.length} />
+        <Metric label="Audit events" value={data.activity.length} />
+      </div>
+
+      <SectionRow title="System health" to="/admin/integrations" />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <HealthRow label="Companies House sync" status="ok" detail="Last run 03:00 UTC" />
+        <HealthRow label="Stripe webhooks" status="ok" detail="100% delivery (24h)" />
+        <HealthRow label="Email notifications" status="ok" detail="Delivered" />
+      </div>
 
       <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SectionPanel title="Onboarding queue" to="/admin/onboarding">
@@ -118,24 +141,6 @@ function AdminDash() {
           )}
         </SectionPanel>
 
-        <SectionPanel title="Amendments queue" to="/admin/amendments">
-          {amendmentsPending.length === 0 ? (
-            <EmptyRow text="No amendments pending." />
-          ) : (
-            amendmentsPending.slice(0, 4).map((a) => (
-              <Link key={a.id} to="/admin/amendments" className="press flex items-center justify-between rounded-xl px-2 py-2.5 hover:bg-surface">
-                <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground">{a.field}</div>
-                  <div className="truncate text-xs text-ink-muted">{a.reason}</div>
-                </div>
-                <StatePill meta={AMENDMENT_STATES[a.state]} />
-              </Link>
-            ))
-          )}
-        </SectionPanel>
-      </div>
-
-      <div className="mt-4">
         <SectionPanel title="Latest activity" to="/admin/activity">
           {recent.map((act) => (
             <div key={act.id} className="flex items-center justify-between rounded-xl px-2 py-2.5">
@@ -149,38 +154,46 @@ function AdminDash() {
           ))}
         </SectionPanel>
       </div>
-
-      <SectionLabel>Companies & users</SectionLabel>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Total companies" value={totalCompanies} icon={Users} tone="blue" />
-        <Stat label="Operate plan" value={operateCount} icon={Sparkles} tone="teal" />
-        <Stat label="Access plan" value={accessCount} icon={FileBadge} tone="green" />
-        <Stat label="Onboarding" value={onboardingPending.length} icon={ClipboardList} tone="amber" />
-      </div>
-
-      <SectionLabel>Risk overview</SectionLabel>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Flagged" value={flaggedCount} icon={AlertTriangle} tone="amber" />
-        <Stat label="Paused" value={pausedCount} icon={Clock} tone="amber" />
-        <Stat label="Suspended" value={suspendedCount} icon={AlertTriangle} tone="rose" />
-        <Stat label="Active overrides" value={activeOverrides.length} icon={ShieldCheck} tone="blue" />
-      </div>
-
-      <SectionLabel>IBG activity</SectionLabel>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="IBGs total" value={ibgsTotal} icon={FileBadge} tone="blue" />
-        <Stat label="Issued (30d)" value={ibgsThisMonth} icon={TrendingUp} tone="green" />
-        <Stat label="Amendments" value={amendmentsPending.length} icon={FileWarning} tone="rose" />
-        <Stat label="Audit events" value={data.activity.length} icon={ScrollText} tone="purple" />
-      </div>
-
-      <SectionLabel>System health</SectionLabel>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <HealthRow label="Companies House sync" status="ok" detail="Last run 03:00 UTC" />
-        <HealthRow label="Stripe webhooks" status="ok" detail="100% delivery (24h)" />
-        <HealthRow label="Email notifications" status="ok" detail="Delivered" />
-      </div>
     </>
+  );
+}
+
+function SectionRow({ title, to }: { title: string; to: string }) {
+  return (
+    <div className="mb-2 mt-10 flex items-center justify-between">
+      <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">{title}</div>
+      <Link to={to} className="press inline-flex items-center gap-1 text-[11px] text-ink-muted hover:text-foreground">
+        View all <ArrowRight className="size-3" />
+      </Link>
+    </div>
+  );
+}
+
+function Metric({ label, value, pillTone, pillText }: { label: string; value: number; pillTone?: "amber" | "rose" | "green"; pillText?: string }) {
+  const cls = pillTone === "amber" ? "bg-cat-amber-bg text-cat-amber" : pillTone === "rose" ? "bg-cat-rose-bg text-cat-rose" : "bg-cat-green-bg text-cat-green";
+  return (
+    <div className="rounded-2xl border bg-card p-5">
+      <div className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted">{label}</div>
+      <div className="mt-3 text-3xl font-semibold tracking-tight text-ink tabular-nums">{value}</div>
+      {pillTone && <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>{pillText ?? "Attention"}</span>}
+    </div>
+  );
+}
+
+function QuickAction({ to, icon: Icon, label, count, sub }: { to: string; icon: React.ComponentType<{ className?: string }>; label: string; count: number; sub: string }) {
+  return (
+    <Link to={to} className="press tile group flex items-center justify-between rounded-2xl border bg-card p-4">
+      <div className="flex items-center gap-3">
+        <div className="grid size-9 place-items-center rounded-xl bg-tile text-ink-muted">
+          <Icon className="size-4" />
+        </div>
+        <div>
+          <div className="text-sm font-medium text-foreground">{label}</div>
+          <div className="text-[11px] text-ink-muted"><span className="tabular-nums text-foreground">{count}</span> {sub}</div>
+        </div>
+      </div>
+      <ArrowRight className="size-3.5 text-ink-muted transition group-hover:translate-x-0.5" />
+    </Link>
   );
 }
 
