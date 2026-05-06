@@ -49,10 +49,14 @@ import { Route as AuthedFundingIdRouteImport } from './routes/_authed.funding.$i
 import { Route as AuthedCustomersNewRouteImport } from './routes/_authed.customers.new'
 import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customers.$id'
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
+import { Route as AuthedAdminStripeEventsRouteImport } from './routes/_authed.admin.stripe-events'
 import { Route as AuthedAdminRiskRouteImport } from './routes/_authed.admin.risk'
 import { Route as AuthedAdminPermissionsRouteImport } from './routes/_authed.admin.permissions'
 import { Route as AuthedAdminOnboardingRouteImport } from './routes/_authed.admin.onboarding'
+import { Route as AuthedAdminMembershipRouteImport } from './routes/_authed.admin.membership'
+import { Route as AuthedAdminCrmRouteImport } from './routes/_authed.admin.crm'
 import { Route as AuthedAdminConfigRouteImport } from './routes/_authed.admin.config'
+import { Route as AuthedAdminCompaniesRouteImport } from './routes/_authed.admin.companies'
 import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.audit'
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
@@ -263,6 +267,11 @@ const AuthedAdminUsersRoute = AuthedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminStripeEventsRoute = AuthedAdminStripeEventsRouteImport.update({
+  id: '/admin/stripe-events',
+  path: '/admin/stripe-events',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminRiskRoute = AuthedAdminRiskRouteImport.update({
   id: '/admin/risk',
   path: '/admin/risk',
@@ -278,9 +287,24 @@ const AuthedAdminOnboardingRoute = AuthedAdminOnboardingRouteImport.update({
   path: '/admin/onboarding',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminMembershipRoute = AuthedAdminMembershipRouteImport.update({
+  id: '/admin/membership',
+  path: '/admin/membership',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminCrmRoute = AuthedAdminCrmRouteImport.update({
+  id: '/admin/crm',
+  path: '/admin/crm',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminConfigRoute = AuthedAdminConfigRouteImport.update({
   id: '/admin/config',
   path: '/admin/config',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminCompaniesRoute = AuthedAdminCompaniesRouteImport.update({
+  id: '/admin/companies',
+  path: '/admin/companies',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedAdminAuditRoute = AuthedAdminAuditRouteImport.update({
@@ -340,10 +364,14 @@ export interface FileRoutesByFullPath {
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRoute
   '/admin/audit': typeof AuthedAdminAuditRoute
+  '/admin/companies': typeof AuthedAdminCompaniesRoute
   '/admin/config': typeof AuthedAdminConfigRoute
+  '/admin/crm': typeof AuthedAdminCrmRoute
+  '/admin/membership': typeof AuthedAdminMembershipRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
   '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
+  '/admin/stripe-events': typeof AuthedAdminStripeEventsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
@@ -392,10 +420,14 @@ export interface FileRoutesByTo {
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRoute
   '/admin/audit': typeof AuthedAdminAuditRoute
+  '/admin/companies': typeof AuthedAdminCompaniesRoute
   '/admin/config': typeof AuthedAdminConfigRoute
+  '/admin/crm': typeof AuthedAdminCrmRoute
+  '/admin/membership': typeof AuthedAdminMembershipRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
   '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
+  '/admin/stripe-events': typeof AuthedAdminStripeEventsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
@@ -446,10 +478,14 @@ export interface FileRoutesById {
   '/_authed/admin/activity': typeof AuthedAdminActivityRoute
   '/_authed/admin/amendments': typeof AuthedAdminAmendmentsRoute
   '/_authed/admin/audit': typeof AuthedAdminAuditRoute
+  '/_authed/admin/companies': typeof AuthedAdminCompaniesRoute
   '/_authed/admin/config': typeof AuthedAdminConfigRoute
+  '/_authed/admin/crm': typeof AuthedAdminCrmRoute
+  '/_authed/admin/membership': typeof AuthedAdminMembershipRoute
   '/_authed/admin/onboarding': typeof AuthedAdminOnboardingRoute
   '/_authed/admin/permissions': typeof AuthedAdminPermissionsRoute
   '/_authed/admin/risk': typeof AuthedAdminRiskRouteWithChildren
+  '/_authed/admin/stripe-events': typeof AuthedAdminStripeEventsRoute
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
@@ -500,10 +536,14 @@ export interface FileRouteTypes {
     | '/admin/activity'
     | '/admin/amendments'
     | '/admin/audit'
+    | '/admin/companies'
     | '/admin/config'
+    | '/admin/crm'
+    | '/admin/membership'
     | '/admin/onboarding'
     | '/admin/permissions'
     | '/admin/risk'
+    | '/admin/stripe-events'
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
@@ -552,10 +592,14 @@ export interface FileRouteTypes {
     | '/admin/activity'
     | '/admin/amendments'
     | '/admin/audit'
+    | '/admin/companies'
     | '/admin/config'
+    | '/admin/crm'
+    | '/admin/membership'
     | '/admin/onboarding'
     | '/admin/permissions'
     | '/admin/risk'
+    | '/admin/stripe-events'
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
@@ -605,10 +649,14 @@ export interface FileRouteTypes {
     | '/_authed/admin/activity'
     | '/_authed/admin/amendments'
     | '/_authed/admin/audit'
+    | '/_authed/admin/companies'
     | '/_authed/admin/config'
+    | '/_authed/admin/crm'
+    | '/_authed/admin/membership'
     | '/_authed/admin/onboarding'
     | '/_authed/admin/permissions'
     | '/_authed/admin/risk'
+    | '/_authed/admin/stripe-events'
     | '/_authed/admin/users'
     | '/_authed/customers/$id'
     | '/_authed/customers/new'
@@ -930,6 +978,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminUsersRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/stripe-events': {
+      id: '/_authed/admin/stripe-events'
+      path: '/admin/stripe-events'
+      fullPath: '/admin/stripe-events'
+      preLoaderRoute: typeof AuthedAdminStripeEventsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/risk': {
       id: '/_authed/admin/risk'
       path: '/admin/risk'
@@ -951,11 +1006,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminOnboardingRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/membership': {
+      id: '/_authed/admin/membership'
+      path: '/admin/membership'
+      fullPath: '/admin/membership'
+      preLoaderRoute: typeof AuthedAdminMembershipRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/crm': {
+      id: '/_authed/admin/crm'
+      path: '/admin/crm'
+      fullPath: '/admin/crm'
+      preLoaderRoute: typeof AuthedAdminCrmRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/config': {
       id: '/_authed/admin/config'
       path: '/admin/config'
       fullPath: '/admin/config'
       preLoaderRoute: typeof AuthedAdminConfigRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/companies': {
+      id: '/_authed/admin/companies'
+      path: '/admin/companies'
+      fullPath: '/admin/companies'
+      preLoaderRoute: typeof AuthedAdminCompaniesRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/admin/audit': {
@@ -1163,10 +1239,14 @@ interface AuthedRouteChildren {
   AuthedAdminActivityRoute: typeof AuthedAdminActivityRoute
   AuthedAdminAmendmentsRoute: typeof AuthedAdminAmendmentsRoute
   AuthedAdminAuditRoute: typeof AuthedAdminAuditRoute
+  AuthedAdminCompaniesRoute: typeof AuthedAdminCompaniesRoute
   AuthedAdminConfigRoute: typeof AuthedAdminConfigRoute
+  AuthedAdminCrmRoute: typeof AuthedAdminCrmRoute
+  AuthedAdminMembershipRoute: typeof AuthedAdminMembershipRoute
   AuthedAdminOnboardingRoute: typeof AuthedAdminOnboardingRoute
   AuthedAdminPermissionsRoute: typeof AuthedAdminPermissionsRoute
   AuthedAdminRiskRoute: typeof AuthedAdminRiskRouteWithChildren
+  AuthedAdminStripeEventsRoute: typeof AuthedAdminStripeEventsRoute
   AuthedAdminUsersRoute: typeof AuthedAdminUsersRouteWithChildren
   AuthedIbgIdRoute: typeof AuthedIbgIdRouteWithChildren
   AuthedIbgHistoryRoute: typeof AuthedIbgHistoryRoute
@@ -1188,10 +1268,14 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminActivityRoute: AuthedAdminActivityRoute,
   AuthedAdminAmendmentsRoute: AuthedAdminAmendmentsRoute,
   AuthedAdminAuditRoute: AuthedAdminAuditRoute,
+  AuthedAdminCompaniesRoute: AuthedAdminCompaniesRoute,
   AuthedAdminConfigRoute: AuthedAdminConfigRoute,
+  AuthedAdminCrmRoute: AuthedAdminCrmRoute,
+  AuthedAdminMembershipRoute: AuthedAdminMembershipRoute,
   AuthedAdminOnboardingRoute: AuthedAdminOnboardingRoute,
   AuthedAdminPermissionsRoute: AuthedAdminPermissionsRoute,
   AuthedAdminRiskRoute: AuthedAdminRiskRouteWithChildren,
+  AuthedAdminStripeEventsRoute: AuthedAdminStripeEventsRoute,
   AuthedAdminUsersRoute: AuthedAdminUsersRouteWithChildren,
   AuthedIbgIdRoute: AuthedIbgIdRouteWithChildren,
   AuthedIbgHistoryRoute: AuthedIbgHistoryRoute,

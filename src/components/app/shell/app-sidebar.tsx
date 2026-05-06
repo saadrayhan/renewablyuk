@@ -32,12 +32,18 @@ import {
   ShieldAlert,
   Plug,
   BarChart2,
+  Building2,
+  CreditCard,
+  Receipt,
+  Workflow,
+  ToggleRight,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
 import { canAny, type Permission } from "@/lib/rbac";
+import type { Role } from "@/lib/rbac";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { useSidebarState } from "./sidebar-context";
 
@@ -47,6 +53,7 @@ type NavItem = {
   icon: React.ComponentType<{ className?: string }>;
   visibleIf?: Permission[];
   showLockedIfNot?: Permission[];
+  hideForRoles?: Role[];
 };
 
 const main: NavItem[] = [
@@ -62,6 +69,7 @@ const main: NavItem[] = [
     to: "/ibg/new",
     icon: FileBadge,
     showLockedIfNot: ["ibg.issue"],
+    hideForRoles: ["admin"],
   },
   {
     label: "IBG Repository",
@@ -89,16 +97,58 @@ const main: NavItem[] = [
   },
 ];
 
-const adminGroup: NavItem[] = [
-  { label: "Users", to: "/admin/users", icon: Users, visibleIf: ["users.read"] },
-  { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
-  { label: "Risk & Compliance", to: "/admin/risk", icon: ShieldAlert, visibleIf: ["risk.read"] },
-  { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
-  { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
-  { label: "Audit log", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
-  { label: "Permissions", to: "/admin/permissions", icon: Library, visibleIf: ["permissions.library.manage"] },
-  { label: "Integrations", to: "/settings/integrations", icon: Plug, visibleIf: ["config.read"] },
-  { label: "System config", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+type AdminGroup = { label: string; items: NavItem[] };
+
+const adminGroups: AdminGroup[] = [
+  {
+    label: "Companies & Users",
+    items: [
+      { label: "Companies", to: "/admin/companies", icon: Building2, visibleIf: ["users.read"] },
+      { label: "Users", to: "/admin/users", icon: Users, visibleIf: ["users.read"] },
+      { label: "Membership & Billing", to: "/admin/membership", icon: CreditCard, visibleIf: ["users.read"] },
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
+      { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
+      { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
+    ],
+  },
+  {
+    label: "Configuration",
+    items: [
+      { label: "Installation & System Types", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+      { label: "Measures & Warranty", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+      { label: "Evidence Requirements", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+      { label: "Funding Schemes", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+    ],
+  },
+  {
+    label: "Risk & Compliance",
+    items: [
+      { label: "Risk Monitoring", to: "/admin/risk", icon: ShieldAlert, visibleIf: ["risk.read"] },
+      { label: "Overrides", to: "/admin/risk", icon: Shield, visibleIf: ["risk.read"] },
+      { label: "Audit Logs", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
+    ],
+  },
+  {
+    label: "Integrations",
+    items: [
+      { label: "External APIs", to: "/settings/integrations", icon: Plug, visibleIf: ["config.read"] },
+      { label: "Stripe Events", to: "/admin/stripe-events", icon: Receipt, visibleIf: ["config.read"] },
+      { label: "CRM / HubSpot", to: "/admin/crm", icon: Workflow, visibleIf: ["config.read"] },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { label: "Access Control", to: "/admin/permissions", icon: Library, visibleIf: ["permissions.library.manage"] },
+      { label: "Feature Flags", to: "/admin/config", icon: ToggleRight, visibleIf: ["config.read"] },
+      { label: "System Settings", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+    ],
+  },
 ];
 
 export function AppSidebar() {
@@ -150,13 +200,17 @@ function SidebarBody({
   mobile?: boolean;
 }) {
   const { permissions, isAdmin } = useAuth();
-  const { onboardingStep } = useDevRole();
+  const { onboardingStep, role } = useDevRole();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { setMobileOpen } = useSidebarState();
 
-  const visibleAdmin = adminGroup.filter(
-    (i) => !i.visibleIf || canAny(permissions, i.visibleIf),
-  );
+  const visibleMain = main.filter((i) => !i.hideForRoles || !i.hideForRoles.includes(role));
+  const visibleAdminGroups = adminGroups
+    .map((g) => ({
+      label: g.label,
+      items: g.items.filter((i) => !i.visibleIf || canAny(permissions, i.visibleIf)),
+    }))
+    .filter((g) => g.items.length > 0);
   const onboardingActive = onboardingStep !== "complete";
 
   return (
@@ -191,7 +245,7 @@ function SidebarBody({
 
       <nav className="flex-1 overflow-y-auto px-2 pb-3 pt-3">
         {!collapsed && <SectionLabel>Workspace</SectionLabel>}
-        {main.map((item) => (
+        {visibleMain.map((item) => (
           <Row
             key={item.to}
             item={item}
@@ -213,19 +267,28 @@ function SidebarBody({
           </Link>
         )}
 
-        {visibleAdmin.length > 0 && (
+        {visibleAdminGroups.length > 0 && (
           <>
             {!collapsed && <SectionLabel icon={Shield}>Admin</SectionLabel>}
             {collapsed && <Divider />}
-            {visibleAdmin.map((item) => (
-              <Row
-                key={item.to}
-                item={item}
-                permissions={permissions}
-                path={path}
-                collapsed={collapsed}
-                onClick={onItemClick}
-              />
+            {visibleAdminGroups.map((group, gi) => (
+              <div key={group.label} className={cn(gi > 0 && "mt-2")}>
+                {!collapsed && (
+                  <div className="px-3 pb-1 pt-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-ink-muted/80">
+                    {group.label}
+                  </div>
+                )}
+                {group.items.map((item) => (
+                  <Row
+                    key={`${group.label}-${item.label}`}
+                    item={item}
+                    permissions={permissions}
+                    path={path}
+                    collapsed={collapsed}
+                    onClick={onItemClick}
+                  />
+                ))}
+              </div>
             ))}
           </>
         )}

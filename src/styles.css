@@ -55,6 +55,9 @@
   /* Brand */
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-foreground: var(--brand-blue-foreground);
+  --color-brand-blue-tint: var(--brand-blue-tint);
 
   /* Category illustration palette (soft tile background + vivid icon) */
   --color-cat-green: var(--cat-green);
@@ -136,6 +139,12 @@
   --brand: oklch(0.62 0.16 152);
   --brand-foreground: oklch(0.99 0 0);
 
+  /* Renewably brand blue (#0F47A8) — used sparingly: active workspace tab,
+     primary CTAs, and informational notice tint (#E8F0FC). */
+  --brand-blue: #0F47A8;
+  --brand-blue-foreground: #FFFFFF;
+  --brand-blue-tint: #E8F0FC;
+
   /* Category illustration palette — soft tile bg + vivid icon ink */
   --cat-green:     oklch(0.55 0.17 152);
   --cat-green-bg:  oklch(0.94 0.05 152);
@@ -216,6 +225,11 @@
   /* Brand */
   --brand: oklch(0.7 0.17 152);
   --brand-foreground: oklch(0.13 0 0);
+
+  /* Brand blue — same hex in dark mode; tint slightly translucent on dark */
+  --brand-blue: #2563EB;
+  --brand-blue-foreground: #FFFFFF;
+  --brand-blue-tint: oklch(0.32 0.06 255 / 35%);
 
   /* Category palette — brighter inks, low-chroma backgrounds for dark canvas */
   --cat-green:     oklch(0.78 0.18 152);
