@@ -200,13 +200,17 @@ function SidebarBody({
   mobile?: boolean;
 }) {
   const { permissions, isAdmin } = useAuth();
-  const { onboardingStep } = useDevRole();
+  const { onboardingStep, role } = useDevRole();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { setMobileOpen } = useSidebarState();
 
-  const visibleAdmin = adminGroup.filter(
-    (i) => !i.visibleIf || canAny(permissions, i.visibleIf),
-  );
+  const visibleMain = main.filter((i) => !i.hideForRoles || !i.hideForRoles.includes(role));
+  const visibleAdminGroups = adminGroups
+    .map((g) => ({
+      label: g.label,
+      items: g.items.filter((i) => !i.visibleIf || canAny(permissions, i.visibleIf)),
+    }))
+    .filter((g) => g.items.length > 0);
   const onboardingActive = onboardingStep !== "complete";
 
   return (
@@ -241,7 +245,7 @@ function SidebarBody({
 
       <nav className="flex-1 overflow-y-auto px-2 pb-3 pt-3">
         {!collapsed && <SectionLabel>Workspace</SectionLabel>}
-        {main.map((item) => (
+        {visibleMain.map((item) => (
           <Row
             key={item.to}
             item={item}
@@ -263,19 +267,28 @@ function SidebarBody({
           </Link>
         )}
 
-        {visibleAdmin.length > 0 && (
+        {visibleAdminGroups.length > 0 && (
           <>
             {!collapsed && <SectionLabel icon={Shield}>Admin</SectionLabel>}
             {collapsed && <Divider />}
-            {visibleAdmin.map((item) => (
-              <Row
-                key={item.to}
-                item={item}
-                permissions={permissions}
-                path={path}
-                collapsed={collapsed}
-                onClick={onItemClick}
-              />
+            {visibleAdminGroups.map((group, gi) => (
+              <div key={group.label} className={cn(gi > 0 && "mt-2")}>
+                {!collapsed && (
+                  <div className="px-3 pb-1 pt-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-ink-muted/80">
+                    {group.label}
+                  </div>
+                )}
+                {group.items.map((item) => (
+                  <Row
+                    key={`${group.label}-${item.label}`}
+                    item={item}
+                    permissions={permissions}
+                    path={path}
+                    collapsed={collapsed}
+                    onClick={onItemClick}
+                  />
+                ))}
+              </div>
             ))}
           </>
         )}
