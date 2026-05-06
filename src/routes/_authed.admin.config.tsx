@@ -82,6 +82,7 @@ function ConfigPage() {
           value={tab} onChange={setTab}
           options={[
             { value: "measures", label: "Approved measures" },
+            { value: "evidence", label: "Evidence requirements", count: EVIDENCE_RULES.length },
             { value: "templates", label: "Notification templates" },
             { value: "schemes", label: "Scheme integrations" },
             { value: "installation", label: "Installation types", count: data.installationTypes.length },
