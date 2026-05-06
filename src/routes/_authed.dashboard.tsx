@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
-import { can, type Permission } from "@/lib/rbac";
+import { can } from "@/lib/rbac";
 import { useStore } from "@/lib/mock/store";
 import { TileRow, type Tile } from "@/components/app/tile-row";
 import { ListRow } from "@/components/app/list-row";
@@ -102,8 +102,8 @@ function AdminDash() {
                 to="/admin/risk"
                 icon={ShieldAlert}
                 iconTone="rose"
-                title={u.fullName}
-                subtitle={u.companyName ?? u.email}
+                title={u.name}
+                subtitle={u.email}
                 meta={<span className="rounded-full bg-cat-rose-bg px-2 py-0.5 text-[11px] font-medium text-cat-rose">{u.accountRiskState}</span>}
               />
             ))}
@@ -303,8 +303,8 @@ function OperateDash() {
               to="/funding"
               icon={Sparkles}
               iconTone="amber"
-              title={f.name}
-              subtitle={f.scheme}
+              title={f.ref}
+              subtitle={`${f.scheme} · ${f.measure}`}
             />
           ))
         )}
@@ -389,4 +389,4 @@ function greet() {
 }
 
 // silence unused
-void Users; void Lock; void CreditCard; void Permission;
+void Users; void Lock; void CreditCard;

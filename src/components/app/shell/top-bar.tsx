@@ -45,15 +45,22 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-1">
+        <a
+          href="https://docs.lovable.dev"
+          target="_blank"
+          rel="noreferrer"
+          className="press hidden h-7 items-center rounded-full px-3 text-[12px] text-ink-muted hover:bg-surface hover:text-foreground md:inline-flex"
+        >
+          Docs
+        </a>
         <button
           type="button"
-          aria-label="Search (⌘K)"
           onClick={() => setOpen(true)}
-          className="press hidden h-8 items-center gap-2 rounded-lg border bg-surface/60 px-2.5 text-xs text-ink-muted hover:bg-surface hover:text-foreground md:inline-flex"
+          className="press hidden h-7 items-center gap-1.5 rounded-full px-3 text-[12px] text-ink-muted hover:bg-surface hover:text-foreground md:inline-flex"
         >
           <Search className="size-3.5" />
-          <span>Search…</span>
-          <kbd className="ml-2 rounded bg-background px-1.5 py-0.5 font-mono text-[10px] text-ink-muted">
+          <span>Ask</span>
+          <kbd className="ml-1 rounded bg-background px-1.5 py-0.5 font-mono text-[10px] text-ink-muted">
             {isMac ? "⌘" : "Ctrl"}K
           </kbd>
         </button>
@@ -61,9 +68,9 @@ export function TopBar() {
           type="button"
           aria-label="Search"
           onClick={() => setOpen(true)}
-          className="press grid size-8 place-items-center rounded-full text-ink-muted hover:bg-surface hover:text-foreground md:hidden"
+          className="press grid size-7 place-items-center rounded-full text-ink-muted hover:bg-surface hover:text-foreground md:hidden"
         >
-          <Search className="size-[18px]" />
+          <Search className="size-[16px]" />
         </button>
         <NotificationsPopover />
         <ProfilePopover />
