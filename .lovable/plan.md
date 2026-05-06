@@ -1,136 +1,110 @@
-# Renewably UK — focused update pass
 
-Scope from the uploaded prompt. Functionality only — the existing visual language stays as-is, color is the only design change.
+# Renewably Admin — Design Restoration & Functional Parity Pass
 
-## 1. Branding — brand blue #0F47A8 (~10% usage)
+The redesign drifted away from ElevenLabs. This pass restores the visual language, dials brand blue back, redesigns Configuration intelligently, and corrects Integrations placement. Functionality from the client's screenshots is the spec; the presentation is ours.
 
-Edit `src/styles.css` only. Do not touch other tokens.
+## Design rules to re-enforce (apply globally)
 
-- Add a new token `--brand-blue: #0F47A8` and `--brand-blue-tint: #E8F0FC` (light + dark variants).
-- Apply to:
-  - active workspace tab indicator on the Access / Operate / Admin switcher (top bar)
-  - primary CTA buttons: "Issue IBG", "Save", "Continue" (white text)
-  - background of informational notice panels (`#E8F0FC` light tint)
-- Do NOT touch: card backgrounds, sidebar fill, section headers, decorative chips, status pills, category palette, dark/light mode logic, existing greens/ambers/reds.
+ElevenLabs language we'll re-apply, not invent:
+- White canvas (`bg-background`), tile surfaces (`bg-tile` / `bg-card`), 1px hairline borders, generous padding (`p-5`/`p-6`), `rounded-2xl` on cards.
+- Typography: `text-3xl/4xl` page titles with `tracking-tight`; eyebrow in `text-[11px] uppercase tracking-[0.08em] text-ink-muted`; supporting copy `text-sm text-ink-muted`.
+- Primary actions: black pill (`bg-foreground text-background rounded-full`). Secondary: bordered ghost. No filled green/blue buttons except the single brand CTA.
+- Status uses the soft `cat-*-bg` + `cat-*` ink pills already in the system (green/amber/rose/purple). Numbers in cards are large, neutral ink — no colored backgrounds on KPI tiles.
+- Motion: keep `.press`, `.tile`, `.stagger-in`. No new animations.
 
-## 2. BUG FIX 1 — IBG creation blocked  (`src/routes/_authed.ibg.new.tsx`)
+Brand blue (`#0F47A8`) — strict 10% rule:
+- Allowed: workspace switcher active state, the single primary CTA per page (e.g. "Update Rule", "Save"), and the `--brand-blue-tint` info notice background.
+- Remove from: KPI cards, dashboard tiles, table headers, sidebar active state (revert to neutral `bg-sidebar-accent` + neutral indicator).
+- Audit `_authed.dashboard.tsx`, `_authed.admin.companies.tsx`, `_authed.admin.membership.tsx`, `_authed.admin.stripe-events.tsx`, `_authed.settings.integrations.tsx` and strip any blue fills/borders that crept in.
 
-- Remove `disabled={step === 0 && !readinessOk}` from the step-0 Continue button.
-- Remove the toast block in `next()` that fires when `step === 0 && !readinessOk`.
-- Step-0 readiness list becomes purely informational (preview).
-- Move the readiness gate to step 3: the final "Issue IBG" button stays disabled when `!readinessOk`, with a clear inline error.
-- Post-issue success screen: if `!isOperate`, change "Back to repository" → "Back to IBG History" linking to `/ibg/history`. Operate/Admin keeps `/ibg/repository`.
-
-## 3. BUG FIX 2 — hide IBG Generator from Admin sidebar
-
-- In `src/components/app/shell/app-sidebar.tsx` (and the legacy `components/app/app-sidebar.tsx` if still wired), add a role exclusion to the `IBG Generator` item so it is hidden when the active role is `admin`. Direct URL access remains.
-
-## 4. UPDATE 1 — Admin sidebar restructure
-
-Reorganise the admin section into labelled groups (no routes removed):
-
+KPI / metric card pattern (single source of truth):
 ```text
-COMPANIES & USERS    Companies (new), Users, Membership & Billing (new)
-OPERATIONS           Onboarding, Amendments, Activity
-CONFIGURATION        Installation & System Types, Measures & Warranty,
-                     Evidence Rules, Funding Schemes
-RISK & COMPLIANCE    Risk Monitoring, Overrides (tab on risk), Audit Logs
-INTEGRATIONS         External APIs (renamed), Stripe Events (new),
-                     CRM / HubSpot (Coming Soon)
-SYSTEM               Access Control (renamed from Permissions),
-                     Feature Flags (Coming Soon), System Settings
+┌──────────────────────────┐
+│ Label             icon   │   label: text-xs text-ink-muted
+│                          │
+│ 247                      │   value: text-3xl font-semibold ink
+│ ▲ 12 this week           │   delta: text-[11px] text-ink-muted
+└──────────────────────────┘
 ```
+No colored fills. Status is conveyed via a small pill under the number when relevant.
 
-Each group rendered as a small uppercase label above its items, matching the existing sidebar style.
+## Sidebar cleanup (`src/components/app/shell/app-sidebar.tsx`)
 
-## 5. UPDATE 2 — Admin dashboard expansion (`_authed.dashboard.tsx`)
+Current admin groups duplicate routes (Configuration has 4 items all pointing at `/admin/config`). Fix:
+- **Companies & Users**: Companies, Users, Membership & Billing
+- **Configuration**: single "Configuration" entry → tabbed page (see below)
+- **Risk & Compliance**: Risk Monitoring, Overrides (deep-link tab on Risk page), Audit Logs
+- **Integrations**: External APIs, Stripe Events, CRM (HubSpot) — these are the **read-only/observability** views
+- **System**: Access Control, Feature Flags, System Settings — separate routes (stub pages OK), not all pointing to `/admin/config`
+- Active row indicator: revert to neutral foreground ink + a 2px neutral left bar (drop the brand color bar).
 
-Only when `role === "admin"`. Existing Access / Operate dashboards untouched. Six sections, each with a row header + link, using existing card/tile components and counts from `mock/store`:
+## Configuration redesign (`/_authed/admin/config`)
 
-1. **User Management** — Total / Pending / Active / Suspended
-2. **Risk & Compliance** — High Risk / Critical / Active Overrides / Expiring (≤48h)
-3. **IBG Activity** — IBGs Today / This Month / Failed Emails (3) / Amendment Requests
-4. **Membership & Billing** — Access / Operate members / Failed Payments (4) / Past Due (7)
-5. **System Health** — 3 wide API status cards (Companies House, Stripe, HubSpot) + Failed API Calls (12)
-6. **Quick Actions** — 4 clickable cards routing to onboarding / risk / amendments / membership
+Replace the current dump with one ElevenLabs-style hub:
+- Page header + horizontal `UnderlineTabs` for: Installation & System Types · Measures & Warranty · Evidence Requirements · Funding Schemes · Email Templates · Feature Flags.
+- Each tab = a single airy section: title + one-line helper + list/grid of cards. Add primary action ("Add installation type", etc.) as a black pill in the section's right-aligned toolbar — not at the top of the page.
+- Installation & System Types: parent–child nested cards (Installation Type → System Types as a soft sub-list with mono `id` chips). Inline add via a ghost row at the bottom of each group, not a giant button.
+- Evidence Requirements: card grid; each card shows scope chip (Installation/Project/Company), required toggle, effective date, edit pencil. Edit opens an existing dialog pattern.
+- Drop the "Admin only" red badge from this page; the route is already RBAC-gated.
 
-Card accent colours per spec (neutral / amber / green / red / blue) using existing palette tokens.
+## Integrations split (this is the part I missed)
 
-## 6. UPDATE 3 — New page: `/admin/companies`
+Two surfaces, different jobs:
+1. **`/admin/integrations`** (admin observability — read-only)
+   - System Health row (Companies House, Stripe, HubSpot — Operational/Degraded pills, no colored fills, just dotted status + label).
+   - API Usage panel (existing `ApiUsagePanel` moves here from Settings).
+   - Sub-pages already exist: Stripe Events, CRM/HubSpot — link out as cards from this hub.
+   - No connect/disconnect buttons here.
+2. **`/settings/integrations`** (workspace-level — owners only)
+   - Connect / disconnect Zapier, Make, HubSpot, Salesforce, Slack, Webhooks (existing UI). Remove the API Usage panel from here — it belongs in admin.
 
-`src/routes/_authed.admin.companies.tsx`, admin-only (`can("users.read")`). Page header + DataTable with columns: Company Name (with type dot), Company Number, Business Type, Account Status, Membership Level, Risk Level, Billing Status, IBG Access, Actions (View/Edit/Billing/Flag/Suspend). Source rows from `mock.users` filtered to installer roles. Bottom info panel "Business Type Verification" (light blue).
+Update sidebar so admin sees an "Integrations" hub link, and Stripe Events / CRM live as children of that hub conceptually (still in the Integrations group).
 
-## 7. UPDATE 4 — New page: `/admin/membership`
+## Admin Dashboard polish (`_authed.dashboard.tsx` → `AdminDash`)
 
-`src/routes/_authed.admin.membership.tsx`. Sections: Current Status card, 4 metric cards (Active 24, Past Due 3, Failed 2, Suspended 1), light-blue info panel, Subscriptions table (3 mock rows), Stripe Events Log (3 mock rows, monospace event types).
+Keep the section structure (Companies & Users, Risk Overview, IBG Activity, System Health) but restyle:
+- Section header: small icon + title + right-aligned ghost link ("View all →"), no boxed background.
+- KPI cards: switch from current colored treatments to the neutral pattern above. Status meaning lives in a tiny pill, not a fill.
+- Add a 4th row: **Quick Actions** strip (Approve Users, Review High Risk, Approve Amendments, Failed Payments) as 4 minimal cards with icon + label + count, linking to the relevant queue.
+- Remove brand blue from any tile.
 
-## 8. UPDATE 5 — New page: `/admin/stripe-events`
+## Companies / Membership / Stripe Events table polish
 
-`src/routes/_authed.admin.stripe-events.tsx`. Reuses Stripe Events Log table. Filter pills: All / Payment Succeeded / Payment Failed / Subscription Events / Refunds.
+- Tables: hairline borders only, `bg-surface/40` header row, `text-[11px] uppercase` column labels, row hover `bg-surface/60`. No zebra. Action icons in a single right-aligned cluster with tooltips (matches client's icon row functionally without copying their dense layout).
+- Status pills use existing `cat-*-bg`/`cat-*` tokens; never blue.
+- Membership page: keep "Current Status" summary, KPI row, Subscriptions table, Stripe Events log — but restyle KPIs to neutral pattern.
 
-Also add stub Coming Soon route `/admin/crm` for HubSpot.
+## Nested pages (drill-downs the user couldn't screenshot)
 
-## 9. UPDATE 6 — Enhance `/settings/integrations`
+Add stubs that already match design system, so the navigation graph is complete:
+- `/admin/companies/$id` — company profile with tabs (Overview · Users · Billing · Risk · Activity).
+- `/admin/users/$id` — already exists; align styling.
+- `/admin/risk/$id` — already exists; ensure the override sheet matches the screenshot's structure (Risk Evaluation → System Impact → Admin Override Section) but in our card language.
+- `/admin/integrations` — new hub page (described above).
+- `/admin/system-settings`, `/admin/feature-flags`, `/admin/access-control` — split out from `/admin/config`.
 
-Append (do not delete existing):
+## Out of scope (explicit)
 
-- API Usage Overview — 3 progress cards (CH 847/1000, HubSpot 1245/2000, Stripe 423/1000) with "Resets at 00:00 UTC".
-- Blue info panel: threshold alerting copy.
-- Rate Limit Status table.
-- Throttling Controls — 3 toggles (Enable Throttling ON, Queue OFF, Priority OFF).
-- Usage Log table (4 mock rows, monospace endpoint).
+- No new colors, no new fonts, no new icon set.
+- No backend / Supabase changes.
+- No copying the client's exact tables, modals, or icon strips pixel-for-pixel — functionality only.
+- IBG Generator stays hidden from admin (already done).
 
-## 10. UPDATE 7 — Enhance `/admin/risk`
+## File-level summary
 
-- Add 5 Risk Tier cards above the table (LOW / MEDIUM / HIGH / CRITICAL / NOT ASSESSED) using a left-border colour accent only.
-- Add missing table columns: Business Type, Company Status, Status Detail, Insolvency History, Override Status, Last Checked.
-- Add a 2-column info section between header and table: "Risk Evaluation Logic" + "Admin Risk Control".
+Edited:
+- `src/components/app/shell/app-sidebar.tsx` (group cleanup, neutral active state)
+- `src/routes/_authed.dashboard.tsx` (admin section restyle, quick actions row)
+- `src/routes/_authed.admin.config.tsx` (rebuild as unified tabbed hub)
+- `src/routes/_authed.admin.companies.tsx` (table restyle, neutral status)
+- `src/routes/_authed.admin.membership.tsx` (KPI restyle)
+- `src/routes/_authed.admin.stripe-events.tsx` (filter pills + table restyle)
+- `src/routes/_authed.admin.risk.tsx` (drop blue, neutralize tier cards)
+- `src/routes/_authed.settings.integrations.tsx` (remove API Usage panel)
 
-## 11. UPDATE 8 — Evidence Requirements
+Created:
+- `src/routes/_authed.admin.integrations.tsx` (new observability hub)
+- `src/routes/_authed.admin.companies.$id.tsx` (drill-down stub)
+- `src/routes/_authed.admin.system-settings.tsx`, `_authed.admin.feature-flags.tsx`, `_authed.admin.access-control.tsx` (split stubs)
 
-Inside `_authed.admin.config.tsx`, add an `evidence` tab if missing. Rename label everywhere → "Evidence Requirements". Page contents:
-
-- 3 stacked info banners (blue / amber / red).
-- Search bar above table; keep "Create Rule" button.
-- Ensure first data column is `Evidence Scope` (Installation = green, Project = blue, Company = purple badge), then Evidence Name, etc.
-
-Also add `flags` and `system` tab placeholders if not present (system already exists; flags may be Coming Soon).
-
-## 12. UPDATE 9 — Access dashboard (`installer-access`)
-
-Verify and fill missing pieces: blue "Access" pill, 5 cards (IBGs, Account Status, Compliance, Funding Match LOCKED, Operate Features LOCKED), "Access Workspace" info panel with restricted features list.
-
-## 13. UPDATE 10 — Operate dashboard (`installer-operate`)
-
-Verify presence of green "Operate" pill, 4 alert banners, 7 dashboard cards (Active Projects, Ready for IBG, Evidence Incomplete, IBGs, Funding Match, Company Compliance, Account Status). Add only what is missing.
-
-## What I will NOT touch
-
-- 5-role RBAC model
-- Shell, sidebar structure pattern, or design language (color only)
-- Mock store schema (read + add static values where noted)
-- Projects, Customers, Properties, Jobs, Submissions, Funding, Reports
-- IBG history or repository pages (only fix `/ibg/new`)
-- Dev role switcher
-- Existing admin pages (Onboarding, Amendments, Activity, Audit, Permissions) beyond the rename of Permissions → Access Control label
-
-## Technical notes
-
-- New routes are added as files under `src/routes/`; the TanStack router plugin auto-registers them.
-- Brand-blue tokens added in `src/styles.css` only; component CSS picks them up via `var(--brand-blue)`.
-- All mock counts derive from `useMock().data` (users, ibgs, riskOverrides, amendments). Static numbers used only where the prompt specifies a hardcoded value.
-- Permission gating uses existing `can()` + `useDevRole()` helpers.
-
-## Order of execution
-
-1. Branding tokens + apply to 3 surfaces
-2. Bug Fix 1 (IBG new) + Bug Fix 2 (sidebar role gate)
-3. Sidebar restructure with new groups + new route stubs
-4. New routes: companies, membership, stripe-events, crm
-5. Admin dashboard expansion
-6. Risk page enhancements
-7. Integrations page enhancements
-8. Evidence Requirements tab
-9. Access + Operate dashboard checks/fills
-
-Awaiting approval.
+Approve and I'll execute in one pass.
