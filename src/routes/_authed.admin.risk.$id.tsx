@@ -1,15 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ShieldAlert, ArrowUp, ArrowDown, Check, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
 import { useStore, update } from "@/lib/mock/store";
 import { findUser, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, RISK_STATES } from "@/components/app/state-pill";
-import { UnderlineTabs } from "@/components/app/underline-tabs";
 import { EmptyState } from "@/components/app/empty-state";
 import { LockedCard } from "@/components/app/locked-card";
 import { HighRiskOverrideSheet } from "@/components/app/high-risk-override-sheet";
 import { CriticalRiskOverrideSheet } from "@/components/app/critical-risk-override-sheet";
+import { Button } from "@/components/ui/button";
 import { useDevRole } from "@/lib/dev-role";
 import { can } from "@/lib/rbac";
 import { useAuth } from "@/lib/auth-context";
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/_authed/admin/risk/$id")({
 });
 
 const ORDER: AccountRiskState[] = ["active", "flagged", "paused", "suspended"];
-type Tab = "history" | "checks" | "overrides";
 
 function RiskDetail() {
   const { id } = Route.useParams();
@@ -70,8 +68,10 @@ function RiskDetail() {
     { date: "01 Apr", type: "Dissolution notice", signal: "None", severity: "low", pass: true },
   ] : [];
 
+  const activeOverride = overrides.find((o) => o.active);
+
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-4 py-6 md:px-8 md:py-10">
+    <div className="mx-auto w-full max-w-[1100px] px-4 py-6 md:px-8 md:py-10">
       <Link to="/admin/risk" className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-foreground">
         <ArrowLeft className="size-3.5" /> Risk & Compliance
       </Link>
@@ -85,126 +85,133 @@ function RiskDetail() {
         <StatePill meta={RISK_STATES[state]} />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="min-w-0">
-          <UnderlineTabs<Tab>
-            value={tab} onChange={setTab}
-            options={[
-              { value: "history", label: "Risk History" },
-              { value: "checks", label: "CH Checks", count: checks.length },
-              { value: "overrides", label: "Overrides", count: overrides.length },
-            ]}
-          />
-
-          <div className="mt-5">
-            {tab === "history" && (
-              <div className="rounded-2xl border bg-card p-4">
-                {assessments.length === 0 ? <EmptyState title="No risk events" body="No risk state changes recorded." /> : (
-                  <ol className="space-y-3">
-                    {assessments.map((r) => (
-                      <li key={r.id} className="relative pl-4">
-                        <span className="absolute left-0 top-1.5 size-2 rounded-full bg-foreground" />
-                        <div className="text-sm text-foreground">State → {r.state}</div>
-                        <div className="text-xs text-ink-muted">{r.signalDetail}</div>
-                        <div className="text-[11px] text-ink-muted">{r.signalType} · {fmtDate(r.createdAt)}</div>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-              </div>
-            )}
-            {tab === "checks" && (
-              <div className="overflow-hidden rounded-2xl border bg-card">
-                {!isLtd ? (
-                  <div className="p-6 text-center text-sm text-ink-muted">Companies House checks only apply to limited companies.</div>
-                ) : (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-                        <th className="px-4 py-2.5 text-left">Date</th>
-                        <th className="px-4 py-2.5 text-left">Type</th>
-                        <th className="px-4 py-2.5 text-left">Signal</th>
-                        <th className="px-4 py-2.5 text-left">Severity</th>
-                        <th className="px-4 py-2.5 text-right">Result</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {checks.map((c, i) => (
-                        <tr key={i} className="border-b last:border-b-0">
-                          <td className="px-4 py-3 text-ink-muted">{c.date}</td>
-                          <td className="px-4 py-3 text-foreground">{c.type}</td>
-                          <td className="px-4 py-3 text-ink-muted">{c.signal}</td>
-                          <td className="px-4 py-3 text-ink-muted">{c.severity}</td>
-                          <td className="px-4 py-3 text-right">
-                            {c.pass
-                              ? <span className="inline-flex items-center gap-1 rounded-full bg-cat-green-bg px-2 py-0.5 text-[11px] font-medium text-cat-green"><Check className="size-3" /> Pass</span>
-                              : <span className="inline-flex items-center gap-1 rounded-full bg-cat-amber-bg px-2 py-0.5 text-[11px] font-medium text-cat-amber"><AlertTriangle className="size-3" /> Flag</span>}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-            {tab === "overrides" && (
-              <div className="rounded-2xl border bg-card">
-                {overrides.length === 0 ? (
-                  <div className="p-6"><EmptyState title="No overrides" body="No overrides recorded for this account" /></div>
-                ) : (
-                  <div className="divide-y">
-                    {overrides.map((o) => (
-                      <div key={o.id} className="flex items-start justify-between gap-4 px-5 py-3">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${o.riskLevel === "high" ? "bg-cat-amber-bg text-cat-amber" : "bg-cat-rose-bg text-cat-rose"}`}>
-                              {o.riskLevel.toUpperCase()}
-                            </span>
-                            <span className={`text-[11px] ${o.active ? "text-cat-green" : "text-ink-muted"}`}>{o.active ? "Active" : "Expired"}</span>
-                          </div>
-                          <div className="mt-1.5 text-sm text-foreground">{o.reason}</div>
-                          <div className="mt-0.5 text-[11px] text-ink-muted">By {o.createdBy} · applied {fmtDate(o.createdAt)}{o.expiresAt ? ` · expires ${fmtDate(o.expiresAt)}` : " · indefinite"}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+      {activeOverride && (
+        <div className="mt-4 rounded-2xl border border-brand-blue/20 bg-brand-blue-tint px-4 py-3 text-sm text-brand-blue">
+          <div className="font-medium">Override active — {activeOverride.riskLevel.toUpperCase()}</div>
+          <div className="mt-0.5 text-xs opacity-80">{activeOverride.reason} · by {activeOverride.createdBy}</div>
         </div>
+      )}
 
-        <aside className="space-y-3 lg:sticky lg:top-6 lg:self-start">
-          <div className="rounded-2xl border bg-card p-4">
-            <div className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">Current state</div>
-            <div className="mt-2"><StatePill meta={RISK_STATES[state]} /></div>
-
-            <div className="mt-4 space-y-2">
-              {(state === "flagged" || state === "paused") && (
-                <button onClick={() => setSheetOpen(true)} className="press inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-cat-amber px-3 py-2 text-xs font-medium text-white">
-                  <ShieldAlert className="size-3.5" /> Apply HIGH Risk Override
-                </button>
-              )}
-              {state === "suspended" && (
-                <button onClick={() => setCriticalOpen(true)} className="press inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-cat-rose px-3 py-2 text-xs font-medium text-white">
-                  <ShieldAlert className="size-3.5" /> Apply CRITICAL Risk Override
-                </button>
-              )}
-              <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => move(1)} className="press inline-flex items-center justify-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs">
-                  <ArrowUp className="size-3" /> Escalate
-                </button>
-                <button onClick={() => move(-1)} className="press inline-flex items-center justify-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs">
-                  <ArrowDown className="size-3" /> Downgrade
-                </button>
-              </div>
-            </div>
+      {/* Card 1 — Risk Evaluation */}
+      <section className="mt-6 rounded-2xl border bg-card">
+        <header className="flex items-center justify-between gap-3 border-b px-5 py-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.08em] text-ink-muted">Card 1</div>
+            <h2 className="text-base font-semibold text-foreground">Risk Evaluation</h2>
           </div>
-        </aside>
-      </div>
+          <span className="text-xs text-ink-muted">{isLtd ? "Companies House monitoring" : "Internal signals only"}</span>
+        </header>
+        <div className="px-5 py-4">
+          {isLtd ? (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+              {checks.map((c, i) => (
+                <div key={i} className="rounded-xl border bg-background p-3">
+                  <div className="text-[10px] uppercase tracking-wide text-ink-muted">{c.date}</div>
+                  <div className="mt-1 text-xs font-medium text-foreground">{c.type}</div>
+                  <div className="mt-0.5 text-[11px] text-ink-muted">{c.signal}</div>
+                  <div className="mt-2">
+                    {c.pass
+                      ? <span className="inline-flex items-center gap-1 rounded-full bg-cat-green-bg px-1.5 py-0.5 text-[10px] text-cat-green"><Check className="size-2.5" /> Pass</span>
+                      : <span className="inline-flex items-center gap-1 rounded-full bg-cat-amber-bg px-1.5 py-0.5 text-[10px] text-cat-amber"><AlertTriangle className="size-2.5" /> Flag</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-ink-muted">Sole traders are not monitored against Companies House. Risk signals come from internal triggers (failed payments, complaint volume, manual review).</p>
+          )}
+          {assessments.length > 0 && (
+            <div className="mt-5 border-t pt-4">
+              <div className="text-[10px] uppercase tracking-wide text-ink-muted">Recent risk events</div>
+              <ol className="mt-2 space-y-2">
+                {assessments.slice(0, 5).map((r) => (
+                  <li key={r.id} className="flex items-center gap-3 text-sm">
+                    <span className="size-1.5 rounded-full bg-foreground" />
+                    <span className="text-foreground">State → {r.state}</span>
+                    <span className="text-ink-muted">{r.signalDetail}</span>
+                    <span className="ml-auto text-[11px] text-ink-muted">{fmtDate(r.createdAt)}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Card 2 — System Impact */}
+      <section className="mt-4 rounded-2xl border bg-card">
+        <header className="flex items-center justify-between gap-3 border-b px-5 py-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.08em] text-ink-muted">Card 2</div>
+            <h2 className="text-base font-semibold text-foreground">System Impact</h2>
+          </div>
+          <span className="text-xs text-ink-muted">What this risk state restricts</span>
+        </header>
+        <div className="grid grid-cols-1 divide-y md:grid-cols-3 md:divide-x md:divide-y-0">
+          <ImpactRow label="IBG issuance" blocked={state === "suspended"} restricted={state === "paused"} />
+          <ImpactRow label="Submissions" blocked={state === "suspended"} restricted={false} />
+          <ImpactRow label="Payouts" blocked={state === "suspended" || state === "paused"} restricted={state === "flagged"} />
+        </div>
+      </section>
+
+      {/* Card 3 — Admin Override */}
+      <section className="mt-4 rounded-2xl border bg-card">
+        <header className="flex items-center justify-between gap-3 border-b px-5 py-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.08em] text-ink-muted">Card 3</div>
+            <h2 className="text-base font-semibold text-foreground">Admin Override</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" size="sm" onClick={() => move(-1)}><ArrowDown className="size-3.5" /> Downgrade</Button>
+            <Button variant="secondary" size="sm" onClick={() => move(1)}><ArrowUp className="size-3.5" /> Escalate</Button>
+            {(state === "flagged" || state === "paused") && (
+              <Button variant="brand" size="sm" onClick={() => setSheetOpen(true)}><ShieldAlert className="size-3.5" /> Apply override</Button>
+            )}
+            {state === "suspended" && (
+              <Button variant="brand" size="sm" onClick={() => setCriticalOpen(true)}><ShieldAlert className="size-3.5" /> Apply CRITICAL</Button>
+            )}
+          </div>
+        </header>
+        <div className="px-5 py-4">
+          {overrides.length === 0 ? (
+            <EmptyState title="No overrides" body="No overrides have been applied to this account." />
+          ) : (
+            <div className="divide-y">
+              {overrides.map((o) => (
+                <div key={o.id} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${o.riskLevel === "high" ? "bg-cat-amber-bg text-cat-amber" : "bg-cat-rose-bg text-cat-rose"}`}>
+                        {o.riskLevel.toUpperCase()}
+                      </span>
+                      <span className={`text-[11px] ${o.active ? "text-cat-green" : "text-ink-muted"}`}>{o.active ? "Active" : "Expired"}</span>
+                    </div>
+                    <div className="mt-1.5 text-sm text-foreground">{o.reason}</div>
+                    <div className="mt-0.5 text-[11px] text-ink-muted">By {o.createdBy} · {fmtDate(o.createdAt)}{o.expiresAt ? ` · expires ${fmtDate(o.expiresAt)}` : " · indefinite"}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       <HighRiskOverrideSheet open={sheetOpen} onOpenChange={setSheetOpen} organisationId={u.id} organisationName={u.name} />
       <CriticalRiskOverrideSheet open={criticalOpen} onOpenChange={setCriticalOpen} organisationId={u.id} organisationName={u.name} />
+    </div>
+  );
+}
+
+function ImpactRow({ label, blocked, restricted }: { label: string; blocked: boolean; restricted: boolean }) {
+  const tone = blocked ? "rose" : restricted ? "amber" : "green";
+  const status = blocked ? "Blocked" : restricted ? "Restricted" : "Allowed";
+  return (
+    <div className="flex items-center justify-between gap-3 px-5 py-4">
+      <div>
+        <div className="text-[10px] uppercase tracking-wide text-ink-muted">Capability</div>
+        <div className="mt-0.5 text-sm font-medium text-foreground">{label}</div>
+      </div>
+      <span className={`rounded-full bg-cat-${tone}-bg px-2 py-0.5 text-[11px] text-cat-${tone}`}>{status}</span>
     </div>
   );
 }
