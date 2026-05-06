@@ -242,7 +242,7 @@
   --brand-foreground: oklch(0.13 0 0);
 
   /* Brand blue — same hex in dark mode; tint slightly translucent on dark */
-  --brand-blue: #2563EB;
+  --brand-blue: #0F47A8;
   --brand-blue-foreground: #FFFFFF;
   --brand-blue-tint: oklch(0.32 0.06 255 / 35%);
 
