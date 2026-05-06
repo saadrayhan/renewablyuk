@@ -303,8 +303,8 @@ function OperateDash() {
               to="/funding"
               icon={Sparkles}
               iconTone="amber"
-              title={f.name}
-              subtitle={f.scheme}
+              title={f.ref}
+              subtitle={`${f.scheme} · ${f.measure}`}
             />
           ))
         )}
