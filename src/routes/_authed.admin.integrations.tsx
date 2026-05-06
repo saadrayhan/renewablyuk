@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plug, Receipt, Workflow, Building2, ArrowRight } from "lucide-react";
+import { Plug, Receipt, Workflow, Building2, ArrowRight, Activity, Clock } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
 import { LockedCard } from "@/components/app/locked-card";
 import { useDevRole } from "@/lib/dev-role";
@@ -24,6 +24,8 @@ const ENDPOINTS = [
 ];
 
 const HUBS = [
+  { to: "/admin/external-apis", icon: Activity, label: "External APIs", desc: "Live request log, quotas and throttling controls." },
+  { to: "/admin/cron", icon: Clock, label: "Cron Jobs", desc: "Background schedules — last run, next run, manual trigger." },
   { to: "/admin/stripe-events", icon: Receipt, label: "Stripe Events", desc: "Webhook log, payment & subscription events." },
   { to: "/admin/crm", icon: Workflow, label: "CRM / HubSpot", desc: "Two-way customer & job sync (coming soon)." },
   { to: "/settings/integrations", icon: Plug, label: "Workspace Integrations", desc: "Connect Zapier, Slack, Webhooks at workspace level." },
