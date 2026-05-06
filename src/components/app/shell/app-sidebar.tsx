@@ -23,6 +23,7 @@ import {
   Users,
   ScrollText,
   Activity,
+  History,
   ClipboardList,
   FileWarning,
   Library,
@@ -75,6 +76,12 @@ const main: NavItem[] = [
     label: "IBG Repository",
     to: "/ibg/repository",
     icon: Database,
+    showLockedIfNot: ["ibg.repository.read"],
+  },
+  {
+    label: "IBG History",
+    to: "/ibg/history",
+    icon: History,
     showLockedIfNot: ["ibg.repository.read"],
   },
   {
@@ -216,7 +223,7 @@ function SidebarBody({
           <Link
             to="/dashboard"
             aria-label="Renewably home"
-            className="press grid size-8 place-items-center rounded-lg bg-gradient-to-br from-cat-green to-cat-blue text-[11px] font-semibold text-white"
+            className="press grid size-8 place-items-center rounded-lg bg-brand-blue text-[11px] font-semibold text-brand-blue-foreground"
           >
             R
           </Link>

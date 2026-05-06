@@ -36,7 +36,7 @@ export function UnderlineTabs<T extends string>({
                 {opt.count}
               </span>
             )}
-            {active && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-foreground" />}
+            {active && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-brand-blue" />}
           </button>
         );
       })}

@@ -25,7 +25,7 @@ export function WorkspaceSwitcher() {
           type="button"
           className="press flex w-full items-center gap-2 rounded-xl border bg-background px-2 py-1.5 text-left hover:bg-surface"
         >
-          <span className="grid size-6 shrink-0 place-items-center rounded-md bg-gradient-to-br from-cat-amber to-cat-rose text-[10px] font-semibold text-white">
+          <span className="grid size-6 shrink-0 place-items-center rounded-md bg-brand-blue text-[10px] font-semibold text-brand-blue-foreground">
             R
           </span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
@@ -39,19 +39,23 @@ export function WorkspaceSwitcher() {
           Workspaces
         </div>
         <div className="space-y-0.5">
-          {WORKSPACES.map((w) => (
-            <button
-              key={w.id}
-              type="button"
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-surface"
-            >
-              <span className="grid size-6 shrink-0 place-items-center rounded-md bg-tile text-[10px] font-semibold text-foreground">
-                {w.name[0]}
-              </span>
-              <span className="min-w-0 flex-1 truncate">{w.name}</span>
-              <span className="text-[10px] text-ink-muted">{w.plan}</span>
-            </button>
-          ))}
+          {WORKSPACES.map((w, i) => {
+            const active = i === 0;
+            return (
+              <button
+                key={w.id}
+                type="button"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-surface"
+              >
+                <span className={`grid size-6 shrink-0 place-items-center rounded-md text-[10px] font-semibold ${active ? "bg-brand-blue text-brand-blue-foreground" : "bg-tile text-foreground"}`}>
+                  {w.name[0]}
+                </span>
+                <span className="min-w-0 flex-1 truncate">{w.name}</span>
+                {active && <span className="size-1.5 rounded-full bg-brand-blue" aria-hidden />}
+                <span className="text-[10px] text-ink-muted">{w.plan}</span>
+              </button>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>

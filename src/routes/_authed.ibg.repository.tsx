@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, FileBadge, Plus } from "lucide-react";
+import { Search, FileBadge, Plus, Download, Eye, History as HistoryIcon } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/mock/store";
 import { useDevRole } from "@/lib/dev-role";
 import { can } from "@/lib/rbac";
@@ -53,9 +54,14 @@ function Repository() {
         title="Repository"
         subtitle="Every issued IBG, fully searchable."
         actions={
-          <Link to="/ibg/new" className="press inline-flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-2 text-sm font-medium text-background">
-            <Plus className="size-4" /> New IBG
-          </Link>
+          <>
+            <Button variant="secondary" size="sm" asChild>
+              <Link to="/ibg/history"><HistoryIcon className="size-4" /> History</Link>
+            </Button>
+            <Button variant="brand" size="sm" asChild>
+              <Link to="/ibg/new"><Plus className="size-4" /> New IBG</Link>
+            </Button>
+          </>
         }
       />
 
@@ -82,18 +88,27 @@ function Repository() {
                   <th className="px-4 py-2.5 text-left">Property</th>
                   <th className="px-4 py-2.5 text-left">Measure</th>
                   <th className="px-4 py-2.5 text-left">Issued</th>
-                  <th className="px-4 py-2.5 text-right">State</th>
+                  <th className="px-4 py-2.5 text-left">State</th>
+                  <th className="w-24 px-4 py-2.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((i) => (
                   <tr key={i.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                    <td className="px-4 py-3"><Link to="/ibg/$id" params={{ id: i.id }} className="font-medium text-foreground hover:underline">{i.ref}</Link></td>
+                    <td className="px-4 py-3"><Link to="/ibg/$id" params={{ id: i.id }} className="font-mono text-[12px] font-medium text-foreground hover:underline">{i.ref}</Link></td>
                     <td className="px-4 py-3 text-foreground">{i.customerName}</td>
                     <td className="px-4 py-3 text-ink-muted">{i.propertyAddress}</td>
                     <td className="px-4 py-3 text-foreground">{i.measure}</td>
                     <td className="px-4 py-3 text-ink-muted">{i.issuedAt ? fmtDate(i.issuedAt) : "—"}</td>
-                    <td className="px-4 py-3 text-right"><StatePill meta={IBG_STATES[i.state]} /></td>
+                    <td className="px-4 py-3"><StatePill meta={IBG_STATES[i.state]} /></td>
+                    <td className="px-2 py-2">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button variant="icon" title="Download PDF"><Download className="size-4" /></Button>
+                        <Button variant="icon" title="View" asChild>
+                          <Link to="/ibg/$id" params={{ id: i.id }}><Eye className="size-4" /></Link>
+                        </Button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
