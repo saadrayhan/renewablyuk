@@ -23,6 +23,7 @@ import {
   Users,
   ScrollText,
   Activity,
+  History,
   ClipboardList,
   FileWarning,
   Library,
@@ -75,6 +76,12 @@ const main: NavItem[] = [
     label: "IBG Repository",
     to: "/ibg/repository",
     icon: Database,
+    showLockedIfNot: ["ibg.repository.read"],
+  },
+  {
+    label: "IBG History",
+    to: "/ibg/history",
+    icon: History,
     showLockedIfNot: ["ibg.repository.read"],
   },
   {
