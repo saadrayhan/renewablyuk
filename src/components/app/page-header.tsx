@@ -8,8 +8,8 @@ export function PageHeader({
   className,
 }: {
   eyebrow?: string;
-  title: string;
-  subtitle?: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
 }) {
@@ -17,15 +17,17 @@ export function PageHeader({
     <div className={cn("flex items-start justify-between gap-6", className)}>
       <div>
         {eyebrow && (
-          <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
             {eyebrow}
           </div>
         )}
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        <h1 className="font-display mt-3 text-[40px] leading-[1.05] text-ink md:text-[48px]">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-2 max-w-2xl text-sm text-ink-muted">{subtitle}</p>
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-muted">
+            {subtitle}
+          </p>
         )}
       </div>
       {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}

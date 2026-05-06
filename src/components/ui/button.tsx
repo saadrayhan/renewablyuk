@@ -43,12 +43,12 @@ const buttonVariants = cva(
         link: "text-foreground underline-offset-4 hover:underline rounded-md",
       },
       size: {
-        sm: "h-8 px-3 text-[13px]",
-        md: "h-9 px-4",
-        icon: "h-8 w-8 p-0",
+        sm: "h-8 px-3.5 text-[13px]",
+        md: "h-10 px-5",
+        icon: "h-9 w-9 p-0",
         // legacy
-        default: "h-9 px-4",
-        lg: "h-9 px-4",
+        default: "h-10 px-5",
+        lg: "h-10 px-5",
       },
     },
     defaultVariants: {

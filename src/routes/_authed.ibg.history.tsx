@@ -10,6 +10,7 @@ import { LockedCard } from "@/components/app/locked-card";
 import { FilterPills } from "@/components/app/filter-pills";
 import { fmtDate } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
+import { GradientOrb } from "@/components/app/gradient-orb";
 
 export const Route = createFileRoute("/_authed/ibg/history")({
   head: () => ({ meta: [{ title: "IBG History — Renewably UK" }] }),
@@ -85,11 +86,12 @@ function HistoryPage() {
   const filtered = rows.filter((r) => filter === "all" || r.kind === filter);
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
+    <div className="relative isolate mx-auto w-full max-w-[1200px] overflow-x-clip px-4 py-6 md:px-8 md:py-10">
+      <GradientOrb variant="lavender" size={360} className="-right-20 -top-20 opacity-45" />
       <PageHeader
-        eyebrow="IBG"
-        title="History"
-        subtitle="Activity log of every IBG event — generated, issued, sent, delivery status."
+        eyebrow="IBG · History"
+        title="Activity log"
+        subtitle="Every IBG event — generated, issued, sent, delivery status."
         actions={
           <Button variant="secondary" size="sm" asChild>
             <Link to="/ibg/repository"><FileBadge className="size-4" /> Repository</Link>

@@ -22,6 +22,7 @@ import { can, type Permission } from "@/lib/rbac";
 import { useStore } from "@/lib/mock/store";
 import { StatePill, JOB_STATES, IBG_STATES, ONBOARDING_STATES, AMENDMENT_STATES } from "@/components/app/state-pill";
 import { fmtDate, relTime } from "@/lib/mock/queries";
+import { GradientOrb } from "@/components/app/gradient-orb";
 
 export const Route = createFileRoute("/_authed/dashboard")({
   head: () => ({ meta: [{ title: "Home — Renewably UK" }] }),
@@ -35,19 +36,31 @@ function DashboardPage() {
   const greeting = greet();
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
-      <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">
-        {workspaceName(role)}
-      </div>
-      <h1 className="mt-2 text-3xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-4xl md:text-[44px] md:leading-[1.05]">
-        {greeting}, {firstName}
-      </h1>
+    <div className="relative isolate mx-auto w-full max-w-[1200px] overflow-x-clip px-4 py-6 md:px-8 md:py-10">
+      <GreetingHero name={firstName} role={role} greeting={greeting} />
 
       {role === "admin" && <AdminDash />}
       {role === "operator" && <OperatorDash />}
       {role === "installer-access" && <AccessDash />}
       {role === "installer-operate" && <OperateDash />}
       {role === "readonly" && <ReadonlyDash />}
+    </div>
+  );
+}
+
+function GreetingHero({ name, role, greeting }: { name: string; role: string; greeting: string }) {
+  return (
+    <div className="relative">
+      <GradientOrb variant="mint" size={420} className="-left-24 -top-24 opacity-50" />
+      <GradientOrb variant="peach" size={360} className="right-0 -top-20 opacity-40" />
+      <div className="relative">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+          {workspaceName(role)}
+        </div>
+        <h1 className="font-display mt-3 text-[40px] leading-[1.05] text-ink md:text-[56px]">
+          {greeting}, <span className="font-display-italic">{name}</span>
+        </h1>
+      </div>
     </div>
   );
 }

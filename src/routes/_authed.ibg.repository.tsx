@@ -11,6 +11,7 @@ import { StatePill, IBG_STATES } from "@/components/app/state-pill";
 import { FilterPills } from "@/components/app/filter-pills";
 import { fmtDate } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
+import { GradientOrb } from "@/components/app/gradient-orb";
 import type { IbgState } from "@/lib/mock/types";
 
 export const Route = createFileRoute("/_authed/ibg/repository")({
@@ -48,17 +49,18 @@ function Repository() {
     .filter((i) => !q || i.ref.toLowerCase().includes(q.toLowerCase()) || i.customerName.toLowerCase().includes(q.toLowerCase()) || i.propertyAddress.toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
+    <div className="relative isolate mx-auto w-full max-w-[1200px] overflow-x-clip px-4 py-6 md:px-8 md:py-10">
+      <GradientOrb variant="sky" size={360} className="-right-20 -top-20 opacity-45" />
       <PageHeader
-        eyebrow="IBG"
-        title="Repository"
-        subtitle="Every issued IBG, fully searchable."
+        eyebrow="IBG · Repository"
+        title="Every issued IBG"
+        subtitle="A searchable record store for certificates, policies and confirmation reports."
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
               <Link to="/ibg/history"><HistoryIcon className="size-4" /> History</Link>
             </Button>
-            <Button variant="brand" size="sm" asChild>
+            <Button size="sm" asChild>
               <Link to="/ibg/new"><Plus className="size-4" /> New IBG</Link>
             </Button>
           </>
