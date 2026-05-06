@@ -149,6 +149,8 @@ function IntegrationsPage() {
         );
       })}
 
+      <ApiUsagePanel />
+
       <Dialog open={!!target} onOpenChange={(v) => !v && setTarget(null)}>
         <DialogContent>
           <DialogHeader>
@@ -191,6 +193,71 @@ function IntegrationsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function ApiUsagePanel() {
+  const [throttle, setThrottle] = useState(true);
+  const [strict, setStrict] = useState(false);
+  const endpoints = [
+    { name: "POST /ibg", used: 412, limit: 1000 },
+    { name: "GET /repository", used: 1820, limit: 5000 },
+    { name: "POST /webhooks", used: 64, limit: 500 },
+  ];
+  return (
+    <section className="space-y-3">
+      <div className="text-xs font-medium uppercase tracking-[0.08em] text-ink-muted">API usage</div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {endpoints.map((e) => {
+          const pct = Math.min(100, Math.round((e.used / e.limit) * 100));
+          const tone = pct > 80 ? "bg-cat-rose" : pct > 60 ? "bg-cat-amber" : "bg-cat-green";
+          return (
+            <div key={e.name} className="rounded-2xl border bg-card p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium text-foreground">{e.name}</div>
+                <div className="text-[11px] text-ink-muted">{e.used.toLocaleString()} / {e.limit.toLocaleString()}</div>
+              </div>
+              <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-tile">
+                <div className={cn("h-full rounded-full", tone)} style={{ width: `${pct}%` }} />
+              </div>
+              <div className="mt-2 text-[11px] text-ink-muted">{pct}% of monthly quota</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="rounded-2xl border bg-card p-5">
+        <div className="text-sm font-medium text-foreground">Rate limit & throttling</div>
+        <div className="mt-1 text-[11px] text-ink-muted">Apply automatic protection when an integration approaches its quota.</div>
+        <div className="mt-4 space-y-3">
+          <ToggleRow label="Auto-throttle at 80% quota" desc="Slow non-critical writes to avoid hitting the cap." value={throttle} onChange={setThrottle} />
+          <ToggleRow label="Strict mode" desc="Reject calls above 100% with HTTP 429 instead of queueing." value={strict} onChange={setStrict} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ToggleRow({ label, desc, value, onChange }: { label: string; desc: string; value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <div className="text-sm text-foreground">{label}</div>
+        <div className="text-[11px] text-ink-muted">{desc}</div>
+      </div>
+      <button
+        onClick={() => onChange(!value)}
+        className={cn(
+          "press relative h-6 w-10 rounded-full border transition",
+          value ? "bg-foreground" : "bg-background",
+        )}
+      >
+        <span className={cn(
+          "absolute top-1/2 size-4 -translate-y-1/2 rounded-full transition-all",
+          value ? "left-[18px] bg-background" : "left-1 bg-foreground/40",
+        )} />
+      </button>
     </div>
   );
 }

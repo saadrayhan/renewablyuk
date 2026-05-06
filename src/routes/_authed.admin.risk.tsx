@@ -63,8 +63,15 @@ function RiskPage() {
     <div className="mx-auto w-full max-w-[1280px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Admin · Risk" title="Risk & Compliance" subtitle="Companies House monitoring, account risk states and override management." />
 
+      {/* Risk tier cards */}
+      <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <TierCard tone="green" label="Low risk" value={allUsers.length - atRisk} sub="Active accounts, no signals." />
+        <TierCard tone="amber" label="Medium risk" value={counts.flagged + counts.paused} sub={`${counts.flagged} flagged · ${counts.paused} paused`} />
+        <TierCard tone="rose" label="High risk" value={counts.suspended} sub={`${counts.suspended} suspended · issuance blocked`} />
+      </div>
+
       {/* KPI tiles — neutral */}
-      <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
         <Stat label="Accounts at risk" value={atRisk} icon={ShieldAlert} sub={`${counts.flagged} flagged · ${counts.paused} paused · ${counts.suspended} suspended`} />
         <Stat label="Active overrides" value={activeOverrides} icon={Activity} sub={activeOverrides ? "HIGH-risk issuance temporarily allowed" : "No temporary overrides in effect"} />
       </div>
@@ -186,6 +193,19 @@ function RiskPage() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+function TierCard({ tone, label, value, sub }: { tone: "green" | "amber" | "rose"; label: string; value: number; sub: string }) {
+  return (
+    <div className="rounded-2xl border bg-card p-5">
+      <div className="flex items-center gap-2">
+        <span className={`size-2 rounded-full ${tone === "green" ? "bg-cat-green" : tone === "amber" ? "bg-cat-amber" : "bg-cat-rose"}`} />
+        <div className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted">{label}</div>
+      </div>
+      <div className="mt-3 text-3xl font-semibold tracking-tight text-ink">{value}</div>
+      <div className="mt-1 text-[11px] text-ink-muted">{sub}</div>
     </div>
   );
 }

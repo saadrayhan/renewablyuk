@@ -14,7 +14,7 @@ import {
   FileBadge, FolderKanban, Send, Sparkles, Database, ArrowRight,
   Users, ScrollText, Activity, ClipboardList, FileWarning,
   Volume2, Music2, Mic2, BookOpen, Image as ImageIcon, Video,
-  Plus, TrendingUp, CheckCircle2, AlertTriangle, Clock,
+  Plus, TrendingUp, CheckCircle2, AlertTriangle, Clock, ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
@@ -61,6 +61,14 @@ function AdminDash() {
   const recent = data.activity.slice(0, 6);
   const activeOverrides = data.riskOverrides.filter((o) => o.active);
   const accountsAtRisk = data.users.filter((u) => u.accountRiskState && u.accountRiskState !== "active").length;
+  const totalCompanies = data.users.filter((u) => u.role !== "admin" && u.role !== "operator").length;
+  const operateCount = data.users.filter((u) => u.role === "installer-operate").length;
+  const accessCount = data.users.filter((u) => u.role === "installer-access").length;
+  const ibgsTotal = data.ibgs.length;
+  const ibgsThisMonth = data.ibgs.filter((i) => i.issuedAt && i.issuedAt > Date.now() - 30 * 86400000).length;
+  const flaggedCount = data.users.filter((u) => u.accountRiskState === "flagged").length;
+  const pausedCount = data.users.filter((u) => u.accountRiskState === "paused").length;
+  const suspendedCount = data.users.filter((u) => u.accountRiskState === "suspended").length;
 
   return (
     <>
@@ -140,6 +148,37 @@ function AdminDash() {
             </div>
           ))}
         </SectionPanel>
+      </div>
+
+      <SectionLabel>Companies & users</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Total companies" value={totalCompanies} icon={Users} tone="blue" />
+        <Stat label="Operate plan" value={operateCount} icon={Sparkles} tone="teal" />
+        <Stat label="Access plan" value={accessCount} icon={FileBadge} tone="green" />
+        <Stat label="Onboarding" value={onboardingPending.length} icon={ClipboardList} tone="amber" />
+      </div>
+
+      <SectionLabel>Risk overview</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Flagged" value={flaggedCount} icon={AlertTriangle} tone="amber" />
+        <Stat label="Paused" value={pausedCount} icon={Clock} tone="amber" />
+        <Stat label="Suspended" value={suspendedCount} icon={AlertTriangle} tone="rose" />
+        <Stat label="Active overrides" value={activeOverrides.length} icon={ShieldCheck} tone="blue" />
+      </div>
+
+      <SectionLabel>IBG activity</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="IBGs total" value={ibgsTotal} icon={FileBadge} tone="blue" />
+        <Stat label="Issued (30d)" value={ibgsThisMonth} icon={TrendingUp} tone="green" />
+        <Stat label="Amendments" value={amendmentsPending.length} icon={FileWarning} tone="rose" />
+        <Stat label="Audit events" value={data.activity.length} icon={ScrollText} tone="purple" />
+      </div>
+
+      <SectionLabel>System health</SectionLabel>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <HealthRow label="Companies House sync" status="ok" detail="Last run 03:00 UTC" />
+        <HealthRow label="Stripe webhooks" status="ok" detail="100% delivery (24h)" />
+        <HealthRow label="Email notifications" status="ok" detail="Delivered" />
       </div>
     </>
   );
@@ -445,6 +484,22 @@ function UpgradeCard() {
       <Link to="/pricing" className="press mt-4 inline-flex items-center gap-1 rounded-full bg-background px-4 py-2 text-xs font-medium text-foreground">
         See plans <ArrowRight className="size-3" />
       </Link>
+    </div>
+  );
+}
+
+function HealthRow({ label, status, detail }: { label: string; status: "ok" | "warn" | "error"; detail: string }) {
+  const tone = status === "ok" ? "bg-cat-green" : status === "warn" ? "bg-cat-amber" : "bg-cat-rose";
+  return (
+    <div className="flex items-center justify-between rounded-2xl border bg-card p-4">
+      <div className="flex items-center gap-2.5">
+        <span className={`size-2 rounded-full ${tone}`} />
+        <div>
+          <div className="text-sm font-medium text-foreground">{label}</div>
+          <div className="text-[11px] text-ink-muted">{detail}</div>
+        </div>
+      </div>
+      <CheckCircle2 className="size-4 text-cat-green" />
     </div>
   );
 }
