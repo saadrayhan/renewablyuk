@@ -10,7 +10,6 @@ import { LockedCard } from "@/components/app/locked-card";
 import { FilterPills } from "@/components/app/filter-pills";
 import { fmtDate } from "@/lib/mock/queries";
 import { EmptyState } from "@/components/app/empty-state";
-import { GradientOrb } from "@/components/app/gradient-orb";
 
 export const Route = createFileRoute("/_authed/ibg/history")({
   head: () => ({ meta: [{ title: "IBG History — Renewably UK" }] }),
@@ -86,8 +85,7 @@ function HistoryPage() {
   const filtered = rows.filter((r) => filter === "all" || r.kind === filter);
 
   return (
-    <div className="relative isolate mx-auto w-full max-w-[1200px] overflow-x-clip px-4 py-6 md:px-8 md:py-10">
-      <GradientOrb variant="lavender" size={360} className="-right-20 -top-20 opacity-45" />
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader
         eyebrow="IBG · History"
         title="Activity log"

@@ -1,98 +1,102 @@
+# Polish + Admin Coverage Pass
 
-# Renewably × ElevenLabs editorial pass
+Three independent tracks. Brand blue (#0F47A8) stays the only primary CTA color. Public marketing pages keep their gradient atmosphere. The client zip is treated as a feature checklist only — no design borrowed.
 
-The goal isn't to copy ElevenLabs — it's to inherit its **calm, magazine-like restraint** and apply it to Renewably, with **#0F47A8 brand blue staying as the only CTA color** (replacing ElevenLabs' ink pill). Brand blue is non-negotiable; everything else is up for refinement.
+---
 
-## What changes (and what doesn't)
+## 1. Remove gradients from in-app surfaces
 
-| Area | Today | After |
-|---|---|---|
-| Canvas | pure white `#FFFFFF` | warm off-white `#F5F5F5` with `#FAFAFA` alt band, cards stay pure white |
-| Primary CTA | brand-blue pill (correct) | **unchanged** — brand blue stays, but applied with ElevenLabs restraint (one per view) |
-| Display type | Inter, all weights | **Instrument Serif** at **weight 400** for h1/h2 (it only ships 400 + italic), with negative tracking (-0.02 → -0.03em) |
-| Body type | Inter 400 | Inter 400/500 with **+0.16px letter-spacing** (editorial dialect) |
-| Hero atmosphere | flat | **pastel gradient orbs** — mint/peach/lavender/sky/rose — drift behind hero copy and on landing/dashboard hero cards. Pure decoration, never on CTAs |
-| Section rhythm | mixed | unified **96px** between bands |
-| Card radius | mixed (lg) | `rounded-2xl` (16px) for feature cards, `rounded-3xl` (24px) for atmospheric/orb cards |
-| Elevation | several shadow tiers | **hairline + single soft drop** (`0 4px 16px rgba(0,0,0,0.04)` on hover only) |
-| Badges/pills | mixed | uppercase 12/600 +0.96px tracking on `surface-strong` |
-| Inputs | mixed | 44px height, `rounded-md` (8px), 1px hairline, focus → 2px ink |
+Strip every `GradientOrb` and decorative `bg-gradient-*` from authed routes. Keep them ONLY on public pages: `index.tsx` (landing), `pricing.tsx`, `verify.tsx`, `auth-layout.tsx`.
 
-### A note on Instrument Serif
+Files to clean:
+- `src/routes/_authed.ibg.repository.tsx` — remove orb in hero band
+- `src/routes/_authed.ibg.history.tsx` — remove orb in hero band
+- `src/components/app/shell/profile-popover.tsx` — flatten avatar gradient ring
+- `src/components/app/hero-card.tsx` — keep component but make orbs opt-in via `decorative` prop (default off); only the public landing passes `decorative`
 
-Instrument Serif is a single-weight (400 + italic) display serif — slightly more romantic and condensed than EB Garamond, with a wider counter and elegant italic. It sits closer to Waldenburg Light's editorial voice than Garamond does. We'll use the **italic cut sparingly** for accent words inside hero headlines (e.g. "Built for *trust*") — that's the one place it earns its keep.
+`gradient-orb.tsx` itself stays — it's used by landing.
 
-## Brand-blue rule (re-stated)
+---
 
-- `primary` variant = **brand-blue pill** for the page's signature action (Issue IBG, Save changes, Connect HubSpot, Retry webhook, Invite member…).
-- One brand-blue button per view header. Inline secondary actions stay `secondary` (bordered) or `ghost` (text). Table row actions stay `icon`.
-- Brand-blue tint `#E8F0FC` continues to back informational notices and active workspace switcher.
+## 2. Switch off-state visibility
 
-## Design tokens (`src/styles.css`)
+Current `data-[state=unchecked]:bg-input` is nearly invisible on the off-white canvas. Update `src/components/ui/switch.tsx`:
 
-```text
---background:  #F5F5F5   (canvas, was #FFFFFF)
---surface:     #FAFAFA   (alt band)
---card:        #FFFFFF   (pure white card stays)
---ink:         #0C0A09   (warm near-black, replaces neutral)
---ink-muted:   #777169   (warm muted)
---border:      #E7E5E4   (warm hairline)
---border-strong:#D6D3D1
---brand-blue:  #0F47A8   (UNCHANGED)
---brand-blue-tint:#E8F0FC (UNCHANGED)
+- Off track: `bg-tile` with a 1px `border-border` ring so the outline is visible against `bg-canvas` and `bg-card`.
+- On track: keep `bg-foreground` (ink) — matches the second image the user shared.
+- Thumb: keep white with a soft shadow.
+- Add a subtle `hover:bg-surface` for off-state to telegraph affordance.
 
-/* New atmospheric tokens */
---orb-mint:    #A7E5D3
---orb-peach:   #F4C5A8
---orb-lavender:#C8B8E0
---orb-sky:     #A8C8E8
---orb-rose:    #E8B8C4
+No size change.
 
-/* Type */
---font-display: "Instrument Serif", "Times New Roman", serif;
---font-sans:    "Inter", system-ui, sans-serif;
-```
+---
 
-Dark mode keeps brand blue, swaps canvas for warm `#0C0A09`.
+## 3. Missing admin functionality (inspired by client repo, our design)
 
-## New / refined components
+The client zip contains 8 admin areas we don't have. Add them to our existing admin shell, using our `PageHeader`, `data-table`, `section-card`, `LockedCard`, and the brand-blue CTA convention (one brand button per page).
 
-1. **`<GradientOrb variant="mint|peach|lavender|sky|rose" />`** — absolute-positioned soft radial blur, used behind page headers on Dashboard, IBG repository hero, marketing pages.
-2. **`<HeroCard>`** — large `rounded-3xl` card with optional gradient orb behind centered display copy.
-3. **`<PageHeader>`** — display copy in Instrument Serif 400 at 36–48px, eyebrow stays uppercase Inter 12/600 with +0.96px tracking.
-4. **`<Section>`** — wrapper enforcing 96px vertical rhythm.
-5. **`<Badge>`** uppercase variant — caption-uppercase token.
-6. **`<Button>`** — no variant changes; only padding bump to match 40px target height (`size="md"` → `h-10 px-5`). Pill geometry stays.
-7. **`Input`** — height bumped to 44px, focus ring ink 2px instead of brand color halo (lets brand-blue stay scarce).
+### 3.1 External APIs — split out from Integrations Hub
+New route: `/admin/external-apis` (`src/routes/_authed.admin.external-apis.tsx`)
+- Per-API quota + rate-limit cards (Companies House, HubSpot, Stripe, Lovable AI)
+- Usage log table: timestamp, source, endpoint, request type, status (Success / Failed / Rate Limited), response time
+- Row click → drawer with request payload, response, status code
+- Throttling controls (Switches): Enable throttling, Queue requests, Priority mode
+- Integrations Hub gets a "View detailed API logs →" link to this page; the hub remains the at-a-glance overview
 
-## Where the editorial pass actually lands
+### 3.2 Cron Job Management
+New route: `/admin/cron` (`src/routes/_authed.admin.cron.tsx`)
+- Table of jobs: Risk Checks (daily 03:00 UTC), Stripe Sync (hourly), Email Retry (4h), API Health Check (15m)
+- Columns: name, schedule, last run, next run, status, last duration
+- Actions per row: Run now (brand blue, requires confirm), Pause / Resume (Switch), View execution log (drawer)
+- Page-level secondary action: Refresh statuses
 
-Pass order:
+### 3.3 Measure Policy & Pricing
+New route: `/admin/measure-policy` (`src/routes/_authed.admin.measure-policy.tsx`)
+- Table per measure type: IBG duration, coverage start rule, base price, Access tier price, Operate tier price, current version, effective from
+- Row click → sheet to edit + create new version (prior versions preserved; existing IBGs unaffected)
+- Pricing history tab inside the sheet
 
-1. **Tokens + Button + Input + PageHeader + Section** (foundation, ripples through every page automatically).
-2. **Auth screens** (`sign-in`, `sign-up`, `forgot-password`) — full ElevenLabs hero treatment with one orb.
-3. **Marketing** (`/`, `/pricing`) — hero band with mega Instrument Serif display + orb, italic accent word, 96px rhythm, pricing tier cards inverted on dark band for the featured tier.
-4. **Dashboard** — display headline ("Good afternoon, Aamir"), single orb behind greeting, KPI tiles redrawn as `rounded-2xl` hairline cards.
-5. **IBG Repository / History headers** — orb behind title, badges switched to uppercase pills.
-6. **Settings & Admin index pages** — display titles, eyebrow labels, but interior tables stay dense and functional (no orbs in data tables).
+### 3.4 Evidence Requirements
+New route: `/admin/evidence-requirements` (`src/routes/_authed.admin.evidence-requirements.tsx`)
+- Table: scope (Company / Project / Installation), evidence name, installation type, funding scheme, standard ref, required toggle, effective from, status
+- Filter pills by scope and status
+- Brand-blue "New rule" → dialog; Edit + Archive in row menu
 
-Detail pages (Stripe event, Audit, Amendment, Company) inherit the new PageHeader for free.
+### 3.5 Installation & System Types
+New route: `/admin/installation-types` (`src/routes/_authed.admin.installation-types.tsx`)
+- Two-column: installation types (Solar PV, ASHP, etc.) on left, child system types on right
+- Add / rename / delete with inline confirm; deletion blocked if referenced by IBGs (shows count)
 
-## Out of scope (deliberately)
+### 3.6 Funding Schemes (admin governance, distinct from user-facing /funding)
+New route: `/admin/funding-schemes` (`src/routes/_authed.admin.funding-schemes.tsx`)
+- CRUD over schemes: name (ECO4, GBIS, …), funder, eligible measures, evidence-rule links, effective window, status
+- Read-only consumers list (which orgs/users currently use it)
 
-- No animation work beyond what exists (orbs are static blurs).
-- No change to admin tables, drawers, or sheets — they already read as expert tools.
-- Brand green stays only inside the IBG-issued celebration burst.
-- No logo / wordmark redesign.
+### 3.7 Measure Access Control
+New route: `/admin/measure-access` (`src/routes/_authed.admin.measure-access.tsx`)
+- Org-level defaults table (per org × measure type → allowed Y/N)
+- Per-user override sub-table
+- Brand-blue "Apply override" opens existing pattern (similar to risk overrides)
 
-## Files touched
+### 3.8 Risk Overrides (lift out of Risk Monitoring)
+New route: `/admin/risk-overrides` (`src/routes/_authed.admin.risk-overrides.tsx`)
+- Active overrides table with expiry countdown
+- Filter pills: All / Expiring ≤7d / Permanent / Expired
+- Reuses existing `high-risk-override-sheet.tsx` and `critical-risk-override-sheet.tsx`
 
-- `src/styles.css` — token swap (canvas, ink, hairline, Instrument Serif, orb palette).
-- `index.html` — add Instrument Serif `<link>` from Google Fonts (400 + italic).
-- `src/components/ui/button.tsx` — height/padding tweak only.
-- `src/components/ui/input.tsx` — height + focus ring tweak.
-- `src/components/app/page-header.tsx` — display font, eyebrow tracking.
-- **New** `src/components/app/gradient-orb.tsx`, `src/components/app/section.tsx`, `src/components/app/hero-card.tsx`.
-- Pages: `index.tsx`, `pricing.tsx`, `sign-in.tsx`, `sign-up.tsx`, `forgot-password.tsx`, `_authed.dashboard.tsx`, `_authed.ibg.repository.tsx`, `_authed.ibg.history.tsx` — apply new header / orb / section.
+### Sidebar grouping update (`src/components/app/shell/app-sidebar.tsx`)
+Restructure the Admin section into clearer groups:
+- People: Companies, Users, Membership & Billing
+- Workflows: Onboarding, Amendments, Activity
+- Risk: Risk Monitoring, Risk Overrides, Audit Logs
+- Configuration: System Settings, Feature Flags, Access Control, Measure Access, Measure Policy & Pricing, Evidence Requirements, Installation & System Types, Funding Schemes
+- Integrations: Integrations Hub, External APIs, Stripe Events, CRM / HubSpot, Cron Jobs
 
-Approve and I'll execute it as one cohesive pass.
+All gated by existing `config.read` / `risk.read` / `users.read` permissions — keeps the 5-role model intact (we are NOT collapsing to the client's 3 roles).
+
+---
+
+## Out of scope
+- No new database tables or edge functions in this pass — pages render against the existing mock store, with TODO hooks where Supabase wiring will land next.
+- No design tokens changed beyond the Switch.
+- Public landing/marketing visuals untouched.

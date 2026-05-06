@@ -51,12 +51,20 @@ import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customer
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
 import { Route as AuthedAdminSystemSettingsRouteImport } from './routes/_authed.admin.system-settings'
 import { Route as AuthedAdminStripeEventsRouteImport } from './routes/_authed.admin.stripe-events'
+import { Route as AuthedAdminRiskOverridesRouteImport } from './routes/_authed.admin.risk-overrides'
 import { Route as AuthedAdminRiskRouteImport } from './routes/_authed.admin.risk'
 import { Route as AuthedAdminPermissionsRouteImport } from './routes/_authed.admin.permissions'
 import { Route as AuthedAdminOnboardingRouteImport } from './routes/_authed.admin.onboarding'
 import { Route as AuthedAdminMembershipRouteImport } from './routes/_authed.admin.membership'
+import { Route as AuthedAdminMeasurePolicyRouteImport } from './routes/_authed.admin.measure-policy'
+import { Route as AuthedAdminMeasureAccessRouteImport } from './routes/_authed.admin.measure-access'
 import { Route as AuthedAdminIntegrationsRouteImport } from './routes/_authed.admin.integrations'
+import { Route as AuthedAdminInstallationTypesRouteImport } from './routes/_authed.admin.installation-types'
+import { Route as AuthedAdminFundingSchemesRouteImport } from './routes/_authed.admin.funding-schemes'
 import { Route as AuthedAdminFeatureFlagsRouteImport } from './routes/_authed.admin.feature-flags'
+import { Route as AuthedAdminExternalApisRouteImport } from './routes/_authed.admin.external-apis'
+import { Route as AuthedAdminEvidenceRequirementsRouteImport } from './routes/_authed.admin.evidence-requirements'
+import { Route as AuthedAdminCronRouteImport } from './routes/_authed.admin.cron'
 import { Route as AuthedAdminCrmRouteImport } from './routes/_authed.admin.crm'
 import { Route as AuthedAdminConfigRouteImport } from './routes/_authed.admin.config'
 import { Route as AuthedAdminCompaniesRouteImport } from './routes/_authed.admin.companies'
@@ -288,6 +296,12 @@ const AuthedAdminStripeEventsRoute = AuthedAdminStripeEventsRouteImport.update({
   path: '/admin/stripe-events',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminRiskOverridesRoute =
+  AuthedAdminRiskOverridesRouteImport.update({
+    id: '/admin/risk-overrides',
+    path: '/admin/risk-overrides',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthedAdminRiskRoute = AuthedAdminRiskRouteImport.update({
   id: '/admin/risk',
   path: '/admin/risk',
@@ -308,14 +322,54 @@ const AuthedAdminMembershipRoute = AuthedAdminMembershipRouteImport.update({
   path: '/admin/membership',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminMeasurePolicyRoute =
+  AuthedAdminMeasurePolicyRouteImport.update({
+    id: '/admin/measure-policy',
+    path: '/admin/measure-policy',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedAdminMeasureAccessRoute =
+  AuthedAdminMeasureAccessRouteImport.update({
+    id: '/admin/measure-access',
+    path: '/admin/measure-access',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthedAdminIntegrationsRoute = AuthedAdminIntegrationsRouteImport.update({
   id: '/admin/integrations',
   path: '/admin/integrations',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminInstallationTypesRoute =
+  AuthedAdminInstallationTypesRouteImport.update({
+    id: '/admin/installation-types',
+    path: '/admin/installation-types',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedAdminFundingSchemesRoute =
+  AuthedAdminFundingSchemesRouteImport.update({
+    id: '/admin/funding-schemes',
+    path: '/admin/funding-schemes',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthedAdminFeatureFlagsRoute = AuthedAdminFeatureFlagsRouteImport.update({
   id: '/admin/feature-flags',
   path: '/admin/feature-flags',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminExternalApisRoute = AuthedAdminExternalApisRouteImport.update({
+  id: '/admin/external-apis',
+  path: '/admin/external-apis',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminEvidenceRequirementsRoute =
+  AuthedAdminEvidenceRequirementsRouteImport.update({
+    id: '/admin/evidence-requirements',
+    path: '/admin/evidence-requirements',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedAdminCronRoute = AuthedAdminCronRouteImport.update({
+  id: '/admin/cron',
+  path: '/admin/cron',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedAdminCrmRoute = AuthedAdminCrmRouteImport.update({
@@ -430,12 +484,20 @@ export interface FileRoutesByFullPath {
   '/admin/companies': typeof AuthedAdminCompaniesRouteWithChildren
   '/admin/config': typeof AuthedAdminConfigRoute
   '/admin/crm': typeof AuthedAdminCrmRoute
+  '/admin/cron': typeof AuthedAdminCronRoute
+  '/admin/evidence-requirements': typeof AuthedAdminEvidenceRequirementsRoute
+  '/admin/external-apis': typeof AuthedAdminExternalApisRoute
   '/admin/feature-flags': typeof AuthedAdminFeatureFlagsRoute
+  '/admin/funding-schemes': typeof AuthedAdminFundingSchemesRoute
+  '/admin/installation-types': typeof AuthedAdminInstallationTypesRoute
   '/admin/integrations': typeof AuthedAdminIntegrationsRouteWithChildren
+  '/admin/measure-access': typeof AuthedAdminMeasureAccessRoute
+  '/admin/measure-policy': typeof AuthedAdminMeasurePolicyRoute
   '/admin/membership': typeof AuthedAdminMembershipRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRouteWithChildren
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
   '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
+  '/admin/risk-overrides': typeof AuthedAdminRiskOverridesRoute
   '/admin/stripe-events': typeof AuthedAdminStripeEventsRouteWithChildren
   '/admin/system-settings': typeof AuthedAdminSystemSettingsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
@@ -496,12 +558,20 @@ export interface FileRoutesByTo {
   '/admin/companies': typeof AuthedAdminCompaniesRouteWithChildren
   '/admin/config': typeof AuthedAdminConfigRoute
   '/admin/crm': typeof AuthedAdminCrmRoute
+  '/admin/cron': typeof AuthedAdminCronRoute
+  '/admin/evidence-requirements': typeof AuthedAdminEvidenceRequirementsRoute
+  '/admin/external-apis': typeof AuthedAdminExternalApisRoute
   '/admin/feature-flags': typeof AuthedAdminFeatureFlagsRoute
+  '/admin/funding-schemes': typeof AuthedAdminFundingSchemesRoute
+  '/admin/installation-types': typeof AuthedAdminInstallationTypesRoute
   '/admin/integrations': typeof AuthedAdminIntegrationsRouteWithChildren
+  '/admin/measure-access': typeof AuthedAdminMeasureAccessRoute
+  '/admin/measure-policy': typeof AuthedAdminMeasurePolicyRoute
   '/admin/membership': typeof AuthedAdminMembershipRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRouteWithChildren
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
   '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
+  '/admin/risk-overrides': typeof AuthedAdminRiskOverridesRoute
   '/admin/stripe-events': typeof AuthedAdminStripeEventsRouteWithChildren
   '/admin/system-settings': typeof AuthedAdminSystemSettingsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
@@ -564,12 +634,20 @@ export interface FileRoutesById {
   '/_authed/admin/companies': typeof AuthedAdminCompaniesRouteWithChildren
   '/_authed/admin/config': typeof AuthedAdminConfigRoute
   '/_authed/admin/crm': typeof AuthedAdminCrmRoute
+  '/_authed/admin/cron': typeof AuthedAdminCronRoute
+  '/_authed/admin/evidence-requirements': typeof AuthedAdminEvidenceRequirementsRoute
+  '/_authed/admin/external-apis': typeof AuthedAdminExternalApisRoute
   '/_authed/admin/feature-flags': typeof AuthedAdminFeatureFlagsRoute
+  '/_authed/admin/funding-schemes': typeof AuthedAdminFundingSchemesRoute
+  '/_authed/admin/installation-types': typeof AuthedAdminInstallationTypesRoute
   '/_authed/admin/integrations': typeof AuthedAdminIntegrationsRouteWithChildren
+  '/_authed/admin/measure-access': typeof AuthedAdminMeasureAccessRoute
+  '/_authed/admin/measure-policy': typeof AuthedAdminMeasurePolicyRoute
   '/_authed/admin/membership': typeof AuthedAdminMembershipRoute
   '/_authed/admin/onboarding': typeof AuthedAdminOnboardingRouteWithChildren
   '/_authed/admin/permissions': typeof AuthedAdminPermissionsRoute
   '/_authed/admin/risk': typeof AuthedAdminRiskRouteWithChildren
+  '/_authed/admin/risk-overrides': typeof AuthedAdminRiskOverridesRoute
   '/_authed/admin/stripe-events': typeof AuthedAdminStripeEventsRouteWithChildren
   '/_authed/admin/system-settings': typeof AuthedAdminSystemSettingsRoute
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
@@ -632,12 +710,20 @@ export interface FileRouteTypes {
     | '/admin/companies'
     | '/admin/config'
     | '/admin/crm'
+    | '/admin/cron'
+    | '/admin/evidence-requirements'
+    | '/admin/external-apis'
     | '/admin/feature-flags'
+    | '/admin/funding-schemes'
+    | '/admin/installation-types'
     | '/admin/integrations'
+    | '/admin/measure-access'
+    | '/admin/measure-policy'
     | '/admin/membership'
     | '/admin/onboarding'
     | '/admin/permissions'
     | '/admin/risk'
+    | '/admin/risk-overrides'
     | '/admin/stripe-events'
     | '/admin/system-settings'
     | '/admin/users'
@@ -698,12 +784,20 @@ export interface FileRouteTypes {
     | '/admin/companies'
     | '/admin/config'
     | '/admin/crm'
+    | '/admin/cron'
+    | '/admin/evidence-requirements'
+    | '/admin/external-apis'
     | '/admin/feature-flags'
+    | '/admin/funding-schemes'
+    | '/admin/installation-types'
     | '/admin/integrations'
+    | '/admin/measure-access'
+    | '/admin/measure-policy'
     | '/admin/membership'
     | '/admin/onboarding'
     | '/admin/permissions'
     | '/admin/risk'
+    | '/admin/risk-overrides'
     | '/admin/stripe-events'
     | '/admin/system-settings'
     | '/admin/users'
@@ -765,12 +859,20 @@ export interface FileRouteTypes {
     | '/_authed/admin/companies'
     | '/_authed/admin/config'
     | '/_authed/admin/crm'
+    | '/_authed/admin/cron'
+    | '/_authed/admin/evidence-requirements'
+    | '/_authed/admin/external-apis'
     | '/_authed/admin/feature-flags'
+    | '/_authed/admin/funding-schemes'
+    | '/_authed/admin/installation-types'
     | '/_authed/admin/integrations'
+    | '/_authed/admin/measure-access'
+    | '/_authed/admin/measure-policy'
     | '/_authed/admin/membership'
     | '/_authed/admin/onboarding'
     | '/_authed/admin/permissions'
     | '/_authed/admin/risk'
+    | '/_authed/admin/risk-overrides'
     | '/_authed/admin/stripe-events'
     | '/_authed/admin/system-settings'
     | '/_authed/admin/users'
@@ -1116,6 +1218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminStripeEventsRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/risk-overrides': {
+      id: '/_authed/admin/risk-overrides'
+      path: '/admin/risk-overrides'
+      fullPath: '/admin/risk-overrides'
+      preLoaderRoute: typeof AuthedAdminRiskOverridesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/risk': {
       id: '/_authed/admin/risk'
       path: '/admin/risk'
@@ -1144,6 +1253,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminMembershipRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/measure-policy': {
+      id: '/_authed/admin/measure-policy'
+      path: '/admin/measure-policy'
+      fullPath: '/admin/measure-policy'
+      preLoaderRoute: typeof AuthedAdminMeasurePolicyRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/measure-access': {
+      id: '/_authed/admin/measure-access'
+      path: '/admin/measure-access'
+      fullPath: '/admin/measure-access'
+      preLoaderRoute: typeof AuthedAdminMeasureAccessRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/integrations': {
       id: '/_authed/admin/integrations'
       path: '/admin/integrations'
@@ -1151,11 +1274,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminIntegrationsRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/installation-types': {
+      id: '/_authed/admin/installation-types'
+      path: '/admin/installation-types'
+      fullPath: '/admin/installation-types'
+      preLoaderRoute: typeof AuthedAdminInstallationTypesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/funding-schemes': {
+      id: '/_authed/admin/funding-schemes'
+      path: '/admin/funding-schemes'
+      fullPath: '/admin/funding-schemes'
+      preLoaderRoute: typeof AuthedAdminFundingSchemesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/feature-flags': {
       id: '/_authed/admin/feature-flags'
       path: '/admin/feature-flags'
       fullPath: '/admin/feature-flags'
       preLoaderRoute: typeof AuthedAdminFeatureFlagsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/external-apis': {
+      id: '/_authed/admin/external-apis'
+      path: '/admin/external-apis'
+      fullPath: '/admin/external-apis'
+      preLoaderRoute: typeof AuthedAdminExternalApisRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/evidence-requirements': {
+      id: '/_authed/admin/evidence-requirements'
+      path: '/admin/evidence-requirements'
+      fullPath: '/admin/evidence-requirements'
+      preLoaderRoute: typeof AuthedAdminEvidenceRequirementsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/cron': {
+      id: '/_authed/admin/cron'
+      path: '/admin/cron'
+      fullPath: '/admin/cron'
+      preLoaderRoute: typeof AuthedAdminCronRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/admin/crm': {
@@ -1512,12 +1670,20 @@ interface AuthedRouteChildren {
   AuthedAdminCompaniesRoute: typeof AuthedAdminCompaniesRouteWithChildren
   AuthedAdminConfigRoute: typeof AuthedAdminConfigRoute
   AuthedAdminCrmRoute: typeof AuthedAdminCrmRoute
+  AuthedAdminCronRoute: typeof AuthedAdminCronRoute
+  AuthedAdminEvidenceRequirementsRoute: typeof AuthedAdminEvidenceRequirementsRoute
+  AuthedAdminExternalApisRoute: typeof AuthedAdminExternalApisRoute
   AuthedAdminFeatureFlagsRoute: typeof AuthedAdminFeatureFlagsRoute
+  AuthedAdminFundingSchemesRoute: typeof AuthedAdminFundingSchemesRoute
+  AuthedAdminInstallationTypesRoute: typeof AuthedAdminInstallationTypesRoute
   AuthedAdminIntegrationsRoute: typeof AuthedAdminIntegrationsRouteWithChildren
+  AuthedAdminMeasureAccessRoute: typeof AuthedAdminMeasureAccessRoute
+  AuthedAdminMeasurePolicyRoute: typeof AuthedAdminMeasurePolicyRoute
   AuthedAdminMembershipRoute: typeof AuthedAdminMembershipRoute
   AuthedAdminOnboardingRoute: typeof AuthedAdminOnboardingRouteWithChildren
   AuthedAdminPermissionsRoute: typeof AuthedAdminPermissionsRoute
   AuthedAdminRiskRoute: typeof AuthedAdminRiskRouteWithChildren
+  AuthedAdminRiskOverridesRoute: typeof AuthedAdminRiskOverridesRoute
   AuthedAdminStripeEventsRoute: typeof AuthedAdminStripeEventsRouteWithChildren
   AuthedAdminSystemSettingsRoute: typeof AuthedAdminSystemSettingsRoute
   AuthedAdminUsersRoute: typeof AuthedAdminUsersRouteWithChildren
@@ -1544,12 +1710,20 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminCompaniesRoute: AuthedAdminCompaniesRouteWithChildren,
   AuthedAdminConfigRoute: AuthedAdminConfigRoute,
   AuthedAdminCrmRoute: AuthedAdminCrmRoute,
+  AuthedAdminCronRoute: AuthedAdminCronRoute,
+  AuthedAdminEvidenceRequirementsRoute: AuthedAdminEvidenceRequirementsRoute,
+  AuthedAdminExternalApisRoute: AuthedAdminExternalApisRoute,
   AuthedAdminFeatureFlagsRoute: AuthedAdminFeatureFlagsRoute,
+  AuthedAdminFundingSchemesRoute: AuthedAdminFundingSchemesRoute,
+  AuthedAdminInstallationTypesRoute: AuthedAdminInstallationTypesRoute,
   AuthedAdminIntegrationsRoute: AuthedAdminIntegrationsRouteWithChildren,
+  AuthedAdminMeasureAccessRoute: AuthedAdminMeasureAccessRoute,
+  AuthedAdminMeasurePolicyRoute: AuthedAdminMeasurePolicyRoute,
   AuthedAdminMembershipRoute: AuthedAdminMembershipRoute,
   AuthedAdminOnboardingRoute: AuthedAdminOnboardingRouteWithChildren,
   AuthedAdminPermissionsRoute: AuthedAdminPermissionsRoute,
   AuthedAdminRiskRoute: AuthedAdminRiskRouteWithChildren,
+  AuthedAdminRiskOverridesRoute: AuthedAdminRiskOverridesRoute,
   AuthedAdminStripeEventsRoute: AuthedAdminStripeEventsRouteWithChildren,
   AuthedAdminSystemSettingsRoute: AuthedAdminSystemSettingsRoute,
   AuthedAdminUsersRoute: AuthedAdminUsersRouteWithChildren,

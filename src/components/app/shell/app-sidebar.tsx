@@ -38,6 +38,13 @@ import {
   Receipt,
   Workflow,
   ToggleRight,
+  Clock,
+  DollarSign,
+  ListChecks,
+  Layers,
+  KeyRound,
+  Globe,
+  ShieldOff,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -127,12 +134,18 @@ const adminGroups: AdminGroup[] = [
     label: "Configuration",
     items: [
       { label: "Configuration", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+      { label: "Measure Policy & Pricing", to: "/admin/measure-policy", icon: DollarSign, visibleIf: ["config.read"] },
+      { label: "Evidence Requirements", to: "/admin/evidence-requirements", icon: ListChecks, visibleIf: ["config.read"] },
+      { label: "Installation & System Types", to: "/admin/installation-types", icon: Layers, visibleIf: ["config.read"] },
+      { label: "Funding Schemes", to: "/admin/funding-schemes", icon: Globe, visibleIf: ["config.read"] },
+      { label: "Measure Access Control", to: "/admin/measure-access", icon: KeyRound, visibleIf: ["config.read"] },
     ],
   },
   {
     label: "Risk & Compliance",
     items: [
       { label: "Risk Monitoring", to: "/admin/risk", icon: ShieldAlert, visibleIf: ["risk.read"] },
+      { label: "Risk Overrides", to: "/admin/risk-overrides", icon: ShieldOff, visibleIf: ["risk.read"] },
       { label: "Audit Logs", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
     ],
   },
@@ -140,6 +153,8 @@ const adminGroups: AdminGroup[] = [
     label: "Integrations",
     items: [
       { label: "Integrations Hub", to: "/admin/integrations", icon: Plug, visibleIf: ["config.read"] },
+      { label: "External APIs", to: "/admin/external-apis", icon: Activity, visibleIf: ["config.read"] },
+      { label: "Cron Jobs", to: "/admin/cron", icon: Clock, visibleIf: ["config.read"] },
       { label: "Stripe Events", to: "/admin/stripe-events", icon: Receipt, visibleIf: ["config.read"] },
       { label: "CRM / HubSpot", to: "/admin/crm", icon: Workflow, visibleIf: ["config.read"] },
     ],
