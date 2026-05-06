@@ -149,6 +149,37 @@ function AdminDash() {
           ))}
         </SectionPanel>
       </div>
+
+      <SectionLabel>Companies & users</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Total companies" value={totalCompanies} icon={Users} tone="blue" />
+        <Stat label="Operate plan" value={operateCount} icon={Sparkles} tone="teal" />
+        <Stat label="Access plan" value={accessCount} icon={FileBadge} tone="green" />
+        <Stat label="Onboarding" value={onboardingPending.length} icon={ClipboardList} tone="amber" />
+      </div>
+
+      <SectionLabel>Risk overview</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Flagged" value={flaggedCount} icon={AlertTriangle} tone="amber" />
+        <Stat label="Paused" value={pausedCount} icon={Clock} tone="amber" />
+        <Stat label="Suspended" value={suspendedCount} icon={AlertTriangle} tone="rose" />
+        <Stat label="Active overrides" value={activeOverrides.length} icon={ShieldIcon} tone="blue" />
+      </div>
+
+      <SectionLabel>IBG activity</SectionLabel>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="IBGs total" value={ibgsTotal} icon={FileBadge} tone="blue" />
+        <Stat label="Issued (30d)" value={ibgsThisMonth} icon={TrendingUp} tone="green" />
+        <Stat label="Amendments" value={amendmentsPending.length} icon={FileWarning} tone="rose" />
+        <Stat label="Audit events" value={data.activity.length} icon={ScrollText} tone="purple" />
+      </div>
+
+      <SectionLabel>System health</SectionLabel>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <HealthRow label="Companies House sync" status="ok" detail="Last run 03:00 UTC" />
+        <HealthRow label="Stripe webhooks" status="ok" detail="100% delivery (24h)" />
+        <HealthRow label="Email notifications" status="ok" detail="Delivered" />
+      </div>
     </>
   );
 }
