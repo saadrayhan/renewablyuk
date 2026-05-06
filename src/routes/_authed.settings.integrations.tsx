@@ -149,8 +149,6 @@ function IntegrationsPage() {
         );
       })}
 
-      <ApiUsagePanel />
-
       <Dialog open={!!target} onOpenChange={(v) => !v && setTarget(null)}>
         <DialogContent>
           <DialogHeader>
