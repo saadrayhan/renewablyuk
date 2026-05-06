@@ -102,8 +102,8 @@ function AdminDash() {
                 to="/admin/risk"
                 icon={ShieldAlert}
                 iconTone="rose"
-                title={u.fullName}
-                subtitle={u.companyName ?? u.email}
+                title={u.name}
+                subtitle={u.email}
                 meta={<span className="rounded-full bg-cat-rose-bg px-2 py-0.5 text-[11px] font-medium text-cat-rose">{u.accountRiskState}</span>}
               />
             ))}
