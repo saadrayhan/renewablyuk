@@ -63,8 +63,15 @@ function RiskPage() {
     <div className="mx-auto w-full max-w-[1280px] px-4 py-6 md:px-8 md:py-10">
       <PageHeader eyebrow="Admin · Risk" title="Risk & Compliance" subtitle="Companies House monitoring, account risk states and override management." />
 
+      {/* Risk tier cards */}
+      <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <TierCard tone="green" label="Low risk" value={allUsers.length - atRisk} sub="Active accounts, no signals." />
+        <TierCard tone="amber" label="Medium risk" value={counts.flagged + counts.paused} sub={`${counts.flagged} flagged · ${counts.paused} paused`} />
+        <TierCard tone="rose" label="High risk" value={counts.suspended} sub={`${counts.suspended} suspended · issuance blocked`} />
+      </div>
+
       {/* KPI tiles — neutral */}
-      <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
         <Stat label="Accounts at risk" value={atRisk} icon={ShieldAlert} sub={`${counts.flagged} flagged · ${counts.paused} paused · ${counts.suspended} suspended`} />
         <Stat label="Active overrides" value={activeOverrides} icon={Activity} sub={activeOverrides ? "HIGH-risk issuance temporarily allowed" : "No temporary overrides in effect"} />
       </div>
