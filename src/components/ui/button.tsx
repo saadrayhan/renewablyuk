@@ -46,6 +46,7 @@ const buttonVariants = cva(
         sm: "h-8 px-3.5 text-[13px]",
         md: "h-10 px-5",
         icon: "h-9 w-9 p-0",
+        topbar: "h-7 px-3 text-[12px] rounded-full",
         // legacy
         default: "h-10 px-5",
         lg: "h-10 px-5",
