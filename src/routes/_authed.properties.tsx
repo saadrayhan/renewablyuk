@@ -67,16 +67,16 @@ function PropertiesList() {
 
       <div className="mt-5">
         {rows.length === 0 ? <EmptyState icon={HomeIcon} title="No properties" body="Properties are added from a customer detail page." /> : (
-          <div className="w-full overflow-x-auto">
+          <div className="overflow-hidden rounded-2xl border bg-card">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-[12px] font-medium text-ink-muted">
-                  <th className="px-3 py-2.5 text-left">Address</th>
-                  <th className="px-3 py-2.5 text-left">Customer</th>
-                  <th className="px-3 py-2.5 text-left">EPC</th>
-                  <th className="px-3 py-2.5 text-left">UPRN</th>
-                  <th className="px-3 py-2.5 text-left">Jobs</th>
-                  <th className="px-3 py-2.5 text-right">Status</th>
+                <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                  <th className="px-4 py-2.5 text-left">Address</th>
+                  <th className="px-4 py-2.5 text-left">Customer</th>
+                  <th className="px-4 py-2.5 text-left">EPC</th>
+                  <th className="px-4 py-2.5 text-left">UPRN</th>
+                  <th className="px-4 py-2.5 text-left">Jobs</th>
+                  <th className="px-4 py-2.5 text-right">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -85,19 +85,19 @@ function PropertiesList() {
                   const j = jobsOfProperty(data, p.id).length;
                   return (
                     <tr key={p.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                      <td className="px-3 py-3.5">
+                      <td className="px-4 py-3">
                         <Link to="/properties/$id" params={{ id: p.id }} className="block">
                           <div className="font-medium text-foreground">{p.address}</div>
                           <div className="text-xs text-ink-muted">{p.postcode}</div>
                         </Link>
                       </td>
-                      <td className="px-3 py-3.5">
+                      <td className="px-4 py-3">
                         {c ? <Link to="/customers/$id" params={{ id: c.id }} className="text-foreground hover:underline">{c.name}</Link> : "—"}
                       </td>
-                      <td className="px-3 py-3.5 text-foreground">{p.epc ?? "—"}</td>
-                      <td className="px-3 py-3.5 text-ink-muted">{p.uprn ?? "—"}</td>
-                      <td className="px-3 py-3.5 text-foreground">{j}</td>
-                      <td className="px-3 py-3.5 text-right"><StatePill meta={RECORD_STATES[p.status]} /></td>
+                      <td className="px-4 py-3 text-foreground">{p.epc ?? "—"}</td>
+                      <td className="px-4 py-3 text-ink-muted">{p.uprn ?? "—"}</td>
+                      <td className="px-4 py-3 text-foreground">{j}</td>
+                      <td className="px-4 py-3 text-right"><StatePill meta={RECORD_STATES[p.status]} /></td>
                     </tr>
                   );
                 })}

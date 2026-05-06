@@ -73,16 +73,16 @@ function CustomersList() {
         {rows.length === 0 ? (
           <EmptyState icon={Users} title="No customers found" body="Try removing filters or create a new customer." />
         ) : (
-          <div className="w-full overflow-x-auto">
+          <div className="overflow-hidden rounded-2xl border bg-card">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-[12px] font-medium text-ink-muted">
-                  <th className="px-3 py-2.5 text-left">Customer</th>
-                  <th className="px-3 py-2.5 text-left">Ref</th>
-                  <th className="px-3 py-2.5 text-left">Properties</th>
-                  <th className="px-3 py-2.5 text-left">Jobs</th>
-                  <th className="px-3 py-2.5 text-left">Created</th>
-                  <th className="px-3 py-2.5 text-right">Status</th>
+                <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                  <th className="px-4 py-2.5 text-left">Customer</th>
+                  <th className="px-4 py-2.5 text-left">Ref</th>
+                  <th className="px-4 py-2.5 text-left">Properties</th>
+                  <th className="px-4 py-2.5 text-left">Jobs</th>
+                  <th className="px-4 py-2.5 text-left">Created</th>
+                  <th className="px-4 py-2.5 text-right">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -91,17 +91,17 @@ function CustomersList() {
                   const j = jobsOfCustomer(data, c.id).length;
                   return (
                     <tr key={c.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                      <td className="px-3 py-3.5">
+                      <td className="px-4 py-3">
                         <Link to="/customers/$id" params={{ id: c.id }} className="block">
                           <div className="font-medium text-foreground">{c.name}</div>
                           <div className="text-xs text-ink-muted">{c.email}</div>
                         </Link>
                       </td>
-                      <td className="px-3 py-3.5 text-ink-muted">{c.ref}</td>
-                      <td className="px-3 py-3.5 text-foreground">{p}</td>
-                      <td className="px-3 py-3.5 text-foreground">{j}</td>
-                      <td className="px-3 py-3.5 text-ink-muted">{fmtDate(c.createdAt)}</td>
-                      <td className="px-3 py-3.5 text-right"><StatePill meta={RECORD_STATES[c.status]} /></td>
+                      <td className="px-4 py-3 text-ink-muted">{c.ref}</td>
+                      <td className="px-4 py-3 text-foreground">{p}</td>
+                      <td className="px-4 py-3 text-foreground">{j}</td>
+                      <td className="px-4 py-3 text-ink-muted">{fmtDate(c.createdAt)}</td>
+                      <td className="px-4 py-3 text-right"><StatePill meta={RECORD_STATES[c.status]} /></td>
                     </tr>
                   );
                 })}

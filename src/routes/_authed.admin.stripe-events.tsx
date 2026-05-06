@@ -30,7 +30,9 @@ function StripeEventsPage() {
           { value: "refunds", label: "Refunds" },
         ]}
       />
-      <EventsTable />
+      <div className="overflow-hidden rounded-2xl border bg-card">
+        <EventsTable />
+      </div>
     </div>
   );
 }

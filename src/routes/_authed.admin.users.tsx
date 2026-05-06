@@ -133,35 +133,35 @@ function UsersList() {
           <div className="overflow-x-auto rounded-2xl border bg-card">
             <table className="w-full min-w-[760px] text-sm">
               <thead>
-                <tr className="border-b text-[12px] font-medium text-ink-muted">
-                  <th className="px-3 py-2.5 text-left">User</th>
-                  <th className="px-3 py-2.5 text-left">Role</th>
-                  <th className="px-3 py-2.5 text-left">Permissions</th>
-                  <th className="px-3 py-2.5 text-left">Last active</th>
-                  <th className="px-3 py-2.5 text-left">Invited</th>
-                  <th className="px-3 py-2.5 text-left">Status</th>
-                  <th className="px-3 py-2.5 text-right" />
+                <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                  <th className="px-4 py-2.5 text-left">User</th>
+                  <th className="px-4 py-2.5 text-left">Role</th>
+                  <th className="px-4 py-2.5 text-left">Permissions</th>
+                  <th className="px-4 py-2.5 text-left">Last active</th>
+                  <th className="px-4 py-2.5 text-left">Invited</th>
+                  <th className="px-4 py-2.5 text-left">Status</th>
+                  <th className="px-4 py-2.5 text-right" />
                 </tr>
               </thead>
               <tbody>
                 {rows.map((u) => (
                   <tr key={u.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                    <td className="px-3 py-3.5">
+                    <td className="px-4 py-3">
                       <Link to="/admin/users/$id" params={{ id: u.id }} className="block">
                         <div className="font-medium text-foreground">{u.name}</div>
                         <div className="text-xs text-ink-muted">{u.email}</div>
                       </Link>
                     </td>
-                    <td className="px-3 py-3.5">
+                    <td className="px-4 py-3">
                       <span className="rounded-full bg-cat-purple-bg px-2 py-0.5 text-[11px] font-medium text-cat-purple">
                         {ROLE_META[u.role].short}
                       </span>
                     </td>
-                    <td className="px-3 py-3.5 text-foreground">{u.permissions.length || "—"}</td>
-                    <td className="px-3 py-3.5 text-ink-muted">{u.lastActive ? relTime(u.lastActive) : "—"}</td>
-                    <td className="px-3 py-3.5 text-ink-muted">{fmtDate(u.invitedAt)}</td>
-                    <td className="px-3 py-3.5"><StatePill meta={USER_STATES[u.status]} /></td>
-                    <td className="px-3 py-3.5 text-right">
+                    <td className="px-4 py-3 text-foreground">{u.permissions.length || "—"}</td>
+                    <td className="px-4 py-3 text-ink-muted">{u.lastActive ? relTime(u.lastActive) : "—"}</td>
+                    <td className="px-4 py-3 text-ink-muted">{fmtDate(u.invitedAt)}</td>
+                    <td className="px-4 py-3"><StatePill meta={USER_STATES[u.status]} /></td>
+                    <td className="px-4 py-3 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button

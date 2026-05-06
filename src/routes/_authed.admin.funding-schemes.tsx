@@ -52,27 +52,27 @@ function SchemesPage() {
         actions={<Button>New scheme</Button>}
       />
 
-      <div className="w-full overflow-x-auto">
+      <div className="overflow-hidden rounded-2xl border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-[12px] font-medium text-ink-muted">
-              <th className="px-3 py-2.5 text-left">Scheme</th>
-              <th className="px-3 py-2.5 text-left">Funder</th>
-              <th className="px-3 py-2.5 text-left">Eligible measures</th>
-              <th className="px-3 py-2.5 text-left">Effective window</th>
-              <th className="px-3 py-2.5 text-right">Consumers</th>
-              <th className="px-3 py-2.5 text-left">Status</th>
+            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+              <th className="px-4 py-2.5 text-left">Scheme</th>
+              <th className="px-4 py-2.5 text-left">Funder</th>
+              <th className="px-4 py-2.5 text-left">Eligible measures</th>
+              <th className="px-4 py-2.5 text-left">Effective window</th>
+              <th className="px-4 py-2.5 text-right">Consumers</th>
+              <th className="px-4 py-2.5 text-left">Status</th>
             </tr>
           </thead>
           <tbody>
             {SEED.map((s) => (
               <tr key={s.id} onClick={() => setOpen(s)} className="cursor-pointer border-b last:border-b-0 hover:bg-surface/60">
-                <td className="px-3 py-3.5 font-medium text-foreground">{s.name}</td>
-                <td className="px-3 py-3.5 text-ink-muted">{s.funder}</td>
-                <td className="px-3 py-3.5 text-ink-muted">{s.measures.length ? s.measures.join(", ") : "—"}</td>
-                <td className="px-3 py-3.5 text-ink-muted">{s.effectiveFrom} → {s.effectiveTo}</td>
-                <td className="px-3 py-3.5 text-right text-ink-muted">{s.consumers}</td>
-                <td className="px-3 py-3.5">
+                <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
+                <td className="px-4 py-3 text-ink-muted">{s.funder}</td>
+                <td className="px-4 py-3 text-ink-muted">{s.measures.length ? s.measures.join(", ") : "—"}</td>
+                <td className="px-4 py-3 text-ink-muted">{s.effectiveFrom} → {s.effectiveTo}</td>
+                <td className="px-4 py-3 text-right text-ink-muted">{s.consumers}</td>
+                <td className="px-4 py-3">
                   <span className={cn(
                     "inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium",
                     s.status === "Active" ? "bg-cat-green-bg text-cat-green" : "bg-tile text-ink-muted",

@@ -79,28 +79,28 @@ function Repository() {
 
       <div className="mt-5">
         {rows.length === 0 ? <EmptyState icon={FileBadge} title="No IBGs match" body="Try clearing filters or search for a reference." /> : (
-          <div className="w-full overflow-x-auto">
+          <div className="overflow-hidden rounded-2xl border bg-card">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-[12px] font-medium text-ink-muted">
-                  <th className="px-3 py-2.5 text-left">Ref</th>
-                  <th className="px-3 py-2.5 text-left">Customer</th>
-                  <th className="px-3 py-2.5 text-left">Property</th>
-                  <th className="px-3 py-2.5 text-left">Measure</th>
-                  <th className="px-3 py-2.5 text-left">Issued</th>
-                  <th className="px-3 py-2.5 text-left">State</th>
-                  <th className="w-24 px-3 py-2.5 text-right">Actions</th>
+                <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                  <th className="px-4 py-2.5 text-left">Ref</th>
+                  <th className="px-4 py-2.5 text-left">Customer</th>
+                  <th className="px-4 py-2.5 text-left">Property</th>
+                  <th className="px-4 py-2.5 text-left">Measure</th>
+                  <th className="px-4 py-2.5 text-left">Issued</th>
+                  <th className="px-4 py-2.5 text-left">State</th>
+                  <th className="w-24 px-4 py-2.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((i) => (
                   <tr key={i.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                    <td className="px-3 py-3.5"><Link to="/ibg/$id" params={{ id: i.id }} className="font-mono text-[12px] font-medium text-foreground hover:underline">{i.ref}</Link></td>
-                    <td className="px-3 py-3.5 text-foreground">{i.customerName}</td>
-                    <td className="px-3 py-3.5 text-ink-muted">{i.propertyAddress}</td>
-                    <td className="px-3 py-3.5 text-foreground">{i.measure}</td>
-                    <td className="px-3 py-3.5 text-ink-muted">{i.issuedAt ? fmtDate(i.issuedAt) : "—"}</td>
-                    <td className="px-3 py-3.5"><StatePill meta={IBG_STATES[i.state]} /></td>
+                    <td className="px-4 py-3"><Link to="/ibg/$id" params={{ id: i.id }} className="font-mono text-[12px] font-medium text-foreground hover:underline">{i.ref}</Link></td>
+                    <td className="px-4 py-3 text-foreground">{i.customerName}</td>
+                    <td className="px-4 py-3 text-ink-muted">{i.propertyAddress}</td>
+                    <td className="px-4 py-3 text-foreground">{i.measure}</td>
+                    <td className="px-4 py-3 text-ink-muted">{i.issuedAt ? fmtDate(i.issuedAt) : "—"}</td>
+                    <td className="px-4 py-3"><StatePill meta={IBG_STATES[i.state]} /></td>
                     <td className="px-2 py-2">
                       <div className="flex items-center justify-end gap-1">
                         <Button variant="icon" title="Download PDF"><Download className="size-4" /></Button>

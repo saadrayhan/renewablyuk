@@ -53,18 +53,18 @@ function MeasureAccess() {
 
       <section>
         <SectionHeader title="Organisation defaults" />
-        <div className="w-full overflow-x-auto">
+        <div className="overflow-hidden rounded-2xl border bg-card">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-[12px] font-medium text-ink-muted">
-                <th className="px-3 py-2.5 text-left">Organisation</th>
+              <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                <th className="px-4 py-2.5 text-left">Organisation</th>
                 {MEASURES.map((m) => <th key={m} className="px-3 py-2.5 text-center">{m}</th>)}
               </tr>
             </thead>
             <tbody>
               {orgs.map((o) => (
                 <tr key={o.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                  <td className="px-3 py-3.5 font-medium text-foreground">{o.name}</td>
+                  <td className="px-4 py-3 font-medium text-foreground">{o.name}</td>
                   {MEASURES.map((m) => (
                     <td key={m} className="px-3 py-3 text-center">
                       <div className="inline-flex">
@@ -84,29 +84,29 @@ function MeasureAccess() {
 
       <section>
         <SectionHeader title="User overrides" subtitle="Per-user permissions that override their organisation default." />
-        <div className="w-full overflow-x-auto">
+        <div className="overflow-hidden rounded-2xl border bg-card">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-[12px] font-medium text-ink-muted">
-                <th className="px-3 py-2.5 text-left">User</th>
-                <th className="px-3 py-2.5 text-left">Organisation</th>
-                <th className="px-3 py-2.5 text-left">Measure</th>
-                <th className="px-3 py-2.5 text-left">Decision</th>
-                <th className="px-3 py-2.5 text-left">Reason</th>
+              <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                <th className="px-4 py-2.5 text-left">User</th>
+                <th className="px-4 py-2.5 text-left">Organisation</th>
+                <th className="px-4 py-2.5 text-left">Measure</th>
+                <th className="px-4 py-2.5 text-left">Decision</th>
+                <th className="px-4 py-2.5 text-left">Reason</th>
               </tr>
             </thead>
             <tbody>
               {OVERRIDES.map((o) => (
                 <tr key={o.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                  <td className="px-3 py-3.5 font-medium text-foreground">{o.user}</td>
-                  <td className="px-3 py-3.5 text-ink-muted">{o.org}</td>
-                  <td className="px-3 py-3.5">{o.measure}</td>
-                  <td className="px-3 py-3.5">
+                  <td className="px-4 py-3 font-medium text-foreground">{o.user}</td>
+                  <td className="px-4 py-3 text-ink-muted">{o.org}</td>
+                  <td className="px-4 py-3">{o.measure}</td>
+                  <td className="px-4 py-3">
                     <span className={"inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium " + (o.allow ? "bg-cat-green-bg text-cat-green" : "bg-cat-rose-bg text-cat-rose")}>
                       {o.allow ? "Allow" : "Deny"}
                     </span>
                   </td>
-                  <td className="px-3 py-3.5 text-ink-muted">{o.reason}</td>
+                  <td className="px-4 py-3 text-ink-muted">{o.reason}</td>
                 </tr>
               ))}
             </tbody>

@@ -62,15 +62,15 @@ function SubmissionsList() {
 
       <div className="mt-5">
         {rows.length === 0 ? <EmptyState icon={Send} title="No submissions" body="Submit a funding project to create a submission record." /> : (
-          <div className="w-full overflow-x-auto">
+          <div className="overflow-hidden rounded-2xl border bg-card">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-[12px] font-medium text-ink-muted">
-                  <th className="px-3 py-2.5 text-left">Ref</th>
-                  <th className="px-3 py-2.5 text-left">Scheme</th>
-                  <th className="px-3 py-2.5 text-left">Funding project</th>
-                  <th className="px-3 py-2.5 text-left">Submitted</th>
-                  <th className="px-3 py-2.5 text-right">State</th>
+                <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+                  <th className="px-4 py-2.5 text-left">Ref</th>
+                  <th className="px-4 py-2.5 text-left">Scheme</th>
+                  <th className="px-4 py-2.5 text-left">Funding project</th>
+                  <th className="px-4 py-2.5 text-left">Submitted</th>
+                  <th className="px-4 py-2.5 text-right">State</th>
                 </tr>
               </thead>
               <tbody>
@@ -78,13 +78,13 @@ function SubmissionsList() {
                   const fp = data.fundingProjects.find((f) => f.id === s.fundingProjectId);
                   return (
                     <tr key={s.id} className="cursor-pointer border-b last:border-b-0 hover:bg-surface/60">
-                      <td className="px-3 py-3.5 font-medium text-foreground"><Link to="/submissions/$id" params={{ id: s.id }} className="hover:underline">{s.ref}</Link></td>
-                      <td className="px-3 py-3.5 text-foreground">{s.scheme}</td>
-                      <td className="px-3 py-3.5">
+                      <td className="px-4 py-3 font-medium text-foreground"><Link to="/submissions/$id" params={{ id: s.id }} className="hover:underline">{s.ref}</Link></td>
+                      <td className="px-4 py-3 text-foreground">{s.scheme}</td>
+                      <td className="px-4 py-3">
                         {fp ? <Link to="/funding/$id" params={{ id: fp.id }} className="text-foreground hover:underline">{fp.ref}</Link> : "—"}
                       </td>
-                      <td className="px-3 py-3.5 text-ink-muted">{fmtDate(s.submittedAt)}</td>
-                      <td className="px-3 py-3.5 text-right"><StatePill meta={SUBMISSION_STATES[s.state]} /></td>
+                      <td className="px-4 py-3 text-ink-muted">{fmtDate(s.submittedAt)}</td>
+                      <td className="px-4 py-3 text-right"><StatePill meta={SUBMISSION_STATES[s.state]} /></td>
                     </tr>
                   );
                 })}

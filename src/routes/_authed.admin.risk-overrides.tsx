@@ -70,34 +70,34 @@ function RiskOverridesPage() {
         ]}
       />
 
-      <div className="w-full overflow-x-auto">
+      <div className="overflow-hidden rounded-2xl border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-[12px] font-medium text-ink-muted">
-              <th className="px-3 py-2.5 text-left">Override</th>
-              <th className="px-3 py-2.5 text-left">Account</th>
-              <th className="px-3 py-2.5 text-left">Level</th>
-              <th className="px-3 py-2.5 text-left">Reason</th>
-              <th className="px-3 py-2.5 text-left">Applied by</th>
-              <th className="px-3 py-2.5 text-left">Applied</th>
-              <th className="px-3 py-2.5 text-left">Expires</th>
+            <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
+              <th className="px-4 py-2.5 text-left">Override</th>
+              <th className="px-4 py-2.5 text-left">Account</th>
+              <th className="px-4 py-2.5 text-left">Level</th>
+              <th className="px-4 py-2.5 text-left">Reason</th>
+              <th className="px-4 py-2.5 text-left">Applied by</th>
+              <th className="px-4 py-2.5 text-left">Applied</th>
+              <th className="px-4 py-2.5 text-left">Expires</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((o) => (
               <tr key={o.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                <td className="px-3 py-3.5 font-mono text-[12px] text-foreground">{o.id}</td>
-                <td className="px-3 py-3.5 text-foreground">{o.account}</td>
-                <td className="px-3 py-3.5">
+                <td className="px-4 py-3 font-mono text-[12px] text-foreground">{o.id}</td>
+                <td className="px-4 py-3 text-foreground">{o.account}</td>
+                <td className="px-4 py-3">
                   <span className={cn(
                     "inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium",
                     o.level === "Critical" ? "bg-cat-rose-bg text-cat-rose" : "bg-cat-amber-bg text-cat-amber",
                   )}>{o.level}</span>
                 </td>
-                <td className="px-3 py-3.5 text-ink-muted">{o.reason}</td>
-                <td className="px-3 py-3.5 text-ink-muted">{o.appliedBy}</td>
-                <td className="px-3 py-3.5 text-ink-muted">{o.appliedAt}</td>
-                <td className="px-3 py-3.5">
+                <td className="px-4 py-3 text-ink-muted">{o.reason}</td>
+                <td className="px-4 py-3 text-ink-muted">{o.appliedBy}</td>
+                <td className="px-4 py-3 text-ink-muted">{o.appliedAt}</td>
+                <td className="px-4 py-3">
                   {o.expiresInDays === null ? (
                     <span className="text-ink-muted">Permanent</span>
                   ) : o.expiresInDays < 0 ? (
