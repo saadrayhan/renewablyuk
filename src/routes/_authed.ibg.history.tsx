@@ -103,7 +103,7 @@ function HistoryPage() {
 
       <div className="mt-4 w-full overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-surface/40 text-[11px] uppercase tracking-[0.06em] text-ink-muted">
+          <thead className="border-b text-[12px] font-medium text-ink-muted">
             <tr>
               <th className="px-3 py-2.5 text-left font-medium">When</th>
               <th className="px-3 py-2.5 text-left font-medium">Event</th>
