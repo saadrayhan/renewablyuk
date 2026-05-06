@@ -102,6 +102,30 @@ function ConfigPage() {
             ))}
           </div>
         )}
+        {tab === "evidence" && (
+          <div className="divide-y">
+            {EVIDENCE_RULES.map((r) => {
+              const scopeTone =
+                r.scope === "Installation" ? "bg-cat-blue-bg text-cat-blue"
+                : r.scope === "Project" ? "bg-cat-purple-bg text-cat-purple"
+                : "bg-cat-teal-bg text-cat-teal";
+              return (
+                <div key={r.name} className="flex items-start justify-between gap-3 px-5 py-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm font-medium text-foreground">{r.name}</div>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${scopeTone}`}>{r.scope}</span>
+                    </div>
+                    <div className="mt-0.5 text-xs text-ink-muted">{r.desc}</div>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${r.required ? "bg-cat-rose-bg text-cat-rose" : "bg-tile text-ink-muted"}`}>
+                    {r.required ? "Required" : "Optional"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
         {tab === "templates" && (
           <div className="divide-y">
             {TEMPLATES.map((t) => (
