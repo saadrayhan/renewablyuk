@@ -1,36 +1,52 @@
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
+/**
+ * PageHeader — quiet editorial header.
+ *
+ *   WORKSPACE NAME
+ *   Good afternoon, Sam
+ *
+ * The page title IS the H1. Subtitle and right-side actions are accepted for
+ * back-compat but intentionally NOT rendered — they cluttered the canvas.
+ * Inline actions belong with their respective sections below.
+ */
 export function PageHeader({
   eyebrow,
   title,
-  subtitle,
-  actions,
   className,
+  dense,
+  // Accepted for back-compat with existing routes; not rendered.
+  subtitle: _subtitle,
+  actions: _actions,
 }: {
   eyebrow?: string;
-  title: React.ReactNode;
-  subtitle?: React.ReactNode;
-  actions?: React.ReactNode;
+  title: ReactNode;
+  /** Smaller variant for sub-pages. */
+  dense?: boolean;
   className?: string;
+  /** @deprecated kept for compat — no longer rendered. */
+  subtitle?: ReactNode;
+  /** @deprecated kept for compat — no longer rendered. */
+  actions?: ReactNode;
 }) {
   return (
-    <div className={cn("flex items-start justify-between gap-6", className)}>
-      <div>
-        {eyebrow && (
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
-            {eyebrow}
-          </div>
+    <div className={cn("min-w-0", className)}>
+      {eyebrow && (
+        <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted">
+          {eyebrow}
+        </div>
+      )}
+      <h1
+        className={cn(
+          "font-display mt-1.5 text-ink",
+          dense
+            ? "text-[28px] leading-[1.1] md:text-[32px]"
+            : "text-[36px] leading-[1.05] md:text-[44px]",
         )}
-        <h1 className="font-display mt-3 text-[40px] leading-[1.05] text-ink md:text-[48px]">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-muted">
-            {subtitle}
-          </p>
-        )}
-      </div>
-      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      >
+        {title}
+      </h1>
     </div>
   );
 }

@@ -1,102 +1,136 @@
-# Polish + Admin Coverage Pass
+## Reading the references
 
-Three independent tracks. Brand blue (#0F47A8) stays the only primary CTA color. Public marketing pages keep their gradient atmosphere. The client zip is treated as a feature checklist only — no design borrowed.
+I went back through every panel of the PDF and the 6 screenshots. The thing that makes ElevenLabs feel different isn't the layout — it's a set of tiny, consistent decisions that repeat on every screen:
 
----
+- **No card chrome on the canvas.** Sections live on bare background, separated by ~80px of whitespace. The only borders are tables, popovers, and a single thin border-bottom on the topbar.
+- **Topbar is a breadcrumb, not a title.** Left: square sidebar-toggle (28×28) + crumb path. Right: 3 ghost pill buttons (`Feedback`, `Docs`, `Ask`) at h-7 with text-[12px], then 2 icon buttons at 28×28, then a 28×28 avatar. No shadows. No sticky page heading.
+- **Sidebar is two zones.** Workspace switcher (small, with arrows, color dot) → primary nav (flat icons, 13px, 28px row height) → "Pinned" group → bottom slot with one promo card + `Developers` link + `Upgrade` button.
+- **Page title is the H1.** Small uppercase eyebrow above. No subtitle. No actions cluster on the right of the header.
+- **Tabs sit directly under the title.** Plain underline, 14px, uppercase-ish weight on active. No background, no card.
+- **Tile rows.** Big rounded-2xl tiles (~180×130) with `bg-tile`, a centered icon-cluster, label *below the tile in normal canvas text*. Horizontal scrollable.
+- **Filter pills.** A row of pill chips above content. Two dropdowns first (`Language ▾`), a thin vertical divider, then category pills. The whole row is one horizontal scroll surface with a `>` chevron.
+- **Tables/lists are flat.** No borders per row. Avatar (rounded-square 36×36 in pastel) + 2-line text + meta chips on the right. Hover swaps to `bg-surface`. Sticky column headers, no zebra.
+- **Sections.** Title + small `>` chevron link, never a "View all" button. Content sits below at the same indent.
+- **Type.** Inter 13–14px body, 11px eyebrow with 0.08em tracking, large display H1. Numbers are tabular.
+- **Buttons.** Black pill stays, but `sm` is h-8 px-3.5 text-[13px]. Ghost in topbar is h-7 with optional 1px border on hover only.
+- **Motion.** ElevenLabs is restrained. Hover bg color in 80ms ease, list-row enter in 150ms ease-out. Sidebar collapse uses cubic-bezier(0.32, 0.72, 0, 1) at 200ms.
 
-## 1. Remove gradients from in-app surfaces
+## Two design principles guiding this pass
 
-Strip every `GradientOrb` and decorative `bg-gradient-*` from authed routes. Keep them ONLY on public pages: `index.tsx` (landing), `pricing.tsx`, `verify.tsx`, `auth-layout.tsx`.
+1. **Subtract chrome before adding anything.** Every existing bordered card on the dashboard is a candidate for deletion. Only keep a border when it groups data the eye can't otherwise distinguish (tables, popovers, cards inside dialogs).
+2. **One craft language, repeated.** Five new primitives — `TopBar`, `PageHeader`, `TileRow`, `UnderlineTabs`, `FilterPillBar`, `ListRow` — replace ad-hoc patterns wherever they appear. Every dashboard, every list page, every settings page.
 
-Files to clean:
-- `src/routes/_authed.ibg.repository.tsx` — remove orb in hero band
-- `src/routes/_authed.ibg.history.tsx` — remove orb in hero band
-- `src/components/app/shell/profile-popover.tsx` — flatten avatar gradient ring
-- `src/components/app/hero-card.tsx` — keep component but make orbs opt-in via `decorative` prop (default off); only the public landing passes `decorative`
+## Motion calibration (applies globally)
 
-`gradient-orb.tsx` itself stays — it's used by landing.
+Add to `src/styles.css`:
 
----
+```text
+--ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+--ease-drawer:    cubic-bezier(0.32, 0.72, 0, 1);
+--ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+```
 
-## 2. Switch off-state visibility
+| Element | Before | After | Why |
+|---|---|---|---|
+| Button `:active` | none | `transform: scale(0.97); transition: transform 140ms var(--ease-out-strong)` | buttons must telegraph press |
+| Sidebar collapse width | `transition-[width] duration-200` | `200ms var(--ease-drawer)` | iOS-style settle |
+| Route fade-in | `slide-in-from-bottom-1 duration-200` | `opacity+translateY(4px) → 0, 180ms ease-out, no scale` | scale on every nav feels heavy at 50+ navs/day |
+| List row hover | `hover:bg-surface` no transition | `bg-color 80ms ease` | invisible-but-felt |
+| Popover/Dropdown | default Radix `data-[state]` | `transform-origin: var(--radix-*-content-transform-origin); enter 160ms var(--ease-out-strong) from scale(0.97)+opacity` | origin-aware |
+| Tooltip | full anim every hover | first 200ms with delay; subsequent within 500ms `data-instant` skip | toolbars feel faster |
+| Dialog | scale(0.95) center | keep center, 200ms ease-out from scale(0.96)+opacity | modals stay center |
+| Underline tab indicator | none | absolutely-positioned bar that translates between tabs in 220ms `var(--ease-out-strong)` | smooth, not jumpy |
+| Switch thumb | default | `transition: transform 180ms var(--ease-out-strong)` + scale(0.92) on press | matches button feel |
 
-Current `data-[state=unchecked]:bg-input` is nearly invisible on the off-white canvas. Update `src/components/ui/switch.tsx`:
+`@media (prefers-reduced-motion: reduce)` block removes translates/scales but keeps opacity — added once globally.
 
-- Off track: `bg-tile` with a 1px `border-border` ring so the outline is visible against `bg-canvas` and `bg-card`.
-- On track: keep `bg-foreground` (ink) — matches the second image the user shared.
-- Thumb: keep white with a soft shadow.
-- Add a subtle `hover:bg-surface` for off-state to telegraph affordance.
+## New / replaced primitives
 
-No size change.
+| File | Purpose |
+|---|---|
+| `src/components/app/shell/top-bar.tsx` *(rewrite)* | Sidebar toggle + breadcrumb (derived from route) + right cluster (Feedback/Docs/Ask ghost pills, bell + folder icon buttons, avatar). Removes today's page-title + actions row. |
+| `src/components/app/shell/breadcrumbs.tsx` *(rewrite)* | Small `›`-separated trail driven by the matched route; supports a per-route `crumb` head meta. |
+| `src/components/app/page-header.tsx` *(simplify)* | Eyebrow + H1. No subtitle, no actions slot. Optional `dense` (small variant for sub-pages). |
+| `src/components/app/tile-row.tsx` *(new)* | Horizontal scroll row of `bg-tile rounded-2xl` 180×130 tiles, centered icon stack, label rendered *outside* and below the tile. |
+| `src/components/app/underline-tabs.tsx` *(rebuild)* | Replace the existing one with a sliding-indicator version (motion-aware). |
+| `src/components/app/filter-pill-bar.tsx` *(new)* | Dropdown pills + divider + scrollable category pills + trailing chevron. |
+| `src/components/app/list-row.tsx` *(new)* | Flat row primitive: leading slot (avatar/icon tile) + 2-line text + right meta cluster. No border. Hover bg-surface 80ms. |
+| `src/components/app/section-header.tsx` *(new)* | `Title ›` link + optional right control. Replaces today's `SectionRow`/`SectionCard` title bar where the card itself isn't needed. |
+| `src/components/ui/button.tsx` *(extend)* | Add `topbar` size (h-7 px-3 text-[12px]) + `:active` scale(0.97). |
 
----
+## Dashboard rewrite — all 5 roles
 
-## 3. Missing admin functionality (inspired by client repo, our design)
+Same skeleton on every role:
 
-The client zip contains 8 admin areas we don't have. Add them to our existing admin shell, using our `PageHeader`, `data-table`, `section-card`, `LockedCard`, and the brand-blue CTA convention (one brand button per page).
+```text
+[ workspace eyebrow ]
+Good <time>, <name>
 
-### 3.1 External APIs — split out from Integrations Hub
-New route: `/admin/external-apis` (`src/routes/_authed.admin.external-apis.tsx`)
-- Per-API quota + rate-limit cards (Companies House, HubSpot, Stripe, Lovable AI)
-- Usage log table: timestamp, source, endpoint, request type, status (Success / Failed / Rate Limited), response time
-- Row click → drawer with request payload, response, status code
-- Throttling controls (Switches): Enable throttling, Queue requests, Priority mode
-- Integrations Hub gets a "View detailed API logs →" link to this page; the hub remains the at-a-glance overview
+TileRow             ← 6 role-specific destinations
+Section ›           ← primary list (work to do today)
+Section ›           ← secondary list (recent)
+Section ›           ← optional third (health / shortcuts)
+```
 
-### 3.2 Cron Job Management
-New route: `/admin/cron` (`src/routes/_authed.admin.cron.tsx`)
-- Table of jobs: Risk Checks (daily 03:00 UTC), Stripe Sync (hourly), Email Retry (4h), API Health Check (15m)
-- Columns: name, schedule, last run, next run, status, last duration
-- Actions per row: Run now (brand blue, requires confirm), Pause / Resume (Switch), View execution log (drawer)
-- Page-level secondary action: Refresh statuses
+No bordered metric grids. Numbers move into right-side meta chips on `ListRow`. No `HeroCard`, no `SectionCard` wrappers, no `QuickAction` boxes — those primitives stay in the codebase but are no longer used by the dashboard.
 
-### 3.3 Measure Policy & Pricing
-New route: `/admin/measure-policy` (`src/routes/_authed.admin.measure-policy.tsx`)
-- Table per measure type: IBG duration, coverage start rule, base price, Access tier price, Operate tier price, current version, effective from
-- Row click → sheet to edit + create new version (prior versions preserved; existing IBGs unaffected)
-- Pricing history tab inside the sheet
+### Per-role tile rows + sections
 
-### 3.4 Evidence Requirements
-New route: `/admin/evidence-requirements` (`src/routes/_authed.admin.evidence-requirements.tsx`)
-- Table: scope (Company / Project / Installation), evidence name, installation type, funding scheme, standard ref, required toggle, effective from, status
-- Filter pills by scope and status
-- Brand-blue "New rule" → dialog; Edit + Archive in row menu
+**Admin**
+- Tiles: Onboarding · Amendments · Risk · Companies · Audit · Integrations
+- Sections: *Today* (pending onboardings + flagged risk, max 6 rows) · *Latest activity* · *Platform health* (3 flat status rows, no card)
 
-### 3.5 Installation & System Types
-New route: `/admin/installation-types` (`src/routes/_authed.admin.installation-types.tsx`)
-- Two-column: installation types (Solar PV, ASHP, etc.) on left, child system types on right
-- Add / rename / delete with inline confirm; deletion blocked if referenced by IBGs (shows count)
+**Operator**
+- Tiles: granted permissions only (Customers, Jobs, IBG Repository, Submissions, Funding, Audit — locked ones are dimmed in the same row, not a separate grid)
+- Sections: *Pending requests* (your permission requests + their status) · *Latest in your areas*
 
-### 3.6 Funding Schemes (admin governance, distinct from user-facing /funding)
-New route: `/admin/funding-schemes` (`src/routes/_authed.admin.funding-schemes.tsx`)
-- CRUD over schemes: name (ECO4, GBIS, …), funder, eligible measures, evidence-rule links, effective window, status
-- Read-only consumers list (which orgs/users currently use it)
+**Installer-Access**
+- Tiles: Issue an IBG · My IBGs · Pricing · Help · Templates · Account
+- Sections: *Recent IBGs* (5 ListRows) · *Tips* (3 ListRows linking to docs) · *Upgrade* (single inline row, no card)
 
-### 3.7 Measure Access Control
-New route: `/admin/measure-access` (`src/routes/_authed.admin.measure-access.tsx`)
-- Org-level defaults table (per org × measure type → allowed Y/N)
-- Per-user override sub-table
-- Brand-blue "Apply override" opens existing pattern (similar to risk overrides)
+**Installer-Operate**
+- Tiles: New IBG · Projects · IBG Repository · Submissions · Funding · Settings
+- Sections: *Jobs needing attention* · *Recently issued IBGs* · *Funding-ready projects*
 
-### 3.8 Risk Overrides (lift out of Risk Monitoring)
-New route: `/admin/risk-overrides` (`src/routes/_authed.admin.risk-overrides.tsx`)
-- Active overrides table with expiry countdown
-- Filter pills: All / Expiring ≤7d / Permanent / Expired
-- Reuses existing `high-risk-override-sheet.tsx` and `critical-risk-override-sheet.tsx`
+**Read-only**
+- Tiles: Customers · Properties · Jobs · IBG Repository · Submissions · Funding (all read-only badge)
+- Sections: *Recent records* · *Pinned reports*
 
-### Sidebar grouping update (`src/components/app/shell/app-sidebar.tsx`)
-Restructure the Admin section into clearer groups:
-- People: Companies, Users, Membership & Billing
-- Workflows: Onboarding, Amendments, Activity
-- Risk: Risk Monitoring, Risk Overrides, Audit Logs
-- Configuration: System Settings, Feature Flags, Access Control, Measure Access, Measure Policy & Pricing, Evidence Requirements, Installation & System Types, Funding Schemes
-- Integrations: Integrations Hub, External APIs, Stripe Events, CRM / HubSpot, Cron Jobs
+## Shell + cross-cutting
 
-All gated by existing `config.read` / `risk.read` / `users.read` permissions — keeps the 5-role model intact (we are NOT collapsing to the client's 3 roles).
+- **Sidebar**: keep current 5-role visibility logic. Restyle: 28px row, 13px label, 16px icon, 4px gutter, smaller "Admin" group titles (`text-[10px]` 0.08em). Add a "Pinned" group between Workspace and Admin (default empty; pin icon appears on row hover; pinned routes persist in `localStorage`). Bottom slot: Invite card → small `Developers` link → `Upgrade` brand pill (only for installer-access).
+- **TopBar**: rewritten per above. Page title moves *out* of the topbar entirely.
+- **Settings**: drop the welcome card, use new `PageHeader` (just eyebrow + title), keep side-nav.
 
----
+## Pages that pick up the new primitives
 
-## Out of scope
-- No new database tables or edge functions in this pass — pages render against the existing mock store, with TODO hooks where Supabase wiring will land next.
-- No design tokens changed beyond the Switch.
-- Public landing/marketing visuals untouched.
+These get a light touch — outer card chrome removed, `FilterPillBar` + `UnderlineTabs` wired in, table styling changed to flat (no border per row, sticky header):
+
+- `/ibg/repository`, `/ibg/history`
+- `/funding`, `/funding/match`
+- `/submissions`
+- `/customers`, `/properties`, `/jobs`, `/projects`
+- `/reports`
+- `/admin/onboarding`, `/admin/amendments`, `/admin/users`, `/admin/companies`, `/admin/risk`, `/admin/audit`, `/admin/activity`, `/admin/integrations`
+- The 8 admin config pages already use `PageHeader` — they pick up the simpler version automatically.
+
+## Out of scope (intentionally)
+
+- No font swap, no color palette change, no dark mode work.
+- Public landing/pricing/sign-in pages stay exactly as they are (gradients live there).
+- No new database tables or edge functions; mocks remain.
+- No custom illustration art for tiles — Lucide icon clusters only. (Custom art is a separate later pass.)
+
+## Files I'll touch (summary)
+
+- New: `tile-row.tsx`, `filter-pill-bar.tsx`, `list-row.tsx`, `section-header.tsx`
+- Rewritten: `shell/top-bar.tsx`, `shell/breadcrumbs.tsx`, `underline-tabs.tsx`, `page-header.tsx`
+- Extended: `ui/button.tsx`, `ui/switch.tsx`, `ui/dialog.tsx`, `ui/popover.tsx`, `ui/dropdown-menu.tsx`, `ui/tooltip.tsx` (motion calibration only)
+- `styles.css` (easing tokens + reduced-motion block)
+- `_authed.tsx` (route fade calibration)
+- `shell/app-sidebar.tsx` (Pinned group, bottom slot, sizing)
+- `_authed.dashboard.tsx` (full rewrite, all 5 roles)
+- `_authed.settings.tsx` (drop welcome card)
+- ~12 list/table routes listed above (FilterPillBar wiring, drop outer card)
+
+Approve and I'll implement in one pass.
