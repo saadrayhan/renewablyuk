@@ -73,10 +73,6 @@ function NewIbg() {
   const readinessOk = readinessChecks.every((c) => c.ok);
 
   function next() {
-    if (step === 0 && !readinessOk) {
-      toast.error("Resolve all readiness checks before continuing");
-      return;
-    }
     setStep((s) => Math.min(3, s + 1));
   }
 
@@ -138,7 +134,9 @@ function NewIbg() {
           <Link to="/ibg/$id" params={{ id: issuedId! }} className="press rounded-full border bg-background px-4 py-2 text-sm font-medium">Open IBG</Link>
         </div>
         <div className="mt-4">
-          <button onClick={() => nav({ to: "/ibg/repository" })} className="text-xs text-ink-muted hover:text-foreground">Back to repository</button>
+          <button onClick={() => nav({ to: isOperate ? "/ibg/repository" : "/ibg/history" })} className="text-xs text-ink-muted hover:text-foreground">
+            {isOperate ? "Back to repository" : "Back to IBG History"}
+          </button>
         </div>
       </div>
     );
@@ -175,8 +173,8 @@ function NewIbg() {
       <div className="mt-6 rounded-2xl border bg-card p-6">
         {step === 0 && (
           <div className="space-y-3">
-            <div className="text-sm font-medium text-foreground">Readiness checks</div>
-            <p className="text-xs text-ink-muted">All five checks must pass before issuance is allowed.</p>
+            <div className="text-sm font-medium text-foreground">Readiness preview</div>
+            <p className="text-xs text-ink-muted">Informational only — fill in the form on the next steps. The final Issue button is gated on these checks.</p>
             <ul className="mt-2 space-y-2">
               {readinessChecks.map((c) => {
                 const Icon = c.ok ? Check : c.key === "account" && !accountAllowsIssue ? ShieldAlert : AlertCircle;
@@ -264,6 +262,17 @@ function NewIbg() {
             <Row label="System type" value={data.systemTypes.find((s) => s.id === form.systemTypeId)?.name} />
             <Row label="Policy" value={form.policyType} />
             <Row label="Issued by" value={user.fullName} />
+            {!readinessOk && (
+              <div className="mt-2 flex items-start gap-2 rounded-xl border border-cat-rose/40 bg-cat-rose-bg/50 px-3 py-2 text-xs text-cat-rose">
+                <AlertCircle className="mt-0.5 size-3.5 shrink-0" />
+                <div>
+                  <div className="font-medium">Readiness checks must pass before issuing</div>
+                  <ul className="mt-1 list-disc pl-4">
+                    {readinessChecks.filter((c) => !c.ok).map((c) => (<li key={c.key}>{c.label}: {c.hint}</li>))}
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -272,11 +281,11 @@ function NewIbg() {
             <ArrowLeft className="size-3.5" /> Back
           </button>
           {step < 3 ? (
-            <button onClick={next} disabled={step === 0 && !readinessOk} className="press inline-flex items-center gap-1 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50">
+            <button onClick={next} className="press inline-flex items-center gap-1 rounded-full bg-[var(--brand-blue)] px-4 py-2 text-sm font-medium text-[var(--brand-blue-foreground)]">
               Continue <ArrowRight className="size-3.5" />
             </button>
           ) : (
-            <button onClick={issue} className="press rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background">Issue IBG</button>
+            <button onClick={issue} disabled={!readinessOk} className="press rounded-full bg-[var(--brand-blue)] px-5 py-2 text-sm font-medium text-[var(--brand-blue-foreground)] disabled:opacity-50">Issue IBG</button>
           )}
         </div>
       </div>
