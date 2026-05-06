@@ -61,6 +61,14 @@ function AdminDash() {
   const recent = data.activity.slice(0, 6);
   const activeOverrides = data.riskOverrides.filter((o) => o.active);
   const accountsAtRisk = data.users.filter((u) => u.accountRiskState && u.accountRiskState !== "active").length;
+  const totalCompanies = data.users.filter((u) => u.role !== "admin" && u.role !== "operator").length;
+  const operateCount = data.users.filter((u) => u.role === "installer-operate").length;
+  const accessCount = data.users.filter((u) => u.role === "installer-access").length;
+  const ibgsTotal = data.ibgs.length;
+  const ibgsThisMonth = data.ibgs.filter((i) => i.issuedAt && i.issuedAt > Date.now() - 30 * 86400000).length;
+  const flaggedCount = data.users.filter((u) => u.accountRiskState === "flagged").length;
+  const pausedCount = data.users.filter((u) => u.accountRiskState === "paused").length;
+  const suspendedCount = data.users.filter((u) => u.accountRiskState === "suspended").length;
 
   return (
     <>
