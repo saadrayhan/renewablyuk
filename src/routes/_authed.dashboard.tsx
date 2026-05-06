@@ -14,7 +14,7 @@ import {
   FileBadge, FolderKanban, Send, Sparkles, Database, ArrowRight,
   Users, ScrollText, Activity, ClipboardList, FileWarning,
   Volume2, Music2, Mic2, BookOpen, Image as ImageIcon, Video,
-  Plus, TrendingUp, CheckCircle2, AlertTriangle, Clock, ShieldCheck,
+  Plus, TrendingUp, CheckCircle2, AlertTriangle, Clock, ShieldCheck, CreditCard,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
