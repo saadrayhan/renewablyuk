@@ -56,7 +56,7 @@ function CompanyDetailPage() {
             <Field label="Business type" value={isLtd ? "Limited Company" : "Sole Trader"} />
             <Field label="Membership" value={membership} />
             <Field label="Account state" value={co.accountRiskState ?? "active"} />
-            <Field label="Primary contact" value={co.fullName} />
+            <Field label="Primary contact" value={co.name} />
             <Field label="Email" value={co.email} />
           </dl>
         )}
