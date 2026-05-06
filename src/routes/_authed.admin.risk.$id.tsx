@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ShieldAlert, ArrowUp, ArrowDown, Check, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 import { useStore, update } from "@/lib/mock/store";
 import { findUser, pushAudit, fmtDate } from "@/lib/mock/queries";
 import { StatePill, RISK_STATES } from "@/components/app/state-pill";
@@ -27,7 +28,6 @@ function RiskDetail() {
   const { permissions } = useDevRole();
   const { user: actor } = useAuth();
   const u = findUser(data, id);
-  const [tab, setTab] = useState<Tab>("history");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [criticalOpen, setCriticalOpen] = useState(false);
   const [flash, setFlash] = useState(true);
