@@ -1,230 +1,98 @@
 
-# Renewably UK — Information Architecture & Completion Plan
+# Renewably × ElevenLabs editorial pass
 
-This is the single source of truth for the platform: every route, every state, every interaction. After approval, we build to it so no click ever lands on a stub.
+The goal isn't to copy ElevenLabs — it's to inherit its **calm, magazine-like restraint** and apply it to Renewably, with **#0F47A8 brand blue staying as the only CTA color** (replacing ElevenLabs' ink pill). Brand blue is non-negotiable; everything else is up for refinement.
 
----
+## What changes (and what doesn't)
 
-## 1. Global rules (apply to everything below)
+| Area | Today | After |
+|---|---|---|
+| Canvas | pure white `#FFFFFF` | warm off-white `#F5F5F5` with `#FAFAFA` alt band, cards stay pure white |
+| Primary CTA | brand-blue pill (correct) | **unchanged** — brand blue stays, but applied with ElevenLabs restraint (one per view) |
+| Display type | Inter, all weights | **Instrument Serif** at **weight 400** for h1/h2 (it only ships 400 + italic), with negative tracking (-0.02 → -0.03em) |
+| Body type | Inter 400 | Inter 400/500 with **+0.16px letter-spacing** (editorial dialect) |
+| Hero atmosphere | flat | **pastel gradient orbs** — mint/peach/lavender/sky/rose — drift behind hero copy and on landing/dashboard hero cards. Pure decoration, never on CTAs |
+| Section rhythm | mixed | unified **96px** between bands |
+| Card radius | mixed (lg) | `rounded-2xl` (16px) for feature cards, `rounded-3xl` (24px) for atmospheric/orb cards |
+| Elevation | several shadow tiers | **hairline + single soft drop** (`0 4px 16px rgba(0,0,0,0.04)` on hover only) |
+| Badges/pills | mixed | uppercase 12/600 +0.96px tracking on `surface-strong` |
+| Inputs | mixed | 44px height, `rounded-md` (8px), 1px hairline, focus → 2px ink |
 
-**Buttons (already centralized in `button.tsx`)**
-- `primary` becomes **brand-blue** by default — `primary` and `brand` collapse to the same `#0F47A8` pill. (You asked: only primary buttons in brand color.)
-- One primary per page header. Everything else: `secondary` (border), `ghost` (inline), `icon` (cluster, tooltip required).
-- Tables: row actions are always `icon` cluster. "View →" is `ghost` with arrow. No bare `<a>` text-as-action.
+### A note on Instrument Serif
 
-**Color**
-- Brand blue stays ≤10%: primary CTA, sidebar logo, workspace switcher dot, `UnderlineTabs` underline, `bg-brand-blue-tint` info notices. Nothing else.
+Instrument Serif is a single-weight (400 + italic) display serif — slightly more romantic and condensed than EB Garamond, with a wider counter and elegant italic. It sits closer to Waldenburg Light's editorial voice than Garamond does. We'll use the **italic cut sparingly** for accent words inside hero headlines (e.g. "Built for *trust*") — that's the one place it earns its keep.
 
-**Navigation contract**
-- Every list row → detail page. Every detail page → back link + at least one next action.
-- Empty states always include: icon, one-line explanation, **primary action** that creates the first record, secondary "Learn more" ghost link.
-- Locked states use existing `LockedCard` with `request access` action.
-- Loading: skeleton rows in tables, skeleton card grid elsewhere — no spinners on full pages.
-- Error: route `errorComponent` with retry; 404: `notFoundComponent` with back to parent list.
+## Brand-blue rule (re-stated)
 
-**Modals vs drawers vs pages**
-- Quick edits / confirmations → `Dialog`.
-- Multi-field review with side context (Amendment review, Risk override) → `Sheet` (right-side drawer).
-- Anything that needs its own URL / share link → full page route.
+- `primary` variant = **brand-blue pill** for the page's signature action (Issue IBG, Save changes, Connect HubSpot, Retry webhook, Invite member…).
+- One brand-blue button per view header. Inline secondary actions stay `secondary` (bordered) or `ghost` (text). Table row actions stay `icon`.
+- Brand-blue tint `#E8F0FC` continues to back informational notices and active workspace switcher.
 
----
-
-## 2. Top-level IA
+## Design tokens (`src/styles.css`)
 
 ```text
-/                                  Marketing landing
-/pricing                           Public pricing
-/sign-in /sign-up /verify
-/forgot-password /reset-password
+--background:  #F5F5F5   (canvas, was #FFFFFF)
+--surface:     #FAFAFA   (alt band)
+--card:        #FFFFFF   (pure white card stays)
+--ink:         #0C0A09   (warm near-black, replaces neutral)
+--ink-muted:   #777169   (warm muted)
+--border:      #E7E5E4   (warm hairline)
+--border-strong:#D6D3D1
+--brand-blue:  #0F47A8   (UNCHANGED)
+--brand-blue-tint:#E8F0FC (UNCHANGED)
 
-/dashboard                         Home (role-aware)
+/* New atmospheric tokens */
+--orb-mint:    #A7E5D3
+--orb-peach:   #F4C5A8
+--orb-lavender:#C8B8E0
+--orb-sky:     #A8C8E8
+--orb-rose:    #E8B8C4
 
-PROJECTS
-/projects                          Project pipeline (kanban + table toggle)
-/customers   /customers/new   /customers/:id
-/properties  /properties/new  /properties/:id
-/jobs        /jobs/new        /jobs/:id
-
-IBG
-/ibg/new                           Wizard
-/ibg/:id                           Detail (preview, audit, amendments tab)
-/ibg/:id/amendment                 Amendment composer
-/ibg/repository                    Document storage
-/ibg/history                       Activity log
-
-SUBMISSIONS
-/submissions   /submissions/:id
-
-FUNDING
-/funding       /funding/match   /funding/:id   /funding/:id/tracking
-
-REPORTS
-/reports                           Saved reports + ad-hoc builder
-
-ONBOARDING (per-user wizard)
-/onboarding
-
-SETTINGS (workspace, role-aware)
-/settings                          → redirect to /settings/profile
-/settings/profile
-/settings/team       /settings/team/invite (modal route via ?invite=1)
-/settings/access     (operator capability requests)
-/settings/measures
-/settings/notifications
-/settings/integrations            workspace-level connectors
-/settings/security                MFA, sessions, API keys
-/settings/subscription            plan, invoices, payment method
-
-ADMIN (internal Renewably)
-/admin/companies                  /admin/companies/:id
-/admin/users                      /admin/users/:id
-/admin/membership                 platform-wide subs & invoices
-/admin/onboarding                 /admin/onboarding/:id
-/admin/amendments                 /admin/amendments/:id
-/admin/activity                   live feed
-/admin/config                     Installation types, evidence, templates, branding
-/admin/risk                       /admin/risk/:id
-/admin/audit                      /admin/audit/:id
-/admin/integrations               /admin/integrations/:id
-/admin/stripe-events              /admin/stripe-events/:id
-/admin/crm                        HubSpot hub  (NEW build, see §5)
-/admin/permissions                permission library, role presets
-/admin/feature-flags
-/admin/system-settings            (NEW build, see §4)
+/* Type */
+--font-display: "Instrument Serif", "Times New Roman", serif;
+--font-sans:    "Inter", system-ui, sans-serif;
 ```
 
----
+Dark mode keeps brand blue, swaps canvas for warm `#0C0A09`.
 
-## 3. State coverage matrix (per page)
+## New / refined components
 
-Every route below ships with these states wired:
+1. **`<GradientOrb variant="mint|peach|lavender|sky|rose" />`** — absolute-positioned soft radial blur, used behind page headers on Dashboard, IBG repository hero, marketing pages.
+2. **`<HeroCard>`** — large `rounded-3xl` card with optional gradient orb behind centered display copy.
+3. **`<PageHeader>`** — display copy in Instrument Serif 400 at 36–48px, eyebrow stays uppercase Inter 12/600 with +0.96px tracking.
+4. **`<Section>`** — wrapper enforcing 96px vertical rhythm.
+5. **`<Badge>`** uppercase variant — caption-uppercase token.
+6. **`<Button>`** — no variant changes; only padding bump to match 40px target height (`size="md"` → `h-10 px-5`). Pill geometry stays.
+7. **`Input`** — height bumped to 44px, focus ring ink 2px instead of brand color halo (lets brand-blue stay scarce).
 
-| State | Implementation |
-|---|---|
-| Empty | `EmptyState` + primary CTA |
-| Loading | Skeletons matching final layout |
-| Loaded | Real data (mock store) |
-| Error | Route `errorComponent` w/ retry |
-| 404 / not found | Route `notFoundComponent` w/ back |
-| Locked (RBAC) | `LockedCard` w/ "Request access" |
-| Read-only (role) | Disabled inputs + tooltip explaining role |
+## Where the editorial pass actually lands
 
-We'll audit every existing route file and add the missing branches.
+Pass order:
 
----
+1. **Tokens + Button + Input + PageHeader + Section** (foundation, ripples through every page automatically).
+2. **Auth screens** (`sign-in`, `sign-up`, `forgot-password`) — full ElevenLabs hero treatment with one orb.
+3. **Marketing** (`/`, `/pricing`) — hero band with mega Instrument Serif display + orb, italic accent word, 96px rhythm, pricing tier cards inverted on dark band for the featured tier.
+4. **Dashboard** — display headline ("Good afternoon, Aamir"), single orb behind greeting, KPI tiles redrawn as `rounded-2xl` hairline cards.
+5. **IBG Repository / History headers** — orb behind title, badges switched to uppercase pills.
+6. **Settings & Admin index pages** — display titles, eyebrow labels, but interior tables stay dense and functional (no orbs in data tables).
 
-## 4. System Settings (`/admin/system-settings`) — full build
+Detail pages (Stripe event, Audit, Amendment, Company) inherit the new PageHeader for free.
 
-Tabs (UnderlineTabs):
+## Out of scope (deliberately)
 
-1. **General** — Platform name, support email, default timezone, default locale, business hours.
-2. **Branding** — Logo upload, accent toggle (off by default; brand-blue = product blue), favicon, login page hero.
-3. **Retention & Data** — Audit log retention (30/90/365/forever), IBG PDF retention, soft-delete window, export-all (zip job).
-4. **Email** — Sender name, reply-to, footer, transactional template links (opens template editor dialog).
-5. **Security** — Password policy (length, complexity), session timeout, allowed MFA methods, IP allowlist (textarea), force MFA for admins toggle.
-6. **Environment** — Active environment badge (Test/Live), maintenance-mode toggle (with confirm dialog), banner message, scheduled window.
-7. **Danger zone** — Reset demo data, rotate platform API key (confirm + show-once), purge soft-deleted (confirm).
+- No animation work beyond what exists (orbs are static blurs).
+- No change to admin tables, drawers, or sheets — they already read as expert tools.
+- Brand green stays only inside the IBG-issued celebration burst.
+- No logo / wordmark redesign.
 
-Each tab card gets `Save changes` (primary brand-blue) + `Discard` (ghost). Unsaved-changes guard via `usePrompt` pattern (route `beforeLoad` + dialog).
+## Files touched
 
----
+- `src/styles.css` — token swap (canvas, ink, hairline, Instrument Serif, orb palette).
+- `index.html` — add Instrument Serif `<link>` from Google Fonts (400 + italic).
+- `src/components/ui/button.tsx` — height/padding tweak only.
+- `src/components/ui/input.tsx` — height + focus ring tweak.
+- `src/components/app/page-header.tsx` — display font, eyebrow tracking.
+- **New** `src/components/app/gradient-orb.tsx`, `src/components/app/section.tsx`, `src/components/app/hero-card.tsx`.
+- Pages: `index.tsx`, `pricing.tsx`, `sign-in.tsx`, `sign-up.tsx`, `forgot-password.tsx`, `_authed.dashboard.tsx`, `_authed.ibg.repository.tsx`, `_authed.ibg.history.tsx` — apply new header / orb / section.
 
-## 5. CRM / HubSpot (`/admin/crm`) — full build
-
-Two-state page driven by HubSpot connection status.
-
-**State A — Not connected**
-- Hero card: "Connect HubSpot to sync customers, jobs, and IBG events."
-- Primary brand-blue button: "Connect HubSpot" → triggers `standard_connectors--connect` (`hubspot`).
-- Bulleted scope list, link to docs.
-
-**State B — Connected** — tabs:
-
-1. **Overview** — connection status pill, account email, last sync timestamp, "Sync now" (primary), "Disconnect" (secondary destructive-ghost). KPIs: Contacts synced, Companies synced, Deals mirrored, Errors (last 24h).
-2. **Object mapping** — three rows (Contact ↔ Customer, Company ↔ Company, Deal ↔ Project). Each opens a drawer to map fields, set sync direction (one-way / two-way), conflict policy (HubSpot wins / Renewably wins / newest wins).
-3. **Event triggers** — toggles: "On IBG issued → create HubSpot note", "On amendment requested → create task", "On funding approved → move deal stage". Stage picker pulls live HubSpot pipelines via gateway.
-4. **Sync history** — table: timestamp, direction, object, count, status, view-payload icon → opens drawer with JSON.
-5. **Webhook** — auto-generated inbound URL (copy button), signing secret (show-once, rotate), recent inbound events table → row click → existing detail pattern.
-
-Server functions:
-- `connectHubspot` (uses `standard_connectors--connect` via flow tool — surfaced through the `Connect HubSpot` button which calls a server function that returns the connection-needed signal; UI then prompts).
-- `hubspotSyncNow`, `hubspotListPipelines`, `hubspotMapField`, `hubspotDisconnect`.
-- All call HubSpot via the connector gateway (`https://connector-gateway.lovable.dev/hubspot/...`) using `LOVABLE_API_KEY` + `HUBSPOT_API_KEY`.
-
-(Until the user actually links HubSpot, page renders State A so it's never a dead end.)
-
----
-
-## 6. Stripe webhook retry — real flow
-
-Endpoint: `src/routes/api/admin/stripe/retry-webhook.ts` (server route, POST).
-- Authenticated via `requireSupabaseAuth`-equivalent inside server function (we use server function instead — `retryStripeWebhook` in `src/server/stripe.functions.ts`).
-- Input: `{ eventId: string }` validated with Zod.
-- Behavior:
-  1. Looks up the original event in our mock store / future Stripe events table.
-  2. POSTs to the configured local webhook receiver (`/api/public/stripe/webhook`) with the original payload + a freshly computed `Stripe-Signature` header using `STRIPE_WEBHOOK_SECRET`.
-  3. Records a retry attempt (timestamp, status, response body) appended to the event's `attempts[]`.
-  4. Returns `{ ok, status, attemptId }`.
-- UI on `/admin/stripe-events/:id`:
-  - "Retry webhook" becomes primary brand-blue, shows spinner while pending, toast on success/fail.
-  - New **Attempts** card lists every retry (timestamp, status, latency, response excerpt, "View payload" → drawer).
-  - Disabled with tooltip if event is older than 30 days or already `succeeded` on latest attempt (configurable).
-
-Secret needed: `STRIPE_WEBHOOK_SECRET`. If missing, the button stays enabled but the handler returns a structured error and the UI shows an inline notice with a "Set Stripe webhook secret" button → opens secrets prompt. (We will request the secret only when the user first clicks Retry, not preemptively.)
-
----
-
-## 7. Closing every other "empty" click
-
-Audit pass — for each existing route, ensure:
-
-- **Dashboard** quick actions all link to real pages (already done) + add "What's new" feed card linking to `/admin/activity`.
-- **Projects** kanban cards → `/jobs/:id` (exists). Add "+ New project" CTA → `/jobs/new`.
-- **Customers/Properties/Jobs** lists → confirm row click + new button wired; add bulk-select toolbar (Archive, Export CSV via server function).
-- **IBG**: ensure Repository row → `/ibg/:id`, History row → same detail with `?tab=audit`. Both already separated; we'll wire row navigation.
-- **Submissions**: detail page exists — add status timeline + resubmit action.
-- **Funding**: `/funding/match` "Apply" → creates funding record then routes to `/funding/:id`. Tracking tab → `/funding/:id/tracking`.
-- **Reports**: empty preset list gets "Create report" CTA → opens builder dialog (filters + group-by + save).
-- **Settings/Team**: "Invite" opens `InviteDialog`; member row → `/admin/users/:id` for admin, otherwise inline drawer.
-- **Settings/Access**: capability list with "Request access" rows; on submit creates a notification for admin.
-- **Settings/Integrations**: each tile (Stripe, HubSpot, Email, Webhooks) → `/admin/integrations/:id`-style detail or its workspace settings page; never a dead tile.
-- **Admin/Permissions**: role preset cards → drawer to edit included permissions + "Apply to N users".
-- **Admin/Audit**: every row → `/admin/audit/:id` (exists); add filter pills (Severity, Actor, Object).
-- **Admin/Risk**: row → `/admin/risk/:id`; add "Override" CTA opening `HighRiskOverrideSheet` / `CriticalRiskOverrideSheet`.
-- **Admin/Amendments & Onboarding**: row → detail (exist). Add bulk approve/reject in detail toolbar.
-- **Admin/Companies**: tabs already exist — wire Users tab rows to `/admin/users/:id`, Billing tab "Open invoice" → `/admin/membership?invoice=…`.
-- **Admin/Stripe Events**: row → detail (exists); add Retry from list (icon).
-- **Admin/Feature Flags**: persists to mock store; add "Audit" link per flag → `/admin/audit?subject=flag:<key>`.
-- **Command palette**: index every route + common actions ("Issue IBG", "Invite teammate", "Connect HubSpot", "Retry last webhook").
-
-Anything currently rendering `<ComingSoon>` gets a real page (only `crm` and `system-settings` were left — both built in §4–§5).
-
----
-
-## 8. Technical scaffolding
-
-New files:
-- `src/server/stripe.server.ts` — signing helper (`computeStripeSignature`), retry executor.
-- `src/server/stripe.functions.ts` — `retryStripeWebhook`, `listStripeEventAttempts`.
-- `src/routes/api/public/stripe/webhook.ts` — receiver (verifies signature, appends to mock store).
-- `src/server/hubspot.server.ts` + `src/server/hubspot.functions.ts` — gateway calls.
-- `src/components/app/unsaved-changes-guard.tsx` — reusable dialog + route guard.
-- `src/components/app/page-states.tsx` — `EmptyBlock`, `ErrorBlock`, `Skeletons.*` to standardize states.
-- `src/lib/mock/stripe-events.ts` — extends store with `attempts[]`.
-
-Edits:
-- `src/components/ui/button.tsx` — alias `primary` → brand-blue styles (keep `brand` as synonym; legacy `default` follows suit).
-- `src/routes/_authed.admin.system-settings.tsx` — full implementation.
-- `src/routes/_authed.admin.crm.tsx` — full implementation w/ connection-aware UI.
-- `src/routes/_authed.admin.stripe-events.$id.tsx` — wire Retry, Attempts card.
-- Sweep every other route file listed in §7 for missing empty/loading/error branches and dead clicks.
-
----
-
-## 9. Out of scope (call-outs)
-
-- We will NOT ask for `STRIPE_WEBHOOK_SECRET` until the user first clicks Retry — keeps the flow honest.
-- HubSpot connection requires the connector picker; the page handles the not-connected state cleanly so it's never a dead end.
-- No real Stripe live calls — the retry replays into our own `/api/public/stripe/webhook` receiver, exactly mirroring how Stripe redelivers in production.
-
-After approval I'll execute §4 → §5 → §6 → §7 in that order, and finish with the IA sweep so every click in the app lands somewhere meaningful.
+Approve and I'll execute it as one cohesive pass.
