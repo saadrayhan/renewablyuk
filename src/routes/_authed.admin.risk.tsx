@@ -197,6 +197,19 @@ function RiskPage() {
   );
 }
 
+function TierCard({ tone, label, value, sub }: { tone: "green" | "amber" | "rose"; label: string; value: number; sub: string }) {
+  return (
+    <div className="rounded-2xl border bg-card p-5">
+      <div className="flex items-center gap-2">
+        <span className={`size-2 rounded-full ${tone === "green" ? "bg-cat-green" : tone === "amber" ? "bg-cat-amber" : "bg-cat-rose"}`} />
+        <div className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted">{label}</div>
+      </div>
+      <div className="mt-3 text-3xl font-semibold tracking-tight text-ink">{value}</div>
+      <div className="mt-1 text-[11px] text-ink-muted">{sub}</div>
+    </div>
+  );
+}
+
 function Stat({ label, value, icon: Icon, sub }: { label: string; value: number; icon: React.ComponentType<{ className?: string }>; sub: string }) {
   return (
     <div className="rounded-2xl border bg-card p-5">
