@@ -101,15 +101,15 @@ function HistoryPage() {
         <FilterPills options={FILTERS} value={filter} onChange={setFilter} />
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border bg-card">
+      <div className="mt-4 w-full overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-surface/40 text-[11px] uppercase tracking-[0.06em] text-ink-muted">
             <tr>
-              <th className="px-4 py-2.5 text-left font-medium">When</th>
-              <th className="px-4 py-2.5 text-left font-medium">Event</th>
-              <th className="px-4 py-2.5 text-left font-medium">IBG</th>
-              <th className="px-4 py-2.5 text-left font-medium">Actor</th>
-              <th className="px-4 py-2.5 text-left font-medium">Recipient</th>
+              <th className="px-3 py-2.5 text-left font-medium">When</th>
+              <th className="px-3 py-2.5 text-left font-medium">Event</th>
+              <th className="px-3 py-2.5 text-left font-medium">IBG</th>
+              <th className="px-3 py-2.5 text-left font-medium">Actor</th>
+              <th className="px-3 py-2.5 text-left font-medium">Recipient</th>
               <th className="w-10" />
             </tr>
           </thead>

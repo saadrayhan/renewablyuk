@@ -270,7 +270,7 @@ function HistoryTab() {
     status: i === 3 ? "error" : "ok",
   }));
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card">
+    <div className="w-full overflow-x-auto">
       <table className="w-full text-sm">
         <thead className="text-[10px] uppercase tracking-wide text-ink-muted">
           <tr className="border-b">

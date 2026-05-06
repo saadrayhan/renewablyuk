@@ -77,16 +77,16 @@ function JobsList() {
 
       <div className="mt-5">
         {rows.length === 0 ? <EmptyState icon={Briefcase} title="No jobs found" body="Try removing filters or create a new job." /> : (
-          <div className="overflow-hidden rounded-2xl border bg-card">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-surface/40 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-muted">
-                  <th className="px-4 py-2.5 text-left">Ref</th>
-                  <th className="px-4 py-2.5 text-left">Customer</th>
-                  <th className="px-4 py-2.5 text-left">Measure</th>
-                  <th className="px-4 py-2.5 text-left">Owner</th>
-                  <th className="px-4 py-2.5 text-left">Start</th>
-                  <th className="px-4 py-2.5 text-right">State</th>
+                <tr className="border-b text-[12px] font-medium text-ink-muted">
+                  <th className="px-3 py-2.5 text-left">Ref</th>
+                  <th className="px-3 py-2.5 text-left">Customer</th>
+                  <th className="px-3 py-2.5 text-left">Measure</th>
+                  <th className="px-3 py-2.5 text-left">Owner</th>
+                  <th className="px-3 py-2.5 text-left">Start</th>
+                  <th className="px-3 py-2.5 text-right">State</th>
                 </tr>
               </thead>
               <tbody>
@@ -94,14 +94,14 @@ function JobsList() {
                   const c = findCustomer(data, j.customerId);
                   return (
                     <tr key={j.id} className="border-b last:border-b-0 hover:bg-surface/60">
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-3.5">
                         <Link to="/jobs/$id" params={{ id: j.id }} className="font-medium text-foreground hover:underline">{j.ref}</Link>
                       </td>
-                      <td className="px-4 py-3 text-foreground">{c?.name ?? "—"}</td>
-                      <td className="px-4 py-3 text-foreground">{j.measure}</td>
-                      <td className="px-4 py-3 text-ink-muted">{j.owner}</td>
-                      <td className="px-4 py-3 text-ink-muted">{j.startDate}</td>
-                      <td className="px-4 py-3 text-right"><StatePill meta={JOB_STATES[j.state]} /></td>
+                      <td className="px-3 py-3.5 text-foreground">{c?.name ?? "—"}</td>
+                      <td className="px-3 py-3.5 text-foreground">{j.measure}</td>
+                      <td className="px-3 py-3.5 text-ink-muted">{j.owner}</td>
+                      <td className="px-3 py-3.5 text-ink-muted">{j.startDate}</td>
+                      <td className="px-3 py-3.5 text-right"><StatePill meta={JOB_STATES[j.state]} /></td>
                     </tr>
                   );
                 })}
