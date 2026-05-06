@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Eye, Pencil, CreditCard, Flag, Ban } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
 import { LockedCard } from "@/components/app/locked-card";
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_authed/admin/companies")({
 
 function CompaniesPage() {
   const data = useStore();
+  const nav = useNavigate();
   const { permissions } = useDevRole();
   if (!can(permissions, "users.read")) {
     return (
@@ -65,7 +66,7 @@ function CompaniesPage() {
                 : risk === "MEDIUM" ? "bg-cat-amber-bg text-cat-amber"
                 : "bg-cat-green-bg text-cat-green";
               return (
-                <tr key={c.id} className="border-b last:border-b-0 hover:bg-surface/60">
+                <tr key={c.id} onClick={() => nav({ to: "/admin/companies/$id", params: { id: c.id } })} className="cursor-pointer border-b last:border-b-0 transition-colors hover:bg-surface/60">
                   <td className="px-4 py-3 font-medium text-foreground">
                     <span className="inline-flex items-center gap-2">
                       <span className={`size-2 rounded-full ${isLtd ? "bg-cat-purple" : "bg-ink-muted"}`} />
@@ -91,7 +92,7 @@ function CompaniesPage() {
                       {c.accountRiskState === "suspended" || c.accountRiskState === "paused" ? "Disabled" : "Enabled"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                     <div className="inline-flex items-center gap-1 text-ink-muted">
                       <button title="View" className="press grid size-7 place-items-center rounded-md hover:bg-surface hover:text-foreground"><Eye className="size-3.5" /></button>
                       <button title="Edit" className="press grid size-7 place-items-center rounded-md hover:bg-surface hover:text-foreground"><Pencil className="size-3.5" /></button>
@@ -107,7 +108,7 @@ function CompaniesPage() {
         </table>
       </div>
 
-      <div className="mt-5 rounded-2xl border-l-4 border-l-[var(--brand-blue)] bg-[var(--brand-blue-tint)] p-4">
+      <div className="mt-5 rounded-2xl border bg-surface/50 p-4">
         <div className="text-sm font-medium text-foreground">Business Type Verification</div>
         <p className="mt-1 text-xs text-ink-muted">
           Limited Company: Risk checks use Companies House API for automated verification · Sole Trader: Risk checks use platform-based verification and manual review.

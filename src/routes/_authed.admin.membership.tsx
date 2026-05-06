@@ -59,13 +59,13 @@ function MembershipPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Metric label="Active Subscriptions" value={24} tone="" />
-        <Metric label="Past Due" value={3} tone="text-cat-amber" />
-        <Metric label="Failed Payments" value={2} tone="text-cat-rose" />
-        <Metric label="Suspended Accounts" value={1} tone="text-cat-rose" />
+        <Metric label="Active Subscriptions" value={24} />
+        <Metric label="Past Due" value={3} pillTone="amber" pillText="3 require action" />
+        <Metric label="Failed Payments" value={2} pillTone="rose" pillText="2 retries" />
+        <Metric label="Suspended Accounts" value={1} pillTone="rose" pillText="1 blocked" />
       </div>
 
-      <div className="rounded-2xl border-l-4 border-l-[var(--brand-blue)] bg-[var(--brand-blue-tint)] p-4 text-xs text-ink-muted">
+      <div className="rounded-2xl border bg-surface/50 p-4 text-xs text-ink-muted">
         All billing operations are synced with Stripe and controlled via webhook events. Subscription status controls platform access.
       </div>
 
@@ -142,11 +142,13 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
     </div>
   );
 }
-function Metric({ label, value, tone }: { label: string; value: number; tone: string }) {
+function Metric({ label, value, pillTone, pillText }: { label: string; value: number; pillTone?: "amber" | "rose" | "green"; pillText?: string }) {
+  const cls = pillTone === "amber" ? "bg-cat-amber-bg text-cat-amber" : pillTone === "rose" ? "bg-cat-rose-bg text-cat-rose" : "bg-cat-green-bg text-cat-green";
   return (
-    <div className="rounded-2xl border bg-card p-4">
-      <div className="text-[10px] uppercase tracking-wide text-ink-muted">{label}</div>
-      <div className={`mt-2 text-2xl font-semibold ${tone || "text-ink"}`}>{value}</div>
+    <div className="rounded-2xl border bg-card p-5">
+      <div className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted">{label}</div>
+      <div className="mt-3 text-3xl font-semibold tracking-tight text-ink">{value}</div>
+      {pillText && <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>{pillText}</span>}
     </div>
   );
 }
