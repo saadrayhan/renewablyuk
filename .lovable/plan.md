@@ -1,136 +1,91 @@
-## Reading the references
+# Page-by-page polish: Tabs, Tables, External APIs
 
-I went back through every panel of the PDF and the 6 screenshots. The thing that makes ElevenLabs feel different isn't the layout — it's a set of tiny, consistent decisions that repeat on every screen:
+Three focused changes, in this order. Nothing else touched this round.
 
-- **No card chrome on the canvas.** Sections live on bare background, separated by ~80px of whitespace. The only borders are tables, popovers, and a single thin border-bottom on the topbar.
-- **Topbar is a breadcrumb, not a title.** Left: square sidebar-toggle (28×28) + crumb path. Right: 3 ghost pill buttons (`Feedback`, `Docs`, `Ask`) at h-7 with text-[12px], then 2 icon buttons at 28×28, then a 28×28 avatar. No shadows. No sticky page heading.
-- **Sidebar is two zones.** Workspace switcher (small, with arrows, color dot) → primary nav (flat icons, 13px, 28px row height) → "Pinned" group → bottom slot with one promo card + `Developers` link + `Upgrade` button.
-- **Page title is the H1.** Small uppercase eyebrow above. No subtitle. No actions cluster on the right of the header.
-- **Tabs sit directly under the title.** Plain underline, 14px, uppercase-ish weight on active. No background, no card.
-- **Tile rows.** Big rounded-2xl tiles (~180×130) with `bg-tile`, a centered icon-cluster, label *below the tile in normal canvas text*. Horizontal scrollable.
-- **Filter pills.** A row of pill chips above content. Two dropdowns first (`Language ▾`), a thin vertical divider, then category pills. The whole row is one horizontal scroll surface with a `>` chevron.
-- **Tables/lists are flat.** No borders per row. Avatar (rounded-square 36×36 in pastel) + 2-line text + meta chips on the right. Hover swaps to `bg-surface`. Sticky column headers, no zebra.
-- **Sections.** Title + small `>` chevron link, never a "View all" button. Content sits below at the same indent.
-- **Type.** Inter 13–14px body, 11px eyebrow with 0.08em tracking, large display H1. Numbers are tabular.
-- **Buttons.** Black pill stays, but `sm` is h-8 px-3.5 text-[13px]. Ghost in topbar is h-7 with optional 1px border on hover only.
-- **Motion.** ElevenLabs is restrained. Hover bg color in 80ms ease, list-row enter in 150ms ease-out. Sidebar collapse uses cubic-bezier(0.32, 0.72, 0, 1) at 200ms.
+---
 
-## Two design principles guiding this pass
+## 1. Tabs — match ElevenLabs underline style
 
-1. **Subtract chrome before adding anything.** Every existing bordered card on the dashboard is a candidate for deletion. Only keep a border when it groups data the eye can't otherwise distinguish (tables, popovers, cards inside dialogs).
-2. **One craft language, repeated.** Five new primitives — `TopBar`, `PageHeader`, `TileRow`, `UnderlineTabs`, `FilterPillBar`, `ListRow` — replace ad-hoc patterns wherever they appear. Every dashboard, every list page, every settings page.
+Right now we have two systems:
+- `src/components/ui/tabs.tsx` (Radix, **pill style** with `bg-muted` + `data-[state=active]:bg-background`) — used by 9 routes incl. `admin.config`, `admin.crm`, `admin.users.$id`, `admin.companies.$id`, `customers.$id`, `jobs.$id`, `reports`, `admin.permissions`, `admin.system-settings`, `admin.risk`.
+- `src/components/app/underline-tabs.tsx` — closer to ElevenLabs but spacing/weight/underline are off.
 
-## Motion calibration (applies globally)
+ElevenLabs (from screenshots): no background chip, just text + optional icon, tighter row, **2px** active underline directly under the label, label gets full ink color when active, `border-b` separator runs the full width below the row.
 
-Add to `src/styles.css`:
+**Edit `src/components/ui/tabs.tsx`** (the Radix one — covers all 9 existing pages with zero call-site changes):
+- `TabsList`: replace pill chrome with `inline-flex h-10 items-center gap-1 border-b w-full justify-start rounded-none bg-transparent p-0 text-ink-muted`.
+- `TabsTrigger`: `relative inline-flex items-center gap-1.5 px-3 h-10 -mb-px text-[13px] font-medium text-ink-muted transition-colors hover:text-foreground data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:-bottom-px data-[state=active]:after:h-0.5 data-[state=active]:after:bg-foreground rounded-none shadow-none`.
+- `TabsContent`: `mt-6` (more breathing room).
 
-```text
---ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
---ease-drawer:    cubic-bezier(0.32, 0.72, 0, 1);
---ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
-```
+**Edit `src/components/app/underline-tabs.tsx`** to mirror the same look (h-10 row, foreground active color, 2px underline using `bg-foreground` not `bg-brand-blue` — ElevenLabs uses ink not accent).
 
-| Element | Before | After | Why |
-|---|---|---|---|
-| Button `:active` | none | `transform: scale(0.97); transition: transform 140ms var(--ease-out-strong)` | buttons must telegraph press |
-| Sidebar collapse width | `transition-[width] duration-200` | `200ms var(--ease-drawer)` | iOS-style settle |
-| Route fade-in | `slide-in-from-bottom-1 duration-200` | `opacity+translateY(4px) → 0, 180ms ease-out, no scale` | scale on every nav feels heavy at 50+ navs/day |
-| List row hover | `hover:bg-surface` no transition | `bg-color 80ms ease` | invisible-but-felt |
-| Popover/Dropdown | default Radix `data-[state]` | `transform-origin: var(--radix-*-content-transform-origin); enter 160ms var(--ease-out-strong) from scale(0.97)+opacity` | origin-aware |
-| Tooltip | full anim every hover | first 200ms with delay; subsequent within 500ms `data-instant` skip | toolbars feel faster |
-| Dialog | scale(0.95) center | keep center, 200ms ease-out from scale(0.96)+opacity | modals stay center |
-| Underline tab indicator | none | absolutely-positioned bar that translates between tabs in 220ms `var(--ease-out-strong)` | smooth, not jumpy |
-| Switch thumb | default | `transition: transform 180ms var(--ease-out-strong)` + scale(0.92) on press | matches button feel |
+Result: every existing page picks up the new look automatically.
 
-`@media (prefers-reduced-motion: reduce)` block removes translates/scales but keeps opacity — added once globally.
+---
 
-## New / replaced primitives
+## 2. Table — match ElevenLabs Voices/Explore style
 
-| File | Purpose |
-|---|---|
-| `src/components/app/shell/top-bar.tsx` *(rewrite)* | Sidebar toggle + breadcrumb (derived from route) + right cluster (Feedback/Docs/Ask ghost pills, bell + folder icon buttons, avatar). Removes today's page-title + actions row. |
-| `src/components/app/shell/breadcrumbs.tsx` *(rewrite)* | Small `›`-separated trail driven by the matched route; supports a per-route `crumb` head meta. |
-| `src/components/app/page-header.tsx` *(simplify)* | Eyebrow + H1. No subtitle, no actions slot. Optional `dense` (small variant for sub-pages). |
-| `src/components/app/tile-row.tsx` *(new)* | Horizontal scroll row of `bg-tile rounded-2xl` 180×130 tiles, centered icon stack, label rendered *outside* and below the tile. |
-| `src/components/app/underline-tabs.tsx` *(rebuild)* | Replace the existing one with a sliding-indicator version (motion-aware). |
-| `src/components/app/filter-pill-bar.tsx` *(new)* | Dropdown pills + divider + scrollable category pills + trailing chevron. |
-| `src/components/app/list-row.tsx` *(new)* | Flat row primitive: leading slot (avatar/icon tile) + 2-line text + right meta cluster. No border. Hover bg-surface 80ms. |
-| `src/components/app/section-header.tsx` *(new)* | `Title ›` link + optional right control. Replaces today's `SectionRow`/`SectionCard` title bar where the card itself isn't needed. |
-| `src/components/ui/button.tsx` *(extend)* | Add `topbar` size (h-7 px-3 text-[12px]) + `:active` scale(0.97). |
+ElevenLabs tables have **no outer card border**, **no header bg**, header text is regular sentence case (not uppercase tracking), rows are flat with subtle bottom hairline, hover is a soft surface tint, and there's generous row height (`h-14`-ish).
 
-## Dashboard rewrite — all 5 roles
+**Edit `src/components/app/data-table.tsx`:**
+- Drop outer `rounded-2xl border bg-card`. Wrap in a plain `div` (overflow-x for narrow viewports only).
+- `thead tr`: remove `bg-surface/40`; keep `border-b`.
+- `th`: `px-3 py-3 text-[12px] font-medium normal-case tracking-normal text-ink-muted` (kills uppercase + letter-spacing).
+- `td`: `px-3 py-3.5` for taller rows.
+- Row hover: keep `hover:bg-surface/60` but remove the per-row `border-b last:border-b-0` and use a `divide-y` on `tbody` instead (cleaner hairlines).
 
-Same skeleton on every role:
+Also update the inline table inside `_authed.admin.external-apis.tsx` (recent calls) and the `_authed.admin.audit.tsx` style table to match — same classes.
+
+---
+
+## 3. External APIs — redesign to match Developers overview screenshot
+
+Current page is a stacked list of cards. Restructure into the ElevenLabs Developers layout: **header with right-side outbound links → underline tabs → hero promo card → content sections → quick-links grid.**
+
+New structure for `src/routes/_authed.admin.external-apis.tsx`:
 
 ```text
-[ workspace eyebrow ]
-Good <time>, <name>
-
-TileRow             ← 6 role-specific destinations
-Section ›           ← primary list (work to do today)
-Section ›           ← secondary list (recent)
-Section ›           ← optional third (health / shortcuts)
+┌─ PageHeader: "External APIs" + right slot: [API Pricing ↗] [Documentation ↗]
+├─ Tabs: Overview · Quotas · Throttling · Request Log · Webhooks · Settings
+│
+├─ (Overview tab)
+│   ┌─ Promo card: thumbnail tile + title "Companies House lookups now cached"
+│   │              + subtitle + "Learn more" ghost button on the right
+│   ├─ Two-column section: left "Quick start" (small copy + CTA "Configure"),
+│   │                      right code snippet block (mono, line numbers, copy btn)
+│   ├─ "Usage" section (left) — top-up balance card pattern, mirrors screenshot
+│   └─ "Quick Links" 2×3 grid: Create API Key · Browse Models · API Reference ·
+│       Libraries & SDKs · Webhooks · Pricing Overview (icon + label tile,
+│       borderless, hover: bg-surface/60)
+│
+├─ (Quotas tab)        → existing quota cards, restyled (no heavy border, just
+│                        bg-card with subtle ring-1 ring-border/60)
+├─ (Throttling tab)    → existing toggle list, no outer card border
+├─ (Request Log tab)   → uses redesigned DataTable from §2; row click → Sheet
+├─ (Webhooks tab)      → empty-state placeholder for now
+└─ (Settings tab)      → empty-state placeholder for now
 ```
 
-No bordered metric grids. Numbers move into right-side meta chips on `ListRow`. No `HeroCard`, no `SectionCard` wrappers, no `QuickAction` boxes — those primitives stay in the codebase but are no longer used by the dashboard.
+Implementation notes:
+- Reuse the new `Tabs` from §1 — gives the underline row that matches the screenshot.
+- Promo card pattern lives inline (small enough): rounded-xl, `ring-1 ring-border/60`, `bg-card`, 96px square thumbnail with a soft gradient (`bg-gradient-to-br from-cat-amber/30 to-cat-rose/20`), text block, right-side Button (`variant="outline"` size="sm").
+- Quick Links tile: `flex items-center gap-3 rounded-xl ring-1 ring-border/60 px-4 py-3.5 hover:bg-surface/60` with a 32px icon square (`bg-tile rounded-md grid place-items-center`) and label.
+- Code snippet: simple `<pre>` with `bg-surface rounded-xl p-4 font-mono text-[12px]` and a copy button absolutely positioned top-right; keep static for now (no syntax highlighter dep).
 
-### Per-role tile rows + sections
+---
 
-**Admin**
-- Tiles: Onboarding · Amendments · Risk · Companies · Audit · Integrations
-- Sections: *Today* (pending onboardings + flagged risk, max 6 rows) · *Latest activity* · *Platform health* (3 flat status rows, no card)
+## Files touched
 
-**Operator**
-- Tiles: granted permissions only (Customers, Jobs, IBG Repository, Submissions, Funding, Audit — locked ones are dimmed in the same row, not a separate grid)
-- Sections: *Pending requests* (your permission requests + their status) · *Latest in your areas*
+- `src/components/ui/tabs.tsx` — rewrite styles (no API change)
+- `src/components/app/underline-tabs.tsx` — match new look
+- `src/components/app/data-table.tsx` — strip card chrome, redo header/row styles
+- `src/routes/_authed.admin.external-apis.tsx` — full restructure into tabs + promo + quick links
+- `src/routes/_authed.admin.audit.tsx` — apply matching table classes to its inline table
 
-**Installer-Access**
-- Tiles: Issue an IBG · My IBGs · Pricing · Help · Templates · Account
-- Sections: *Recent IBGs* (5 ListRows) · *Tips* (3 ListRows linking to docs) · *Upgrade* (single inline row, no card)
+## Out of scope (next rounds)
 
-**Installer-Operate**
-- Tiles: New IBG · Projects · IBG Repository · Submissions · Funding · Settings
-- Sections: *Jobs needing attention* · *Recently issued IBGs* · *Funding-ready projects*
+- Migrating other admin pages page-by-page
+- Sidebar polish, command palette, dashboard tile spacing
+- Replacing per-route inline tables with the shared `DataTable`
 
-**Read-only**
-- Tiles: Customers · Properties · Jobs · IBG Repository · Submissions · Funding (all read-only badge)
-- Sections: *Recent records* · *Pinned reports*
-
-## Shell + cross-cutting
-
-- **Sidebar**: keep current 5-role visibility logic. Restyle: 28px row, 13px label, 16px icon, 4px gutter, smaller "Admin" group titles (`text-[10px]` 0.08em). Add a "Pinned" group between Workspace and Admin (default empty; pin icon appears on row hover; pinned routes persist in `localStorage`). Bottom slot: Invite card → small `Developers` link → `Upgrade` brand pill (only for installer-access).
-- **TopBar**: rewritten per above. Page title moves *out* of the topbar entirely.
-- **Settings**: drop the welcome card, use new `PageHeader` (just eyebrow + title), keep side-nav.
-
-## Pages that pick up the new primitives
-
-These get a light touch — outer card chrome removed, `FilterPillBar` + `UnderlineTabs` wired in, table styling changed to flat (no border per row, sticky header):
-
-- `/ibg/repository`, `/ibg/history`
-- `/funding`, `/funding/match`
-- `/submissions`
-- `/customers`, `/properties`, `/jobs`, `/projects`
-- `/reports`
-- `/admin/onboarding`, `/admin/amendments`, `/admin/users`, `/admin/companies`, `/admin/risk`, `/admin/audit`, `/admin/activity`, `/admin/integrations`
-- The 8 admin config pages already use `PageHeader` — they pick up the simpler version automatically.
-
-## Out of scope (intentionally)
-
-- No font swap, no color palette change, no dark mode work.
-- Public landing/pricing/sign-in pages stay exactly as they are (gradients live there).
-- No new database tables or edge functions; mocks remain.
-- No custom illustration art for tiles — Lucide icon clusters only. (Custom art is a separate later pass.)
-
-## Files I'll touch (summary)
-
-- New: `tile-row.tsx`, `filter-pill-bar.tsx`, `list-row.tsx`, `section-header.tsx`
-- Rewritten: `shell/top-bar.tsx`, `shell/breadcrumbs.tsx`, `underline-tabs.tsx`, `page-header.tsx`
-- Extended: `ui/button.tsx`, `ui/switch.tsx`, `ui/dialog.tsx`, `ui/popover.tsx`, `ui/dropdown-menu.tsx`, `ui/tooltip.tsx` (motion calibration only)
-- `styles.css` (easing tokens + reduced-motion block)
-- `_authed.tsx` (route fade calibration)
-- `shell/app-sidebar.tsx` (Pinned group, bottom slot, sizing)
-- `_authed.dashboard.tsx` (full rewrite, all 5 roles)
-- `_authed.settings.tsx` (drop welcome card)
-- ~12 list/table routes listed above (FilterPillBar wiring, drop outer card)
-
-Approve and I'll implement in one pass.
+Approve and I'll ship these in one pass.
