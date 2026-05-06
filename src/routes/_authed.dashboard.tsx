@@ -163,7 +163,7 @@ function AdminDash() {
         <Stat label="Flagged" value={flaggedCount} icon={AlertTriangle} tone="amber" />
         <Stat label="Paused" value={pausedCount} icon={Clock} tone="amber" />
         <Stat label="Suspended" value={suspendedCount} icon={AlertTriangle} tone="rose" />
-        <Stat label="Active overrides" value={activeOverrides.length} icon={ShieldIcon} tone="blue" />
+        <Stat label="Active overrides" value={activeOverrides.length} icon={ShieldCheck} tone="blue" />
       </div>
 
       <SectionLabel>IBG activity</SectionLabel>
