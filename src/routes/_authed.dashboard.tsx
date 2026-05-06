@@ -389,4 +389,4 @@ function greet() {
 }
 
 // silence unused
-void Users; void Lock; void CreditCard; void Permission;
+void Users; void Lock; void CreditCard;
