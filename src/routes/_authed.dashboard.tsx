@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
-import { can, type Permission } from "@/lib/rbac";
+import { can } from "@/lib/rbac";
 import { useStore } from "@/lib/mock/store";
 import { TileRow, type Tile } from "@/components/app/tile-row";
 import { ListRow } from "@/components/app/list-row";
