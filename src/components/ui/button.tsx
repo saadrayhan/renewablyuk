@@ -26,7 +26,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "rounded-full bg-foreground text-background hover:bg-foreground/90",
+          "rounded-full bg-brand-blue text-brand-blue-foreground hover:bg-brand-blue/90",
         brand:
           "rounded-full bg-brand-blue text-brand-blue-foreground hover:bg-brand-blue/90",
         secondary:
@@ -36,7 +36,7 @@ const buttonVariants = cva(
         icon:
           "rounded-md text-ink-muted hover:bg-surface hover:text-foreground",
         // legacy aliases
-        default: "rounded-full bg-foreground text-background hover:bg-foreground/90",
+        default: "rounded-full bg-brand-blue text-brand-blue-foreground hover:bg-brand-blue/90",
         outline: "rounded-full border bg-card text-foreground hover:bg-surface",
         destructive:
           "rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90",

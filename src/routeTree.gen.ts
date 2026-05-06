@@ -63,6 +63,7 @@ import { Route as AuthedAdminCompaniesRouteImport } from './routes/_authed.admin
 import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.audit'
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as AuthedIbgIdAmendmentRouteImport } from './routes/_authed.ibg.$id.amendment'
 import { Route as AuthedFundingIdTrackingRouteImport } from './routes/_authed.funding.$id.tracking'
 import { Route as AuthedAdminUsersIdRouteImport } from './routes/_authed.admin.users.$id'
@@ -347,6 +348,11 @@ const AuthedAdminActivityRoute = AuthedAdminActivityRouteImport.update({
   path: '/admin/activity',
   getParentRoute: () => AuthedRoute,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe/webhook',
+  path: '/api/public/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedIbgIdAmendmentRoute = AuthedIbgIdAmendmentRouteImport.update({
   id: '/amendment',
   path: '/amendment',
@@ -464,6 +470,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
   '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -529,6 +536,7 @@ export interface FileRoutesByTo {
   '/admin/users/$id': typeof AuthedAdminUsersIdRoute
   '/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -596,6 +604,7 @@ export interface FileRoutesById {
   '/_authed/admin/users/$id': typeof AuthedAdminUsersIdRoute
   '/_authed/funding/$id/tracking': typeof AuthedFundingIdTrackingRoute
   '/_authed/ibg/$id/amendment': typeof AuthedIbgIdAmendmentRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -663,6 +672,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
+    | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -728,6 +738,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/funding/$id/tracking'
     | '/ibg/$id/amendment'
+    | '/api/public/stripe/webhook'
   id:
     | '__root__'
     | '/'
@@ -794,6 +805,7 @@ export interface FileRouteTypes {
     | '/_authed/admin/users/$id'
     | '/_authed/funding/$id/tracking'
     | '/_authed/ibg/$id/amendment'
+    | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -805,6 +817,7 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   VerifyRoute: typeof VerifyRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1187,6 +1200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminActivityRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/api/public/stripe/webhook': {
+      id: '/api/public/stripe/webhook'
+      path: '/api/public/stripe/webhook'
+      fullPath: '/api/public/stripe/webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authed/ibg/$id/amendment': {
       id: '/_authed/ibg/$id/amendment'
       path: '/amendment'
@@ -1551,6 +1571,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   VerifyRoute: VerifyRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
