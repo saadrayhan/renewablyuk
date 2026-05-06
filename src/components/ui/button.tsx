@@ -26,7 +26,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "rounded-full bg-foreground text-background hover:bg-foreground/90",
+          "rounded-full bg-brand-blue text-brand-blue-foreground hover:bg-brand-blue/90",
         brand:
           "rounded-full bg-brand-blue text-brand-blue-foreground hover:bg-brand-blue/90",
         secondary:
