@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, FileBadge, Plus } from "lucide-react";
+import { Search, FileBadge, Plus, Download, Eye, History as HistoryIcon } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/mock/store";
 import { useDevRole } from "@/lib/dev-role";
 import { can } from "@/lib/rbac";
