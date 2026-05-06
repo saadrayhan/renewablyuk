@@ -216,7 +216,7 @@ function SidebarBody({
           <Link
             to="/dashboard"
             aria-label="Renewably home"
-            className="press grid size-8 place-items-center rounded-lg bg-gradient-to-br from-cat-green to-cat-blue text-[11px] font-semibold text-white"
+            className="press grid size-8 place-items-center rounded-lg bg-brand-blue text-[11px] font-semibold text-brand-blue-foreground"
           >
             R
           </Link>
