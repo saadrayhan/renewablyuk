@@ -107,7 +107,7 @@ function CompaniesPage() {
         </table>
       </div>
 
-      <div className="mt-5 rounded-2xl border-l-4 border-l-[var(--brand-blue)] bg-[var(--brand-blue-tint)] p-4">
+      <div className="mt-5 rounded-2xl border bg-surface/50 p-4">
         <div className="text-sm font-medium text-foreground">Business Type Verification</div>
         <p className="mt-1 text-xs text-ink-muted">
           Limited Company: Risk checks use Companies House API for automated verification · Sole Trader: Risk checks use platform-based verification and manual review.

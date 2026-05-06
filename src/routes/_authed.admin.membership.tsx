@@ -65,7 +65,7 @@ function MembershipPage() {
         <Metric label="Suspended Accounts" value={1} tone="text-cat-rose" />
       </div>
 
-      <div className="rounded-2xl border-l-4 border-l-[var(--brand-blue)] bg-[var(--brand-blue-tint)] p-4 text-xs text-ink-muted">
+      <div className="rounded-2xl border bg-surface/50 p-4 text-xs text-ink-muted">
         All billing operations are synced with Stripe and controlled via webhook events. Subscription status controls platform access.
       </div>
 
