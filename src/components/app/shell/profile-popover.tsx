@@ -38,7 +38,7 @@ export function ProfilePopover() {
         <button
           type="button"
           aria-label="Account"
-          className="press grid size-8 place-items-center rounded-full bg-gradient-to-br from-cat-blue to-cat-purple text-xs font-semibold text-white"
+          className="press grid size-8 place-items-center rounded-full bg-foreground text-xs font-semibold text-background"
         >
           {user.initials}
         </button>
