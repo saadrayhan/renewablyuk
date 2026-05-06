@@ -42,8 +42,7 @@ const KIND_META: Record<EventKind, { label: string; icon: React.ComponentType<{ 
   cancelled: { label: "Cancelled", icon: XCircle, tone: "cat-rose" },
 };
 
-const FILTERS: { value: EventKind | "all"; label: string }[] = [
-  { value: "all", label: "All events" },
+const FILTERS: { value: EventKind; label: string }[] = [
   { value: "issued", label: "Issued" },
   { value: "sent", label: "Sent" },
   { value: "delivered", label: "Delivered" },
