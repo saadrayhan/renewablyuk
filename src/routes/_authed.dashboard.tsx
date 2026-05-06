@@ -22,7 +22,7 @@ import { can, type Permission } from "@/lib/rbac";
 import { useStore } from "@/lib/mock/store";
 import { StatePill, JOB_STATES, IBG_STATES, ONBOARDING_STATES, AMENDMENT_STATES } from "@/components/app/state-pill";
 import { fmtDate, relTime } from "@/lib/mock/queries";
-import { GradientOrb } from "@/components/app/gradient-orb";
+
 
 export const Route = createFileRoute("/_authed/dashboard")({
   head: () => ({ meta: [{ title: "Home — Renewably UK" }] }),
