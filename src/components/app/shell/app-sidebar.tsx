@@ -59,6 +59,7 @@ import { useMembership } from "@/lib/membership";
 import { canAny, type Permission } from "@/lib/rbac";
 import type { Role } from "@/lib/rbac";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { BrandMark } from "@/components/app/brand-logo";
 import { useSidebarState } from "./sidebar-context";
 
 type NavItem = {
