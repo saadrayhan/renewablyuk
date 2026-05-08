@@ -216,8 +216,8 @@
   --popover:    oklch(0.205 0.005 264);
   --popover-foreground: oklch(0.97 0 0);
 
-  --primary: oklch(0.97 0 0);
-  --primary-foreground: oklch(0.145 0.003 264);
+  --primary: oklch(0.62 0.16 261.67);
+  --primary-foreground: oklch(0.99 0 0);
 
   --secondary: oklch(0.235 0.005 264);
   --secondary-foreground: oklch(0.97 0 0);
@@ -233,16 +233,16 @@
 
   --border: oklch(1 0 0 / 8%);
   --input:  oklch(1 0 0 / 10%);
-  --ring:   oklch(0.6 0.01 264);
+  --ring:   oklch(0.62 0.16 261.67);
 
   /* Brand */
   --brand: oklch(0.7 0.17 152);
   --brand-foreground: oklch(0.13 0 0);
 
-  /* Brand blue — same hex in dark mode; tint slightly translucent on dark */
-  --brand-blue: #0F47A8;
+  /* Brand blue — primary brand color (#0C44AC) */
+  --brand-blue: #0C44AC;
   --brand-blue-foreground: #FFFFFF;
-  --brand-blue-tint: oklch(0.32 0.06 255 / 35%);
+  --brand-blue-tint: oklch(0.32 0.09 261.67 / 35%);
 
   /* Category palette — brighter inks, low-chroma backgrounds for dark canvas */
   --cat-green:     oklch(0.78 0.18 152);
