@@ -59,6 +59,7 @@ import { useMembership } from "@/lib/membership";
 import { canAny, type Permission } from "@/lib/rbac";
 import type { Role } from "@/lib/rbac";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { BrandMark } from "@/components/app/brand-logo";
 import { useSidebarState } from "./sidebar-context";
 
 type NavItem = {
@@ -274,9 +275,9 @@ function SidebarBody({
           <Link
             to="/dashboard"
             aria-label="Renewably home"
-            className="press grid size-8 place-items-center rounded-lg bg-brand-blue text-[11px] font-semibold text-brand-blue-foreground"
+            className="press grid size-8 place-items-center rounded-lg"
           >
-            R
+            <BrandMark className="size-7" />
           </Link>
         ) : (
           <div className="flex w-full items-center gap-2">
