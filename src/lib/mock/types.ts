@@ -1,6 +1,10 @@
 /**
  * Types for the mock in-memory store. Mirrors the IA record chain:
  * Customer → Property → Job → IBG / Funding project → Submission.
+ *
+ * Also covers the v2 surfaces: certificates, tickets, evidence queue,
+ * products (Operate catalog), payouts, notifications, and the
+ * contractor membership / activation state machine.
  */
 
 export type RecordStatus =
@@ -104,7 +108,7 @@ export type IBG = {
   customerId?: string;
   propertyId?: string;
   jobId?: string;
-  customerName: string; // denormalised for Access tier standalone
+  customerName: string;
   propertyAddress: string;
   measure: string;
   policyType: string;
@@ -159,7 +163,10 @@ export type AuditEvent = {
     | "funding"
     | "submission"
     | "user"
-    | "amendment";
+    | "amendment"
+    | "certificate"
+    | "ticket"
+    | "evidence";
   entityId: string;
   actor: string;
   action: string;
@@ -194,7 +201,7 @@ export type ManagedUser = {
     | "installer-operate"
     | "readonly";
   status: UserStatus;
-  permissions: string[]; // permission ids
+  permissions: string[];
   invitedAt: number;
   lastActive?: number;
   banReason?: string;
@@ -248,7 +255,7 @@ export type OnboardingApplication = {
 export type FundingMatch = {
   scheme: string;
   description: string;
-  score: number; // 0-100
+  score: number;
   measures: string[];
   state: "active" | "opportunity" | "no-match";
   region: string;
@@ -273,7 +280,7 @@ export type SystemType = {
 
 export type RiskAssessment = {
   id: string;
-  organisationId: string; // user id (organisation root user)
+  organisationId: string;
   state: AccountRiskState;
   signalType: "companies-house" | "internal";
   signalDetail: string;
@@ -292,4 +299,203 @@ export type RiskOverride = {
   createdAt: number;
   expiresAt?: number;
   active: boolean;
+};
+
+/* ─── v2: Membership, certificates, tickets, products, evidence ── */
+
+export type MembershipTier = "access" | "operate";
+
+export type ActivationCondition =
+  | "company_verified"
+  | "trustmark_linked"
+  | "insurance_uploaded"
+  | "payment_method"
+  | "profile_complete";
+
+export type ActivationState =
+  | "empty"
+  | "partial"
+  | "active"
+  | "expiring"
+  | "expired"
+  | "suspended"
+  | "locked";
+
+export type AdminRole =
+  | "super_admin"
+  | "reviewer"
+  | "support"
+  | "finance";
+
+export type CertificateState =
+  | "draft"
+  | "pending_review"
+  | "issued"
+  | "expiring"
+  | "expired"
+  | "revoked";
+
+export type CertificateTemplate = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  brandColor: string;
+  fields: { id: string; label: string; type: "text" | "date" | "select" | "number"; options?: string[] }[];
+  evidenceRequired: { id: string; label: string; description: string }[];
+  active: boolean;
+  createdAt: number;
+};
+
+export type Certificate = {
+  id: string;
+  ref: string;
+  templateId: string;
+  templateName: string;
+  contractorId: string;
+  contractorName: string;
+  customerName: string;
+  propertyAddress: string;
+  measure: string;
+  state: CertificateState;
+  issuedAt?: number;
+  expiresAt?: number;
+  createdAt: number;
+  issuedBy?: string;
+  fields: Record<string, string>;
+};
+
+export type EvidenceState =
+  | "pending"
+  | "in_review"
+  | "approved"
+  | "changes_requested"
+  | "rejected";
+
+export type EvidenceItem = {
+  id: string;
+  certificateId: string;
+  certificateRef: string;
+  contractorId: string;
+  contractorName: string;
+  templateName: string;
+  category: string;
+  fileName: string;
+  fileType: "pdf" | "image" | "doc";
+  uploadedAt: number;
+  state: EvidenceState;
+  reviewerId?: string;
+  reviewerNotes?: string;
+  decidedAt?: number;
+  priority: "low" | "normal" | "high";
+};
+
+export type TicketState = "open" | "pending" | "resolved" | "closed";
+export type TicketCategory = "billing" | "technical" | "evidence" | "other";
+
+export type TicketMessage = {
+  id: string;
+  ticketId: string;
+  authorId: string;
+  authorName: string;
+  authorRole: "contractor" | "support" | "system";
+  body: string;
+  attachments?: { name: string; size: string }[];
+  at: number;
+};
+
+export type Ticket = {
+  id: string;
+  ref: string;
+  subject: string;
+  contractorId: string;
+  contractorName: string;
+  category: TicketCategory;
+  state: TicketState;
+  priority: "low" | "normal" | "high";
+  createdAt: number;
+  updatedAt: number;
+  assigneeId?: string;
+  assigneeName?: string;
+  unread: boolean;
+};
+
+export type Product = {
+  id: string;
+  name: string;
+  category: "energy" | "insulation" | "heating" | "controls";
+  manufacturer: string;
+  sku: string;
+  description: string;
+  active: boolean;
+  createdAt: number;
+};
+
+export type Notification = {
+  id: string;
+  contractorId?: string;
+  scope: "platform" | "personal";
+  kind: "release" | "alert" | "billing" | "evidence" | "ticket";
+  title: string;
+  body: string;
+  at: number;
+  read: boolean;
+  href?: string;
+};
+
+export type Payout = {
+  id: string;
+  ref: string;
+  contractorId: string;
+  contractorName: string;
+  amountGbp: number;
+  state: "scheduled" | "processing" | "paid" | "failed";
+  scheduledFor: number;
+  paidAt?: number;
+};
+
+export type ContractorProfile = {
+  id: string;
+  name: string;
+  email: string;
+  companyName: string;
+  membershipTier: MembershipTier;
+  activationState: ActivationState;
+  activationConditions: Record<ActivationCondition, boolean>;
+  tierExpiresAt?: number;
+  suspendedReason?: string;
+  createdAt: number;
+};
+
+export type Invoice = {
+  id: string;
+  ref: string;
+  contractorId: string;
+  amountGbp: number;
+  state: "paid" | "open" | "void";
+  issuedAt: number;
+  paidAt?: number;
+  description: string;
+};
+
+/* ─── Project (Operate kanban) & Funding pipeline (V1.2) ────── */
+
+export type ProjectState =
+  | "lead"
+  | "scoping"
+  | "in_progress"
+  | "review"
+  | "complete";
+
+export type Project = {
+  id: string;
+  ref: string;
+  contractorId: string;
+  title: string;
+  customer: string;
+  measure: string;
+  state: ProjectState;
+  budgetGbp: number;
+  dueAt: number;
+  createdAt: number;
 };
