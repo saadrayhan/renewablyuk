@@ -17,16 +17,20 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthedTicketsRouteImport } from './routes/_authed.tickets'
 import { Route as AuthedSubmissionsRouteImport } from './routes/_authed.submissions'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed.settings'
 import { Route as AuthedReportsRouteImport } from './routes/_authed.reports'
 import { Route as AuthedPropertiesRouteImport } from './routes/_authed.properties'
 import { Route as AuthedProjectsRouteImport } from './routes/_authed.projects'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed.onboarding'
+import { Route as AuthedMembershipRouteImport } from './routes/_authed.membership'
 import { Route as AuthedJobsRouteImport } from './routes/_authed.jobs'
 import { Route as AuthedFundingRouteImport } from './routes/_authed.funding'
+import { Route as AuthedDocumentsRouteImport } from './routes/_authed.documents'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed.dashboard'
 import { Route as AuthedCustomersRouteImport } from './routes/_authed.customers'
+import { Route as AuthedCertificatesRouteImport } from './routes/_authed.certificates'
 import { Route as AuthedSubmissionsIdRouteImport } from './routes/_authed.submissions.$id'
 import { Route as AuthedSettingsTeamRouteImport } from './routes/_authed.settings.team'
 import { Route as AuthedSettingsSubscriptionRouteImport } from './routes/_authed.settings.subscription'
@@ -122,6 +126,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedTicketsRoute = AuthedTicketsRouteImport.update({
+  id: '/tickets',
+  path: '/tickets',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedSubmissionsRoute = AuthedSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
@@ -152,6 +161,11 @@ const AuthedOnboardingRoute = AuthedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedMembershipRoute = AuthedMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedJobsRoute = AuthedJobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
@@ -162,6 +176,11 @@ const AuthedFundingRoute = AuthedFundingRouteImport.update({
   path: '/funding',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedDocumentsRoute = AuthedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -170,6 +189,11 @@ const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
 const AuthedCustomersRoute = AuthedCustomersRouteImport.update({
   id: '/customers',
   path: '/customers',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedCertificatesRoute = AuthedCertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedSubmissionsIdRoute = AuthedSubmissionsIdRouteImport.update({
@@ -468,16 +492,20 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
+  '/certificates': typeof AuthedCertificatesRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
+  '/documents': typeof AuthedDocumentsRoute
   '/funding': typeof AuthedFundingRouteWithChildren
   '/jobs': typeof AuthedJobsRouteWithChildren
+  '/membership': typeof AuthedMembershipRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
   '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
+  '/tickets': typeof AuthedTicketsRoute
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRouteWithChildren
   '/admin/audit': typeof AuthedAdminAuditRouteWithChildren
@@ -542,16 +570,20 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
+  '/certificates': typeof AuthedCertificatesRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
+  '/documents': typeof AuthedDocumentsRoute
   '/funding': typeof AuthedFundingRouteWithChildren
   '/jobs': typeof AuthedJobsRouteWithChildren
+  '/membership': typeof AuthedMembershipRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
   '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
+  '/tickets': typeof AuthedTicketsRoute
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRouteWithChildren
   '/admin/audit': typeof AuthedAdminAuditRouteWithChildren
@@ -618,16 +650,20 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
+  '/_authed/certificates': typeof AuthedCertificatesRoute
   '/_authed/customers': typeof AuthedCustomersRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRoute
+  '/_authed/documents': typeof AuthedDocumentsRoute
   '/_authed/funding': typeof AuthedFundingRouteWithChildren
   '/_authed/jobs': typeof AuthedJobsRouteWithChildren
+  '/_authed/membership': typeof AuthedMembershipRoute
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/projects': typeof AuthedProjectsRoute
   '/_authed/properties': typeof AuthedPropertiesRouteWithChildren
   '/_authed/reports': typeof AuthedReportsRoute
   '/_authed/settings': typeof AuthedSettingsRouteWithChildren
   '/_authed/submissions': typeof AuthedSubmissionsRouteWithChildren
+  '/_authed/tickets': typeof AuthedTicketsRoute
   '/_authed/admin/activity': typeof AuthedAdminActivityRoute
   '/_authed/admin/amendments': typeof AuthedAdminAmendmentsRouteWithChildren
   '/_authed/admin/audit': typeof AuthedAdminAuditRouteWithChildren
@@ -694,16 +730,20 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify'
+    | '/certificates'
     | '/customers'
     | '/dashboard'
+    | '/documents'
     | '/funding'
     | '/jobs'
+    | '/membership'
     | '/onboarding'
     | '/projects'
     | '/properties'
     | '/reports'
     | '/settings'
     | '/submissions'
+    | '/tickets'
     | '/admin/activity'
     | '/admin/amendments'
     | '/admin/audit'
@@ -768,16 +808,20 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify'
+    | '/certificates'
     | '/customers'
     | '/dashboard'
+    | '/documents'
     | '/funding'
     | '/jobs'
+    | '/membership'
     | '/onboarding'
     | '/projects'
     | '/properties'
     | '/reports'
     | '/settings'
     | '/submissions'
+    | '/tickets'
     | '/admin/activity'
     | '/admin/amendments'
     | '/admin/audit'
@@ -843,16 +887,20 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify'
+    | '/_authed/certificates'
     | '/_authed/customers'
     | '/_authed/dashboard'
+    | '/_authed/documents'
     | '/_authed/funding'
     | '/_authed/jobs'
+    | '/_authed/membership'
     | '/_authed/onboarding'
     | '/_authed/projects'
     | '/_authed/properties'
     | '/_authed/reports'
     | '/_authed/settings'
     | '/_authed/submissions'
+    | '/_authed/tickets'
     | '/_authed/admin/activity'
     | '/_authed/admin/amendments'
     | '/_authed/admin/audit'
@@ -980,6 +1028,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/tickets': {
+      id: '/_authed/tickets'
+      path: '/tickets'
+      fullPath: '/tickets'
+      preLoaderRoute: typeof AuthedTicketsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/submissions': {
       id: '/_authed/submissions'
       path: '/submissions'
@@ -1022,6 +1077,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOnboardingRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/membership': {
+      id: '/_authed/membership'
+      path: '/membership'
+      fullPath: '/membership'
+      preLoaderRoute: typeof AuthedMembershipRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/jobs': {
       id: '/_authed/jobs'
       path: '/jobs'
@@ -1036,6 +1098,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedFundingRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/documents': {
+      id: '/_authed/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthedDocumentsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/dashboard': {
       id: '/_authed/dashboard'
       path: '/dashboard'
@@ -1048,6 +1117,13 @@ declare module '@tanstack/react-router' {
       path: '/customers'
       fullPath: '/customers'
       preLoaderRoute: typeof AuthedCustomersRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/certificates': {
+      id: '/_authed/certificates'
+      path: '/certificates'
+      fullPath: '/certificates'
+      preLoaderRoute: typeof AuthedCertificatesRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/submissions/$id': {
@@ -1654,16 +1730,20 @@ const AuthedIbgIdRouteWithChildren = AuthedIbgIdRoute._addFileChildren(
 )
 
 interface AuthedRouteChildren {
+  AuthedCertificatesRoute: typeof AuthedCertificatesRoute
   AuthedCustomersRoute: typeof AuthedCustomersRouteWithChildren
   AuthedDashboardRoute: typeof AuthedDashboardRoute
+  AuthedDocumentsRoute: typeof AuthedDocumentsRoute
   AuthedFundingRoute: typeof AuthedFundingRouteWithChildren
   AuthedJobsRoute: typeof AuthedJobsRouteWithChildren
+  AuthedMembershipRoute: typeof AuthedMembershipRoute
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedProjectsRoute: typeof AuthedProjectsRoute
   AuthedPropertiesRoute: typeof AuthedPropertiesRouteWithChildren
   AuthedReportsRoute: typeof AuthedReportsRoute
   AuthedSettingsRoute: typeof AuthedSettingsRouteWithChildren
   AuthedSubmissionsRoute: typeof AuthedSubmissionsRouteWithChildren
+  AuthedTicketsRoute: typeof AuthedTicketsRoute
   AuthedAdminActivityRoute: typeof AuthedAdminActivityRoute
   AuthedAdminAmendmentsRoute: typeof AuthedAdminAmendmentsRouteWithChildren
   AuthedAdminAuditRoute: typeof AuthedAdminAuditRouteWithChildren
@@ -1694,16 +1774,20 @@ interface AuthedRouteChildren {
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedCertificatesRoute: AuthedCertificatesRoute,
   AuthedCustomersRoute: AuthedCustomersRouteWithChildren,
   AuthedDashboardRoute: AuthedDashboardRoute,
+  AuthedDocumentsRoute: AuthedDocumentsRoute,
   AuthedFundingRoute: AuthedFundingRouteWithChildren,
   AuthedJobsRoute: AuthedJobsRouteWithChildren,
+  AuthedMembershipRoute: AuthedMembershipRoute,
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedProjectsRoute: AuthedProjectsRoute,
   AuthedPropertiesRoute: AuthedPropertiesRouteWithChildren,
   AuthedReportsRoute: AuthedReportsRoute,
   AuthedSettingsRoute: AuthedSettingsRouteWithChildren,
   AuthedSubmissionsRoute: AuthedSubmissionsRouteWithChildren,
+  AuthedTicketsRoute: AuthedTicketsRoute,
   AuthedAdminActivityRoute: AuthedAdminActivityRoute,
   AuthedAdminAmendmentsRoute: AuthedAdminAmendmentsRouteWithChildren,
   AuthedAdminAuditRoute: AuthedAdminAuditRouteWithChildren,
