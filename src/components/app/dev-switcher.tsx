@@ -130,10 +130,16 @@ export function DevSwitcher() {
 
       <div className="flex border-b text-xs">
         <TabButton active={tab === "role"} onClick={() => setTab("role")}>
-          Role &amp; state
+          Role
+        </TabButton>
+        <TabButton active={tab === "tier"} onClick={() => setTab("tier")}>
+          Tier
+        </TabButton>
+        <TabButton active={tab === "admin"} onClick={() => setTab("admin")}>
+          Admin
         </TabButton>
         <TabButton active={tab === "perms"} onClick={() => setTab("perms")}>
-          Permissions
+          Perms
           <span className="ml-1.5 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-surface px-1 text-[10px] text-ink-muted">
             {permissions.length}
           </span>
@@ -141,7 +147,7 @@ export function DevSwitcher() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 py-3">
-        {tab === "role" ? (
+        {tab === "role" && (
           <>
             <SectionLabel>Role</SectionLabel>
             <div className="grid grid-cols-1 gap-1.5">
@@ -201,7 +207,118 @@ export function DevSwitcher() {
               Drives where the installer lands and which gates appear.
             </p>
           </>
-        ) : (
+        )}
+
+        {tab === "tier" && (
+          <>
+            <SectionLabel>Membership tier</SectionLabel>
+            <div className="grid grid-cols-1 gap-1.5">
+              {TIERS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => membership.setTier(t.id)}
+                  className={cn(
+                    "press rounded-xl border bg-background px-2.5 py-2 text-left",
+                    membership.tier === t.id
+                      ? "border-[var(--brand-blue)] bg-[var(--brand-blue-tint)]"
+                      : "border-transparent hover:bg-surface",
+                  )}
+                >
+                  <div className="text-xs font-medium text-foreground">{t.label}</div>
+                  <div className="text-[11px] leading-snug text-ink-muted">{t.description}</div>
+                </button>
+              ))}
+            </div>
+
+            <SectionLabel className="mt-4">Activation / dashboard state</SectionLabel>
+            <div className="flex flex-wrap gap-1">
+              {ACTIVATION_STATES.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => membership.setActivationState(s.id)}
+                  className={cn(
+                    "press rounded-full border px-2.5 py-1 text-[11px]",
+                    membership.activationState === s.id
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border text-ink-muted hover:bg-surface",
+                  )}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+
+            <SectionLabel className="mt-4">5 activation conditions</SectionLabel>
+            <div className="space-y-0.5">
+              {ACTIVATION_CONDITIONS.map((c) => {
+                const checked = membership.conditions[c.id];
+                return (
+                  <label
+                    key={c.id}
+                    className="flex cursor-pointer items-start gap-2 rounded-md px-1.5 py-1 hover:bg-surface"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => membership.toggleCondition(c.id)}
+                      className="mt-0.5 size-3 accent-foreground"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[11px] text-foreground">{c.label}</div>
+                      <div className="text-[10px] text-ink-muted">{c.description}</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {tab === "admin" && (
+          <>
+            <SectionLabel>Admin role surface</SectionLabel>
+            <div className="grid grid-cols-1 gap-1.5">
+              {ADMIN_ROLES.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => membership.setAdminRole(r)}
+                  className={cn(
+                    "press rounded-xl border bg-background px-2.5 py-2 text-left",
+                    membership.adminRole === r
+                      ? "border-[var(--brand-blue)] bg-[var(--brand-blue-tint)]"
+                      : "border-transparent hover:bg-surface",
+                  )}
+                >
+                  <div className="text-xs font-medium text-foreground">
+                    {ADMIN_ROLE_META[r].label}
+                  </div>
+                  <div className="text-[11px] leading-snug text-ink-muted">
+                    {ADMIN_ROLE_META[r].description}
+                  </div>
+                </button>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] text-ink-muted">
+              Switches admin nav and permissions without re-login.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                resetStore();
+                membership.reset();
+              }}
+              className="press mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border bg-background px-2.5 py-2 text-[11px] font-medium hover:bg-surface"
+            >
+              <RotateCcw className="size-3" /> Reset demo data
+            </button>
+          </>
+        )}
+
+        {tab === "perms" && (
           <PermissionsTab
             role={role}
             permissions={permissions}
