@@ -45,11 +45,17 @@ import {
   KeyRound,
   Globe,
   ShieldOff,
+  Award,
+  FileText,
+  Inbox,
+  LayoutTemplate,
+  UserPlus,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
+import { useMembership } from "@/lib/membership";
 import { canAny, type Permission } from "@/lib/rbac";
 import type { Role } from "@/lib/rbac";
 import { WorkspaceSwitcher } from "./workspace-switcher";
@@ -64,13 +70,18 @@ type NavItem = {
   hideForRoles?: Role[];
 };
 
-const main: NavItem[] = [
+type Tier = "access" | "operate";
+
+const main: (NavItem & { tier?: Tier })[] = [
   { label: "Home", to: "/dashboard", icon: Home },
+  { label: "Certificates", to: "/certificates", icon: Award, hideForRoles: ["admin"] },
+  { label: "Documents", to: "/documents", icon: FileText, hideForRoles: ["admin"] },
   {
     label: "Projects",
     to: "/projects",
     icon: FolderKanban,
     showLockedIfNot: ["customers.read", "jobs.read", "properties.read"],
+    tier: "operate",
   },
   {
     label: "IBG Generator",
@@ -86,22 +97,18 @@ const main: NavItem[] = [
     showLockedIfNot: ["ibg.repository.read"],
   },
   {
-    label: "IBG History",
-    to: "/ibg/history",
-    icon: History,
-    showLockedIfNot: ["ibg.repository.read"],
-  },
-  {
     label: "Submissions",
     to: "/submissions",
     icon: Send,
     showLockedIfNot: ["submissions.read"],
+    tier: "operate",
   },
   {
     label: "Funding",
     to: "/funding",
     icon: Sparkles,
     showLockedIfNot: ["funding.match.read", "funding.projects.read"],
+    tier: "operate",
   },
   {
     label: "Reports",
@@ -109,6 +116,8 @@ const main: NavItem[] = [
     icon: BarChart2,
     showLockedIfNot: ["reports.read"],
   },
+  { label: "Tickets", to: "/tickets", icon: Inbox, hideForRoles: ["admin"] },
+  { label: "Membership", to: "/membership", icon: CreditCard, hideForRoles: ["admin"] },
 ];
 
 type AdminGroup = { label: string; items: NavItem[] };
@@ -126,8 +135,30 @@ const adminGroups: AdminGroup[] = [
     label: "Operations",
     items: [
       { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
+      { label: "Evidence Queue", to: "/admin/evidence", icon: ListChecks, visibleIf: ["amendments.queue.read"] },
       { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
+      { label: "Tickets", to: "/admin/tickets", icon: Inbox, visibleIf: ["users.read"] },
       { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
+    ],
+  },
+  {
+    label: "Catalogue",
+    items: [
+      { label: "Certificate Templates", to: "/admin/templates", icon: LayoutTemplate, visibleIf: ["config.read"] },
+      { label: "Certificates", to: "/admin/certificates", icon: Award, visibleIf: ["config.read"] },
+      { label: "Products", to: "/admin/products", icon: Layers, visibleIf: ["config.read"] },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      { label: "Payouts", to: "/admin/payouts", icon: DollarSign, visibleIf: ["users.read"] },
+    ],
+  },
+  {
+    label: "Admin Team",
+    items: [
+      { label: "Invite Admin", to: "/admin/create-admin", icon: UserPlus, visibleIf: ["users.read"] },
     ],
   },
   {
@@ -219,10 +250,15 @@ function SidebarBody({
 }) {
   const { permissions, isAdmin } = useAuth();
   const { onboardingStep, role } = useDevRole();
+  const { tier } = useMembership();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { setMobileOpen } = useSidebarState();
 
-  const visibleMain = main.filter((i) => !i.hideForRoles || !i.hideForRoles.includes(role));
+  const visibleMain = main.filter((i) => {
+    if (i.hideForRoles && i.hideForRoles.includes(role)) return false;
+    if (i.tier && i.tier === "operate" && tier !== "operate" && role !== "admin") return false;
+    return true;
+  });
   const visibleAdminGroups = adminGroups
     .map((g) => ({
       label: g.label,
