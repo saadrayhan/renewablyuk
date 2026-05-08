@@ -26,9 +26,7 @@ export function WorkspaceSwitcher() {
           type="button"
           className="press flex w-full items-center gap-2 rounded-xl border bg-background px-2 py-1.5 text-left hover:bg-surface"
         >
-          <span className="grid size-6 shrink-0 place-items-center rounded-md bg-brand-blue text-[10px] font-semibold text-brand-blue-foreground">
-            R
-          </span>
+          <BrandMark className="size-6 shrink-0" />
           <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
             {current.name}
           </span>
