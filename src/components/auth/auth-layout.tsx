@@ -18,9 +18,7 @@ export function AuthLayout({
       {/* Form side */}
       <div className="flex flex-col px-6 py-8 sm:px-10">
         <Link to="/" className="press inline-flex items-center gap-2">
-          <div className="grid size-8 place-items-center rounded-xl bg-brand-blue text-brand-blue-foreground">
-            <span className="text-sm font-semibold">R</span>
-          </div>
+          <BrandMark className="size-8" />
           <span className="text-base font-semibold tracking-tight">
             Renewably
           </span>
