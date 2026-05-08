@@ -121,8 +121,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.16 0 0);
 
-  /* Primary = black pill (ElevenLabs) */
-  --primary: oklch(0.16 0 0);
+  /* Primary = Renewably brand blue (rgb(12,68,172) / #0C44AC) */
+  --primary: oklch(0.4249 0.1755 261.67);
   --primary-foreground: oklch(0.99 0 0);
 
   --secondary: oklch(0.965 0.003 250);
@@ -137,20 +137,19 @@
   --destructive: oklch(0.58 0.21 27);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border:        #E7E5E4;                  /* warm hairline */
+  --border:        #E7E5E4;
   --border-strong: #D6D3D1;
   --input:         #E7E5E4;
-  --ring:          #0C0A09;
+  --ring:          #0C44AC;
 
-  /* Renewably brand green */
+  /* Renewably brand green (success states only) */
   --brand: oklch(0.62 0.16 152);
   --brand-foreground: oklch(0.99 0 0);
 
-  /* Renewably brand blue (#0F47A8) — used sparingly: active workspace tab,
-     primary CTAs, and informational notice tint (#E8F0FC). */
-  --brand-blue: #0F47A8;
+  /* Renewably brand blue — primary brand color (#0C44AC = rgb(12,68,172)) */
+  --brand-blue: #0C44AC;
   --brand-blue-foreground: #FFFFFF;
-  --brand-blue-tint: #E8F0FC;
+  --brand-blue-tint: #E6EEFB;
 
   /* Atmospheric gradient orb palette — pure decoration, never on CTAs */
   --orb-mint:     #A7E5D3;
