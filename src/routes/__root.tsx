@@ -10,6 +10,7 @@ import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import { DevRoleProvider } from "@/lib/dev-role";
+import { MembershipProvider } from "@/lib/membership";
 import { DevSwitcher } from "@/components/app/dev-switcher";
 import { MockStoreProvider } from "@/lib/mock/store";
 
@@ -96,13 +97,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <DevRoleProvider>
-      <MockStoreProvider>
-        <AuthProvider>
-          <Outlet />
-          <Toaster />
-          <DevSwitcher />
-        </AuthProvider>
-      </MockStoreProvider>
+      <MembershipProvider>
+        <MockStoreProvider>
+          <AuthProvider>
+            <Outlet />
+            <Toaster />
+            <DevSwitcher />
+          </AuthProvider>
+        </MockStoreProvider>
+      </MembershipProvider>
     </DevRoleProvider>
   );
 }
