@@ -45,11 +45,17 @@ import {
   KeyRound,
   Globe,
   ShieldOff,
+  Award,
+  FileText,
+  Inbox,
+  LayoutTemplate,
+  UserPlus,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useDevRole } from "@/lib/dev-role";
+import { useMembership } from "@/lib/membership";
 import { canAny, type Permission } from "@/lib/rbac";
 import type { Role } from "@/lib/rbac";
 import { WorkspaceSwitcher } from "./workspace-switcher";
