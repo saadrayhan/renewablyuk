@@ -70,13 +70,18 @@ type NavItem = {
   hideForRoles?: Role[];
 };
 
-const main: NavItem[] = [
+type Tier = "access" | "operate";
+
+const main: (NavItem & { tier?: Tier })[] = [
   { label: "Home", to: "/dashboard", icon: Home },
+  { label: "Certificates", to: "/certificates", icon: Award, hideForRoles: ["admin"] },
+  { label: "Documents", to: "/documents", icon: FileText, hideForRoles: ["admin"] },
   {
     label: "Projects",
     to: "/projects",
     icon: FolderKanban,
     showLockedIfNot: ["customers.read", "jobs.read", "properties.read"],
+    tier: "operate",
   },
   {
     label: "IBG Generator",
@@ -92,22 +97,18 @@ const main: NavItem[] = [
     showLockedIfNot: ["ibg.repository.read"],
   },
   {
-    label: "IBG History",
-    to: "/ibg/history",
-    icon: History,
-    showLockedIfNot: ["ibg.repository.read"],
-  },
-  {
     label: "Submissions",
     to: "/submissions",
     icon: Send,
     showLockedIfNot: ["submissions.read"],
+    tier: "operate",
   },
   {
     label: "Funding",
     to: "/funding",
     icon: Sparkles,
     showLockedIfNot: ["funding.match.read", "funding.projects.read"],
+    tier: "operate",
   },
   {
     label: "Reports",
@@ -115,6 +116,8 @@ const main: NavItem[] = [
     icon: BarChart2,
     showLockedIfNot: ["reports.read"],
   },
+  { label: "Tickets", to: "/tickets", icon: Inbox, hideForRoles: ["admin"] },
+  { label: "Membership", to: "/membership", icon: CreditCard, hideForRoles: ["admin"] },
 ];
 
 type AdminGroup = { label: string; items: NavItem[] };
