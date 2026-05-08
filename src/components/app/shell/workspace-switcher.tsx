@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { BrandMark } from "@/components/app/brand-logo";
 
 const WORKSPACES = [
   { id: "renewably-uk", name: "Renewably UK", plan: "Operate" },
