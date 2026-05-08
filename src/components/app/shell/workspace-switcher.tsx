@@ -46,9 +46,13 @@ export function WorkspaceSwitcher() {
                 type="button"
                 className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-surface"
               >
-                <span className={`grid size-6 shrink-0 place-items-center rounded-md text-[10px] font-semibold ${active ? "bg-brand-blue text-brand-blue-foreground" : "bg-tile text-foreground"}`}>
-                  {w.name[0]}
-                </span>
+                {active ? (
+                  <BrandMark className="size-6 shrink-0" />
+                ) : (
+                  <span className="grid size-6 shrink-0 place-items-center rounded-md bg-tile text-[10px] font-semibold text-foreground">
+                    {w.name[0]}
+                  </span>
+                )}
                 <span className="min-w-0 flex-1 truncate">{w.name}</span>
                 {active && <span className="size-1.5 rounded-full bg-brand-blue" aria-hidden />}
                 <span className="text-[10px] text-ink-muted">{w.plan}</span>
