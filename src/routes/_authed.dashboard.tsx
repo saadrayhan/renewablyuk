@@ -28,6 +28,8 @@ import { ListRow } from "@/components/app/list-row";
 import { SectionHeader } from "@/components/app/section-header";
 import { StatePill, JOB_STATES, IBG_STATES, ONBOARDING_STATES } from "@/components/app/state-pill";
 import { fmtDate, relTime } from "@/lib/mock/queries";
+import { ActivationBanner } from "@/components/app/activation-banner";
+import { useActivationGate } from "@/lib/membership";
 
 export const Route = createFileRoute("/_authed/dashboard")({
   head: () => ({ meta: [{ title: "Home — Renewably UK" }] }),
