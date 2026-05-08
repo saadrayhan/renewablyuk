@@ -19,33 +19,44 @@ import {
   FileWarning,
   Library,
   SlidersHorizontal,
+  Award,
+  FileText,
+  LifeBuoy,
+  CreditCard,
+  ShieldCheck,
+  Banknote,
+  PanelsTopLeft,
+  Building2,
+  Workflow,
+  Boxes,
+  Cog,
+  Globe,
+  TerminalSquare,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { canAny, type Permission } from "@/lib/rbac";
+import { useMembership } from "@/lib/membership";
+import type { AdminRole } from "@/lib/mock/types";
 
 type NavItem = {
   label: string;
   to: string;
   icon: React.ComponentType<{ className?: string }>;
-  /** Visible to anyone holding ANY of these permissions. */
   visibleIf?: Permission[];
-  /** Lock indicator when present but disabled. Item still shows. */
   showLockedIfNot?: Permission[];
+  /** Only show when contractor tier matches. */
+  tier?: "access" | "operate";
 };
 
 const main: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
-  {
-    label: "Projects",
-    to: "/projects",
-    icon: FolderKanban,
-    showLockedIfNot: ["customers.read", "jobs.read", "properties.read"],
-  },
 ];
 
-const ibgGroup: NavItem[] = [
+const complianceGroup: NavItem[] = [
+  { label: "Certificates", to: "/certificates", icon: Award },
+  { label: "Documents", to: "/documents", icon: FileText },
   {
     label: "IBG Generator",
     to: "/ibg/new",
@@ -61,7 +72,13 @@ const ibgGroup: NavItem[] = [
   },
 ];
 
-const workGroup: NavItem[] = [
+const operationsGroup: NavItem[] = [
+  {
+    label: "Projects",
+    to: "/projects",
+    icon: FolderKanban,
+    tier: "operate",
+  },
   {
     label: "Submissions",
     to: "/submissions",
@@ -72,20 +89,111 @@ const workGroup: NavItem[] = [
     label: "Funding",
     to: "/funding",
     icon: Sparkles,
+    tier: "operate",
     showLockedIfNot: ["funding.match.read", "funding.projects.read"],
   },
 ];
 
-// Admin-only conditional items — only render at all if the user has the perm.
-const adminGroup: NavItem[] = [
-  { label: "Users", to: "/admin/users", icon: Users, visibleIf: ["users.read"] },
-  { label: "Audit log", to: "/admin/audit", icon: ScrollText, visibleIf: ["audit.read"] },
-  { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
-  { label: "Onboarding queue", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
-  { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
-  { label: "Permission library", to: "/admin/permissions", icon: Library, visibleIf: ["permissions.library.manage"] },
-  { label: "System config", to: "/admin/config", icon: SlidersHorizontal, visibleIf: ["config.read"] },
+const accountGroup: NavItem[] = [
+  { label: "Tickets", to: "/tickets", icon: LifeBuoy },
+  { label: "Membership", to: "/membership", icon: CreditCard },
 ];
+
+/* Admin nav surfaces per role */
+
+const adminNavByRole: Record<AdminRole, { label: string; items: NavItem[] }[]> = {
+  super_admin: [
+    {
+      label: "Compliance",
+      items: [
+        { label: "Evidence queue", to: "/admin/evidence", icon: ShieldCheck },
+        { label: "Certificates", to: "/admin/certificates", icon: Award },
+        { label: "Templates", to: "/admin/templates", icon: PanelsTopLeft },
+        { label: "Amendments", to: "/admin/amendments", icon: FileWarning },
+        { label: "Risk", to: "/admin/risk", icon: Shield },
+      ],
+    },
+    {
+      label: "Operations",
+      items: [
+        { label: "Tickets", to: "/admin/tickets", icon: LifeBuoy },
+        { label: "Companies", to: "/admin/companies", icon: Building2 },
+        { label: "Users", to: "/admin/users", icon: Users },
+        { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList },
+        { label: "CRM", to: "/admin/crm", icon: Workflow },
+        { label: "Activity", to: "/admin/activity", icon: Activity },
+      ],
+    },
+    {
+      label: "Finance",
+      items: [
+        { label: "Membership", to: "/admin/membership", icon: CreditCard },
+        { label: "Payouts", to: "/admin/payouts", icon: Banknote },
+        { label: "Stripe events", to: "/admin/stripe-events", icon: CreditCard },
+        { label: "Funding schemes", to: "/admin/funding-schemes", icon: Sparkles },
+        { label: "Products", to: "/admin/products", icon: Boxes },
+      ],
+    },
+    {
+      label: "Platform",
+      items: [
+        { label: "Audit log", to: "/admin/audit", icon: ScrollText },
+        { label: "Permission library", to: "/admin/permissions", icon: Library },
+        { label: "Feature flags", to: "/admin/feature-flags", icon: SlidersHorizontal },
+        { label: "System config", to: "/admin/config", icon: Cog },
+        { label: "System settings", to: "/admin/system-settings", icon: SlidersHorizontal },
+        { label: "Cron", to: "/admin/cron", icon: TerminalSquare },
+        { label: "External APIs", to: "/admin/external-apis", icon: Globe },
+        { label: "Integrations", to: "/admin/integrations", icon: Workflow },
+        { label: "Installation types", to: "/admin/installation-types", icon: Boxes },
+        { label: "Measure access", to: "/admin/measure-access", icon: Library },
+        { label: "Measure policy", to: "/admin/measure-policy", icon: Library },
+        { label: "Evidence req.", to: "/admin/evidence-requirements", icon: FileWarning },
+        { label: "Risk overrides", to: "/admin/risk-overrides", icon: Shield },
+        { label: "Create admin", to: "/admin/create-admin", icon: Users },
+      ],
+    },
+  ],
+  reviewer: [
+    {
+      label: "Compliance",
+      items: [
+        { label: "Evidence queue", to: "/admin/evidence", icon: ShieldCheck },
+        { label: "Certificates", to: "/admin/certificates", icon: Award },
+        { label: "Templates", to: "/admin/templates", icon: PanelsTopLeft },
+        { label: "Amendments", to: "/admin/amendments", icon: FileWarning },
+        { label: "Companies", to: "/admin/companies", icon: Building2 },
+        { label: "Audit log", to: "/admin/audit", icon: ScrollText },
+        { label: "Risk", to: "/admin/risk", icon: Shield },
+      ],
+    },
+  ],
+  support: [
+    {
+      label: "Support",
+      items: [
+        { label: "Tickets", to: "/admin/tickets", icon: LifeBuoy },
+        { label: "Companies", to: "/admin/companies", icon: Building2 },
+        { label: "Users", to: "/admin/users", icon: Users },
+        { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList },
+        { label: "CRM", to: "/admin/crm", icon: Workflow },
+        { label: "Activity", to: "/admin/activity", icon: Activity },
+      ],
+    },
+  ],
+  finance: [
+    {
+      label: "Finance",
+      items: [
+        { label: "Membership", to: "/admin/membership", icon: CreditCard },
+        { label: "Payouts", to: "/admin/payouts", icon: Banknote },
+        { label: "Stripe events", to: "/admin/stripe-events", icon: CreditCard },
+        { label: "Funding schemes", to: "/admin/funding-schemes", icon: Sparkles },
+        { label: "Products", to: "/admin/products", icon: Boxes },
+      ],
+    },
+  ],
+};
 
 const footerGroup: NavItem[] = [
   { label: "Settings", to: "/settings/profile", icon: Settings },
@@ -93,11 +201,11 @@ const footerGroup: NavItem[] = [
 
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const { user, permissions } = useAuth();
+  const { user, permissions, isAdmin } = useAuth();
+  const { tier, adminRole } = useMembership();
 
-  const visibleAdmin = adminGroup.filter(
-    (item) => !item.visibleIf || canAny(permissions, item.visibleIf),
-  );
+  const filterByTier = (items: NavItem[]) =>
+    items.filter((i) => !i.tier || i.tier === tier);
 
   return (
     <aside
@@ -133,24 +241,32 @@ export function AppSidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 pb-3 pt-1">
-        <Group items={main} permissions={permissions} collapsed={collapsed} />
-
-        <SectionLabel collapsed={collapsed}>IBG</SectionLabel>
-        <Group items={ibgGroup} permissions={permissions} collapsed={collapsed} />
-
-        <SectionLabel collapsed={collapsed}>Workflows</SectionLabel>
-        <Group items={workGroup} permissions={permissions} collapsed={collapsed} />
-
-        {visibleAdmin.length > 0 && (
+        {!isAdmin && (
           <>
-            <SectionLabel collapsed={collapsed} icon={Shield}>
-              Admin
-            </SectionLabel>
-            <Group
-              items={visibleAdmin}
-              permissions={permissions}
-              collapsed={collapsed}
-            />
+            <Group items={main} permissions={permissions} collapsed={collapsed} />
+
+            <SectionLabel collapsed={collapsed}>Compliance</SectionLabel>
+            <Group items={filterByTier(complianceGroup)} permissions={permissions} collapsed={collapsed} />
+
+            <SectionLabel collapsed={collapsed}>Operations</SectionLabel>
+            <Group items={filterByTier(operationsGroup)} permissions={permissions} collapsed={collapsed} />
+
+            <SectionLabel collapsed={collapsed}>Account</SectionLabel>
+            <Group items={accountGroup} permissions={permissions} collapsed={collapsed} />
+          </>
+        )}
+
+        {isAdmin && (
+          <>
+            <Group items={main} permissions={permissions} collapsed={collapsed} />
+            {adminNavByRole[adminRole].map((section) => (
+              <div key={section.label}>
+                <SectionLabel collapsed={collapsed} icon={Shield}>
+                  {section.label}
+                </SectionLabel>
+                <Group items={section.items} permissions={permissions} collapsed={collapsed} />
+              </div>
+            ))}
           </>
         )}
 
@@ -172,7 +288,7 @@ export function AppSidebar() {
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-medium">{user.fullName}</div>
               <div className="truncate text-xs text-ink-muted">
-                {user.roleLabel}
+                {isAdmin ? `Admin · ${adminRole.replace("_", " ")}` : `${user.roleLabel} · ${tier}`}
               </div>
             </div>
           )}

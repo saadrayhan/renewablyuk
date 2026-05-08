@@ -17,16 +17,20 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthedTicketsRouteImport } from './routes/_authed.tickets'
 import { Route as AuthedSubmissionsRouteImport } from './routes/_authed.submissions'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed.settings'
 import { Route as AuthedReportsRouteImport } from './routes/_authed.reports'
 import { Route as AuthedPropertiesRouteImport } from './routes/_authed.properties'
 import { Route as AuthedProjectsRouteImport } from './routes/_authed.projects'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed.onboarding'
+import { Route as AuthedMembershipRouteImport } from './routes/_authed.membership'
 import { Route as AuthedJobsRouteImport } from './routes/_authed.jobs'
 import { Route as AuthedFundingRouteImport } from './routes/_authed.funding'
+import { Route as AuthedDocumentsRouteImport } from './routes/_authed.documents'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed.dashboard'
 import { Route as AuthedCustomersRouteImport } from './routes/_authed.customers'
+import { Route as AuthedCertificatesRouteImport } from './routes/_authed.certificates'
 import { Route as AuthedSubmissionsIdRouteImport } from './routes/_authed.submissions.$id'
 import { Route as AuthedSettingsTeamRouteImport } from './routes/_authed.settings.team'
 import { Route as AuthedSettingsSubscriptionRouteImport } from './routes/_authed.settings.subscription'
@@ -49,11 +53,15 @@ import { Route as AuthedFundingIdRouteImport } from './routes/_authed.funding.$i
 import { Route as AuthedCustomersNewRouteImport } from './routes/_authed.customers.new'
 import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customers.$id'
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
+import { Route as AuthedAdminTicketsRouteImport } from './routes/_authed.admin.tickets'
+import { Route as AuthedAdminTemplatesRouteImport } from './routes/_authed.admin.templates'
 import { Route as AuthedAdminSystemSettingsRouteImport } from './routes/_authed.admin.system-settings'
 import { Route as AuthedAdminStripeEventsRouteImport } from './routes/_authed.admin.stripe-events'
 import { Route as AuthedAdminRiskOverridesRouteImport } from './routes/_authed.admin.risk-overrides'
 import { Route as AuthedAdminRiskRouteImport } from './routes/_authed.admin.risk'
+import { Route as AuthedAdminProductsRouteImport } from './routes/_authed.admin.products'
 import { Route as AuthedAdminPermissionsRouteImport } from './routes/_authed.admin.permissions'
+import { Route as AuthedAdminPayoutsRouteImport } from './routes/_authed.admin.payouts'
 import { Route as AuthedAdminOnboardingRouteImport } from './routes/_authed.admin.onboarding'
 import { Route as AuthedAdminMembershipRouteImport } from './routes/_authed.admin.membership'
 import { Route as AuthedAdminMeasurePolicyRouteImport } from './routes/_authed.admin.measure-policy'
@@ -64,10 +72,13 @@ import { Route as AuthedAdminFundingSchemesRouteImport } from './routes/_authed.
 import { Route as AuthedAdminFeatureFlagsRouteImport } from './routes/_authed.admin.feature-flags'
 import { Route as AuthedAdminExternalApisRouteImport } from './routes/_authed.admin.external-apis'
 import { Route as AuthedAdminEvidenceRequirementsRouteImport } from './routes/_authed.admin.evidence-requirements'
+import { Route as AuthedAdminEvidenceRouteImport } from './routes/_authed.admin.evidence'
 import { Route as AuthedAdminCronRouteImport } from './routes/_authed.admin.cron'
 import { Route as AuthedAdminCrmRouteImport } from './routes/_authed.admin.crm'
+import { Route as AuthedAdminCreateAdminRouteImport } from './routes/_authed.admin.create-admin'
 import { Route as AuthedAdminConfigRouteImport } from './routes/_authed.admin.config'
 import { Route as AuthedAdminCompaniesRouteImport } from './routes/_authed.admin.companies'
+import { Route as AuthedAdminCertificatesRouteImport } from './routes/_authed.admin.certificates'
 import { Route as AuthedAdminAuditRouteImport } from './routes/_authed.admin.audit'
 import { Route as AuthedAdminAmendmentsRouteImport } from './routes/_authed.admin.amendments'
 import { Route as AuthedAdminActivityRouteImport } from './routes/_authed.admin.activity'
@@ -122,6 +133,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedTicketsRoute = AuthedTicketsRouteImport.update({
+  id: '/tickets',
+  path: '/tickets',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedSubmissionsRoute = AuthedSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
@@ -152,6 +168,11 @@ const AuthedOnboardingRoute = AuthedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedMembershipRoute = AuthedMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedJobsRoute = AuthedJobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
@@ -162,6 +183,11 @@ const AuthedFundingRoute = AuthedFundingRouteImport.update({
   path: '/funding',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedDocumentsRoute = AuthedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -170,6 +196,11 @@ const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
 const AuthedCustomersRoute = AuthedCustomersRouteImport.update({
   id: '/customers',
   path: '/customers',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedCertificatesRoute = AuthedCertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedSubmissionsIdRoute = AuthedSubmissionsIdRouteImport.update({
@@ -285,6 +316,16 @@ const AuthedAdminUsersRoute = AuthedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminTicketsRoute = AuthedAdminTicketsRouteImport.update({
+  id: '/admin/tickets',
+  path: '/admin/tickets',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminTemplatesRoute = AuthedAdminTemplatesRouteImport.update({
+  id: '/admin/templates',
+  path: '/admin/templates',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminSystemSettingsRoute =
   AuthedAdminSystemSettingsRouteImport.update({
     id: '/admin/system-settings',
@@ -307,9 +348,19 @@ const AuthedAdminRiskRoute = AuthedAdminRiskRouteImport.update({
   path: '/admin/risk',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminProductsRoute = AuthedAdminProductsRouteImport.update({
+  id: '/admin/products',
+  path: '/admin/products',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminPermissionsRoute = AuthedAdminPermissionsRouteImport.update({
   id: '/admin/permissions',
   path: '/admin/permissions',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminPayoutsRoute = AuthedAdminPayoutsRouteImport.update({
+  id: '/admin/payouts',
+  path: '/admin/payouts',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedAdminOnboardingRoute = AuthedAdminOnboardingRouteImport.update({
@@ -367,6 +418,11 @@ const AuthedAdminEvidenceRequirementsRoute =
     path: '/admin/evidence-requirements',
     getParentRoute: () => AuthedRoute,
   } as any)
+const AuthedAdminEvidenceRoute = AuthedAdminEvidenceRouteImport.update({
+  id: '/admin/evidence',
+  path: '/admin/evidence',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminCronRoute = AuthedAdminCronRouteImport.update({
   id: '/admin/cron',
   path: '/admin/cron',
@@ -377,6 +433,11 @@ const AuthedAdminCrmRoute = AuthedAdminCrmRouteImport.update({
   path: '/admin/crm',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedAdminCreateAdminRoute = AuthedAdminCreateAdminRouteImport.update({
+  id: '/admin/create-admin',
+  path: '/admin/create-admin',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedAdminConfigRoute = AuthedAdminConfigRouteImport.update({
   id: '/admin/config',
   path: '/admin/config',
@@ -385,6 +446,11 @@ const AuthedAdminConfigRoute = AuthedAdminConfigRouteImport.update({
 const AuthedAdminCompaniesRoute = AuthedAdminCompaniesRouteImport.update({
   id: '/admin/companies',
   path: '/admin/companies',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminCertificatesRoute = AuthedAdminCertificatesRouteImport.update({
+  id: '/admin/certificates',
+  path: '/admin/certificates',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedAdminAuditRoute = AuthedAdminAuditRouteImport.update({
@@ -468,23 +534,30 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
+  '/certificates': typeof AuthedCertificatesRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
+  '/documents': typeof AuthedDocumentsRoute
   '/funding': typeof AuthedFundingRouteWithChildren
   '/jobs': typeof AuthedJobsRouteWithChildren
+  '/membership': typeof AuthedMembershipRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
   '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
+  '/tickets': typeof AuthedTicketsRoute
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRouteWithChildren
   '/admin/audit': typeof AuthedAdminAuditRouteWithChildren
+  '/admin/certificates': typeof AuthedAdminCertificatesRoute
   '/admin/companies': typeof AuthedAdminCompaniesRouteWithChildren
   '/admin/config': typeof AuthedAdminConfigRoute
+  '/admin/create-admin': typeof AuthedAdminCreateAdminRoute
   '/admin/crm': typeof AuthedAdminCrmRoute
   '/admin/cron': typeof AuthedAdminCronRoute
+  '/admin/evidence': typeof AuthedAdminEvidenceRoute
   '/admin/evidence-requirements': typeof AuthedAdminEvidenceRequirementsRoute
   '/admin/external-apis': typeof AuthedAdminExternalApisRoute
   '/admin/feature-flags': typeof AuthedAdminFeatureFlagsRoute
@@ -495,11 +568,15 @@ export interface FileRoutesByFullPath {
   '/admin/measure-policy': typeof AuthedAdminMeasurePolicyRoute
   '/admin/membership': typeof AuthedAdminMembershipRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRouteWithChildren
+  '/admin/payouts': typeof AuthedAdminPayoutsRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
+  '/admin/products': typeof AuthedAdminProductsRoute
   '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
   '/admin/risk-overrides': typeof AuthedAdminRiskOverridesRoute
   '/admin/stripe-events': typeof AuthedAdminStripeEventsRouteWithChildren
   '/admin/system-settings': typeof AuthedAdminSystemSettingsRoute
+  '/admin/templates': typeof AuthedAdminTemplatesRoute
+  '/admin/tickets': typeof AuthedAdminTicketsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
@@ -542,23 +619,30 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
+  '/certificates': typeof AuthedCertificatesRoute
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
+  '/documents': typeof AuthedDocumentsRoute
   '/funding': typeof AuthedFundingRouteWithChildren
   '/jobs': typeof AuthedJobsRouteWithChildren
+  '/membership': typeof AuthedMembershipRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/projects': typeof AuthedProjectsRoute
   '/properties': typeof AuthedPropertiesRouteWithChildren
   '/reports': typeof AuthedReportsRoute
   '/settings': typeof AuthedSettingsRouteWithChildren
   '/submissions': typeof AuthedSubmissionsRouteWithChildren
+  '/tickets': typeof AuthedTicketsRoute
   '/admin/activity': typeof AuthedAdminActivityRoute
   '/admin/amendments': typeof AuthedAdminAmendmentsRouteWithChildren
   '/admin/audit': typeof AuthedAdminAuditRouteWithChildren
+  '/admin/certificates': typeof AuthedAdminCertificatesRoute
   '/admin/companies': typeof AuthedAdminCompaniesRouteWithChildren
   '/admin/config': typeof AuthedAdminConfigRoute
+  '/admin/create-admin': typeof AuthedAdminCreateAdminRoute
   '/admin/crm': typeof AuthedAdminCrmRoute
   '/admin/cron': typeof AuthedAdminCronRoute
+  '/admin/evidence': typeof AuthedAdminEvidenceRoute
   '/admin/evidence-requirements': typeof AuthedAdminEvidenceRequirementsRoute
   '/admin/external-apis': typeof AuthedAdminExternalApisRoute
   '/admin/feature-flags': typeof AuthedAdminFeatureFlagsRoute
@@ -569,11 +653,15 @@ export interface FileRoutesByTo {
   '/admin/measure-policy': typeof AuthedAdminMeasurePolicyRoute
   '/admin/membership': typeof AuthedAdminMembershipRoute
   '/admin/onboarding': typeof AuthedAdminOnboardingRouteWithChildren
+  '/admin/payouts': typeof AuthedAdminPayoutsRoute
   '/admin/permissions': typeof AuthedAdminPermissionsRoute
+  '/admin/products': typeof AuthedAdminProductsRoute
   '/admin/risk': typeof AuthedAdminRiskRouteWithChildren
   '/admin/risk-overrides': typeof AuthedAdminRiskOverridesRoute
   '/admin/stripe-events': typeof AuthedAdminStripeEventsRouteWithChildren
   '/admin/system-settings': typeof AuthedAdminSystemSettingsRoute
+  '/admin/templates': typeof AuthedAdminTemplatesRoute
+  '/admin/tickets': typeof AuthedAdminTicketsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
@@ -618,23 +706,30 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
+  '/_authed/certificates': typeof AuthedCertificatesRoute
   '/_authed/customers': typeof AuthedCustomersRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRoute
+  '/_authed/documents': typeof AuthedDocumentsRoute
   '/_authed/funding': typeof AuthedFundingRouteWithChildren
   '/_authed/jobs': typeof AuthedJobsRouteWithChildren
+  '/_authed/membership': typeof AuthedMembershipRoute
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/projects': typeof AuthedProjectsRoute
   '/_authed/properties': typeof AuthedPropertiesRouteWithChildren
   '/_authed/reports': typeof AuthedReportsRoute
   '/_authed/settings': typeof AuthedSettingsRouteWithChildren
   '/_authed/submissions': typeof AuthedSubmissionsRouteWithChildren
+  '/_authed/tickets': typeof AuthedTicketsRoute
   '/_authed/admin/activity': typeof AuthedAdminActivityRoute
   '/_authed/admin/amendments': typeof AuthedAdminAmendmentsRouteWithChildren
   '/_authed/admin/audit': typeof AuthedAdminAuditRouteWithChildren
+  '/_authed/admin/certificates': typeof AuthedAdminCertificatesRoute
   '/_authed/admin/companies': typeof AuthedAdminCompaniesRouteWithChildren
   '/_authed/admin/config': typeof AuthedAdminConfigRoute
+  '/_authed/admin/create-admin': typeof AuthedAdminCreateAdminRoute
   '/_authed/admin/crm': typeof AuthedAdminCrmRoute
   '/_authed/admin/cron': typeof AuthedAdminCronRoute
+  '/_authed/admin/evidence': typeof AuthedAdminEvidenceRoute
   '/_authed/admin/evidence-requirements': typeof AuthedAdminEvidenceRequirementsRoute
   '/_authed/admin/external-apis': typeof AuthedAdminExternalApisRoute
   '/_authed/admin/feature-flags': typeof AuthedAdminFeatureFlagsRoute
@@ -645,11 +740,15 @@ export interface FileRoutesById {
   '/_authed/admin/measure-policy': typeof AuthedAdminMeasurePolicyRoute
   '/_authed/admin/membership': typeof AuthedAdminMembershipRoute
   '/_authed/admin/onboarding': typeof AuthedAdminOnboardingRouteWithChildren
+  '/_authed/admin/payouts': typeof AuthedAdminPayoutsRoute
   '/_authed/admin/permissions': typeof AuthedAdminPermissionsRoute
+  '/_authed/admin/products': typeof AuthedAdminProductsRoute
   '/_authed/admin/risk': typeof AuthedAdminRiskRouteWithChildren
   '/_authed/admin/risk-overrides': typeof AuthedAdminRiskOverridesRoute
   '/_authed/admin/stripe-events': typeof AuthedAdminStripeEventsRouteWithChildren
   '/_authed/admin/system-settings': typeof AuthedAdminSystemSettingsRoute
+  '/_authed/admin/templates': typeof AuthedAdminTemplatesRoute
+  '/_authed/admin/tickets': typeof AuthedAdminTicketsRoute
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
@@ -694,23 +793,30 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify'
+    | '/certificates'
     | '/customers'
     | '/dashboard'
+    | '/documents'
     | '/funding'
     | '/jobs'
+    | '/membership'
     | '/onboarding'
     | '/projects'
     | '/properties'
     | '/reports'
     | '/settings'
     | '/submissions'
+    | '/tickets'
     | '/admin/activity'
     | '/admin/amendments'
     | '/admin/audit'
+    | '/admin/certificates'
     | '/admin/companies'
     | '/admin/config'
+    | '/admin/create-admin'
     | '/admin/crm'
     | '/admin/cron'
+    | '/admin/evidence'
     | '/admin/evidence-requirements'
     | '/admin/external-apis'
     | '/admin/feature-flags'
@@ -721,11 +827,15 @@ export interface FileRouteTypes {
     | '/admin/measure-policy'
     | '/admin/membership'
     | '/admin/onboarding'
+    | '/admin/payouts'
     | '/admin/permissions'
+    | '/admin/products'
     | '/admin/risk'
     | '/admin/risk-overrides'
     | '/admin/stripe-events'
     | '/admin/system-settings'
+    | '/admin/templates'
+    | '/admin/tickets'
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
@@ -768,23 +878,30 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify'
+    | '/certificates'
     | '/customers'
     | '/dashboard'
+    | '/documents'
     | '/funding'
     | '/jobs'
+    | '/membership'
     | '/onboarding'
     | '/projects'
     | '/properties'
     | '/reports'
     | '/settings'
     | '/submissions'
+    | '/tickets'
     | '/admin/activity'
     | '/admin/amendments'
     | '/admin/audit'
+    | '/admin/certificates'
     | '/admin/companies'
     | '/admin/config'
+    | '/admin/create-admin'
     | '/admin/crm'
     | '/admin/cron'
+    | '/admin/evidence'
     | '/admin/evidence-requirements'
     | '/admin/external-apis'
     | '/admin/feature-flags'
@@ -795,11 +912,15 @@ export interface FileRouteTypes {
     | '/admin/measure-policy'
     | '/admin/membership'
     | '/admin/onboarding'
+    | '/admin/payouts'
     | '/admin/permissions'
+    | '/admin/products'
     | '/admin/risk'
     | '/admin/risk-overrides'
     | '/admin/stripe-events'
     | '/admin/system-settings'
+    | '/admin/templates'
+    | '/admin/tickets'
     | '/admin/users'
     | '/customers/$id'
     | '/customers/new'
@@ -843,23 +964,30 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify'
+    | '/_authed/certificates'
     | '/_authed/customers'
     | '/_authed/dashboard'
+    | '/_authed/documents'
     | '/_authed/funding'
     | '/_authed/jobs'
+    | '/_authed/membership'
     | '/_authed/onboarding'
     | '/_authed/projects'
     | '/_authed/properties'
     | '/_authed/reports'
     | '/_authed/settings'
     | '/_authed/submissions'
+    | '/_authed/tickets'
     | '/_authed/admin/activity'
     | '/_authed/admin/amendments'
     | '/_authed/admin/audit'
+    | '/_authed/admin/certificates'
     | '/_authed/admin/companies'
     | '/_authed/admin/config'
+    | '/_authed/admin/create-admin'
     | '/_authed/admin/crm'
     | '/_authed/admin/cron'
+    | '/_authed/admin/evidence'
     | '/_authed/admin/evidence-requirements'
     | '/_authed/admin/external-apis'
     | '/_authed/admin/feature-flags'
@@ -870,11 +998,15 @@ export interface FileRouteTypes {
     | '/_authed/admin/measure-policy'
     | '/_authed/admin/membership'
     | '/_authed/admin/onboarding'
+    | '/_authed/admin/payouts'
     | '/_authed/admin/permissions'
+    | '/_authed/admin/products'
     | '/_authed/admin/risk'
     | '/_authed/admin/risk-overrides'
     | '/_authed/admin/stripe-events'
     | '/_authed/admin/system-settings'
+    | '/_authed/admin/templates'
+    | '/_authed/admin/tickets'
     | '/_authed/admin/users'
     | '/_authed/customers/$id'
     | '/_authed/customers/new'
@@ -980,6 +1112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/tickets': {
+      id: '/_authed/tickets'
+      path: '/tickets'
+      fullPath: '/tickets'
+      preLoaderRoute: typeof AuthedTicketsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/submissions': {
       id: '/_authed/submissions'
       path: '/submissions'
@@ -1022,6 +1161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOnboardingRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/membership': {
+      id: '/_authed/membership'
+      path: '/membership'
+      fullPath: '/membership'
+      preLoaderRoute: typeof AuthedMembershipRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/jobs': {
       id: '/_authed/jobs'
       path: '/jobs'
@@ -1036,6 +1182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedFundingRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/documents': {
+      id: '/_authed/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthedDocumentsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/dashboard': {
       id: '/_authed/dashboard'
       path: '/dashboard'
@@ -1048,6 +1201,13 @@ declare module '@tanstack/react-router' {
       path: '/customers'
       fullPath: '/customers'
       preLoaderRoute: typeof AuthedCustomersRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/certificates': {
+      id: '/_authed/certificates'
+      path: '/certificates'
+      fullPath: '/certificates'
+      preLoaderRoute: typeof AuthedCertificatesRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/submissions/$id': {
@@ -1204,6 +1364,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminUsersRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/tickets': {
+      id: '/_authed/admin/tickets'
+      path: '/admin/tickets'
+      fullPath: '/admin/tickets'
+      preLoaderRoute: typeof AuthedAdminTicketsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/templates': {
+      id: '/_authed/admin/templates'
+      path: '/admin/templates'
+      fullPath: '/admin/templates'
+      preLoaderRoute: typeof AuthedAdminTemplatesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/system-settings': {
       id: '/_authed/admin/system-settings'
       path: '/admin/system-settings'
@@ -1232,11 +1406,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminRiskRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/products': {
+      id: '/_authed/admin/products'
+      path: '/admin/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AuthedAdminProductsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/permissions': {
       id: '/_authed/admin/permissions'
       path: '/admin/permissions'
       fullPath: '/admin/permissions'
       preLoaderRoute: typeof AuthedAdminPermissionsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/payouts': {
+      id: '/_authed/admin/payouts'
+      path: '/admin/payouts'
+      fullPath: '/admin/payouts'
+      preLoaderRoute: typeof AuthedAdminPayoutsRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/admin/onboarding': {
@@ -1309,6 +1497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminEvidenceRequirementsRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/evidence': {
+      id: '/_authed/admin/evidence'
+      path: '/admin/evidence'
+      fullPath: '/admin/evidence'
+      preLoaderRoute: typeof AuthedAdminEvidenceRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/cron': {
       id: '/_authed/admin/cron'
       path: '/admin/cron'
@@ -1323,6 +1518,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedAdminCrmRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/admin/create-admin': {
+      id: '/_authed/admin/create-admin'
+      path: '/admin/create-admin'
+      fullPath: '/admin/create-admin'
+      preLoaderRoute: typeof AuthedAdminCreateAdminRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/admin/config': {
       id: '/_authed/admin/config'
       path: '/admin/config'
@@ -1335,6 +1537,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/companies'
       fullPath: '/admin/companies'
       preLoaderRoute: typeof AuthedAdminCompaniesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin/certificates': {
+      id: '/_authed/admin/certificates'
+      path: '/admin/certificates'
+      fullPath: '/admin/certificates'
+      preLoaderRoute: typeof AuthedAdminCertificatesRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/admin/audit': {
@@ -1654,23 +1863,30 @@ const AuthedIbgIdRouteWithChildren = AuthedIbgIdRoute._addFileChildren(
 )
 
 interface AuthedRouteChildren {
+  AuthedCertificatesRoute: typeof AuthedCertificatesRoute
   AuthedCustomersRoute: typeof AuthedCustomersRouteWithChildren
   AuthedDashboardRoute: typeof AuthedDashboardRoute
+  AuthedDocumentsRoute: typeof AuthedDocumentsRoute
   AuthedFundingRoute: typeof AuthedFundingRouteWithChildren
   AuthedJobsRoute: typeof AuthedJobsRouteWithChildren
+  AuthedMembershipRoute: typeof AuthedMembershipRoute
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedProjectsRoute: typeof AuthedProjectsRoute
   AuthedPropertiesRoute: typeof AuthedPropertiesRouteWithChildren
   AuthedReportsRoute: typeof AuthedReportsRoute
   AuthedSettingsRoute: typeof AuthedSettingsRouteWithChildren
   AuthedSubmissionsRoute: typeof AuthedSubmissionsRouteWithChildren
+  AuthedTicketsRoute: typeof AuthedTicketsRoute
   AuthedAdminActivityRoute: typeof AuthedAdminActivityRoute
   AuthedAdminAmendmentsRoute: typeof AuthedAdminAmendmentsRouteWithChildren
   AuthedAdminAuditRoute: typeof AuthedAdminAuditRouteWithChildren
+  AuthedAdminCertificatesRoute: typeof AuthedAdminCertificatesRoute
   AuthedAdminCompaniesRoute: typeof AuthedAdminCompaniesRouteWithChildren
   AuthedAdminConfigRoute: typeof AuthedAdminConfigRoute
+  AuthedAdminCreateAdminRoute: typeof AuthedAdminCreateAdminRoute
   AuthedAdminCrmRoute: typeof AuthedAdminCrmRoute
   AuthedAdminCronRoute: typeof AuthedAdminCronRoute
+  AuthedAdminEvidenceRoute: typeof AuthedAdminEvidenceRoute
   AuthedAdminEvidenceRequirementsRoute: typeof AuthedAdminEvidenceRequirementsRoute
   AuthedAdminExternalApisRoute: typeof AuthedAdminExternalApisRoute
   AuthedAdminFeatureFlagsRoute: typeof AuthedAdminFeatureFlagsRoute
@@ -1681,11 +1897,15 @@ interface AuthedRouteChildren {
   AuthedAdminMeasurePolicyRoute: typeof AuthedAdminMeasurePolicyRoute
   AuthedAdminMembershipRoute: typeof AuthedAdminMembershipRoute
   AuthedAdminOnboardingRoute: typeof AuthedAdminOnboardingRouteWithChildren
+  AuthedAdminPayoutsRoute: typeof AuthedAdminPayoutsRoute
   AuthedAdminPermissionsRoute: typeof AuthedAdminPermissionsRoute
+  AuthedAdminProductsRoute: typeof AuthedAdminProductsRoute
   AuthedAdminRiskRoute: typeof AuthedAdminRiskRouteWithChildren
   AuthedAdminRiskOverridesRoute: typeof AuthedAdminRiskOverridesRoute
   AuthedAdminStripeEventsRoute: typeof AuthedAdminStripeEventsRouteWithChildren
   AuthedAdminSystemSettingsRoute: typeof AuthedAdminSystemSettingsRoute
+  AuthedAdminTemplatesRoute: typeof AuthedAdminTemplatesRoute
+  AuthedAdminTicketsRoute: typeof AuthedAdminTicketsRoute
   AuthedAdminUsersRoute: typeof AuthedAdminUsersRouteWithChildren
   AuthedIbgIdRoute: typeof AuthedIbgIdRouteWithChildren
   AuthedIbgHistoryRoute: typeof AuthedIbgHistoryRoute
@@ -1694,23 +1914,30 @@ interface AuthedRouteChildren {
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedCertificatesRoute: AuthedCertificatesRoute,
   AuthedCustomersRoute: AuthedCustomersRouteWithChildren,
   AuthedDashboardRoute: AuthedDashboardRoute,
+  AuthedDocumentsRoute: AuthedDocumentsRoute,
   AuthedFundingRoute: AuthedFundingRouteWithChildren,
   AuthedJobsRoute: AuthedJobsRouteWithChildren,
+  AuthedMembershipRoute: AuthedMembershipRoute,
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedProjectsRoute: AuthedProjectsRoute,
   AuthedPropertiesRoute: AuthedPropertiesRouteWithChildren,
   AuthedReportsRoute: AuthedReportsRoute,
   AuthedSettingsRoute: AuthedSettingsRouteWithChildren,
   AuthedSubmissionsRoute: AuthedSubmissionsRouteWithChildren,
+  AuthedTicketsRoute: AuthedTicketsRoute,
   AuthedAdminActivityRoute: AuthedAdminActivityRoute,
   AuthedAdminAmendmentsRoute: AuthedAdminAmendmentsRouteWithChildren,
   AuthedAdminAuditRoute: AuthedAdminAuditRouteWithChildren,
+  AuthedAdminCertificatesRoute: AuthedAdminCertificatesRoute,
   AuthedAdminCompaniesRoute: AuthedAdminCompaniesRouteWithChildren,
   AuthedAdminConfigRoute: AuthedAdminConfigRoute,
+  AuthedAdminCreateAdminRoute: AuthedAdminCreateAdminRoute,
   AuthedAdminCrmRoute: AuthedAdminCrmRoute,
   AuthedAdminCronRoute: AuthedAdminCronRoute,
+  AuthedAdminEvidenceRoute: AuthedAdminEvidenceRoute,
   AuthedAdminEvidenceRequirementsRoute: AuthedAdminEvidenceRequirementsRoute,
   AuthedAdminExternalApisRoute: AuthedAdminExternalApisRoute,
   AuthedAdminFeatureFlagsRoute: AuthedAdminFeatureFlagsRoute,
@@ -1721,11 +1948,15 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminMeasurePolicyRoute: AuthedAdminMeasurePolicyRoute,
   AuthedAdminMembershipRoute: AuthedAdminMembershipRoute,
   AuthedAdminOnboardingRoute: AuthedAdminOnboardingRouteWithChildren,
+  AuthedAdminPayoutsRoute: AuthedAdminPayoutsRoute,
   AuthedAdminPermissionsRoute: AuthedAdminPermissionsRoute,
+  AuthedAdminProductsRoute: AuthedAdminProductsRoute,
   AuthedAdminRiskRoute: AuthedAdminRiskRouteWithChildren,
   AuthedAdminRiskOverridesRoute: AuthedAdminRiskOverridesRoute,
   AuthedAdminStripeEventsRoute: AuthedAdminStripeEventsRouteWithChildren,
   AuthedAdminSystemSettingsRoute: AuthedAdminSystemSettingsRoute,
+  AuthedAdminTemplatesRoute: AuthedAdminTemplatesRoute,
+  AuthedAdminTicketsRoute: AuthedAdminTicketsRoute,
   AuthedAdminUsersRoute: AuthedAdminUsersRouteWithChildren,
   AuthedIbgIdRoute: AuthedIbgIdRouteWithChildren,
   AuthedIbgHistoryRoute: AuthedIbgHistoryRoute,
