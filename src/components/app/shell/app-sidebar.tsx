@@ -250,10 +250,15 @@ function SidebarBody({
 }) {
   const { permissions, isAdmin } = useAuth();
   const { onboardingStep, role } = useDevRole();
+  const { tier } = useMembership();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { setMobileOpen } = useSidebarState();
 
-  const visibleMain = main.filter((i) => !i.hideForRoles || !i.hideForRoles.includes(role));
+  const visibleMain = main.filter((i) => {
+    if (i.hideForRoles && i.hideForRoles.includes(role)) return false;
+    if (i.tier && i.tier === "operate" && tier !== "operate" && role !== "admin") return false;
+    return true;
+  });
   const visibleAdminGroups = adminGroups
     .map((g) => ({
       label: g.label,
