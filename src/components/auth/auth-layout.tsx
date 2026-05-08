@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { GradientOrb } from "@/components/app/gradient-orb";
+import { BrandMark } from "@/components/app/brand-logo";
 
 export function AuthLayout({
   children,
