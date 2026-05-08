@@ -45,9 +45,30 @@ const ONBOARDING_STEPS: { id: OnboardingStep; label: string }[] = [
   { id: "review", label: "Review" },
 ];
 
+import { ACTIVATION_CONDITIONS, ADMIN_ROLE_META, useMembership } from "@/lib/membership";
+import { resetStore } from "@/lib/mock/store";
+import type { ActivationState, AdminRole, MembershipTier } from "@/lib/mock/types";
+
+const TIERS: { id: MembershipTier; label: string; description: string }[] = [
+  { id: "access", label: "Access (free)", description: "5-condition gated, IBG-only." },
+  { id: "operate", label: "Operate (paid)", description: "Projects, funding, full pipeline." },
+];
+
+const ACTIVATION_STATES: { id: ActivationState; label: string }[] = [
+  { id: "empty", label: "Empty" },
+  { id: "partial", label: "Partial" },
+  { id: "active", label: "Active" },
+  { id: "expiring", label: "Expiring" },
+  { id: "expired", label: "Expired" },
+  { id: "suspended", label: "Suspended" },
+  { id: "locked", label: "Locked" },
+];
+
+const ADMIN_ROLES: AdminRole[] = ["super_admin", "reviewer", "support", "finance"];
+
 export function DevSwitcher() {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<"role" | "perms">("role");
+  const [tab, setTab] = useState<"role" | "tier" | "admin" | "perms">("role");
   const {
     role,
     permissions,
@@ -60,6 +81,7 @@ export function DevSwitcher() {
     approvePermissionRequest,
     reset,
   } = useDevRole();
+  const membership = useMembership();
 
   if (!open) {
     return (
