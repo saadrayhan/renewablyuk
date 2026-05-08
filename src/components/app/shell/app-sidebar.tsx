@@ -135,8 +135,30 @@ const adminGroups: AdminGroup[] = [
     label: "Operations",
     items: [
       { label: "Onboarding", to: "/admin/onboarding", icon: ClipboardList, visibleIf: ["onboarding.queue.read"] },
+      { label: "Evidence Queue", to: "/admin/evidence", icon: ListChecks, visibleIf: ["amendments.queue.read"] },
       { label: "Amendments", to: "/admin/amendments", icon: FileWarning, visibleIf: ["amendments.queue.read"] },
+      { label: "Tickets", to: "/admin/tickets", icon: Inbox, visibleIf: ["users.read"] },
       { label: "Activity", to: "/admin/activity", icon: Activity, visibleIf: ["activity.read"] },
+    ],
+  },
+  {
+    label: "Catalogue",
+    items: [
+      { label: "Certificate Templates", to: "/admin/templates", icon: LayoutTemplate, visibleIf: ["config.read"] },
+      { label: "Certificates", to: "/admin/certificates", icon: Award, visibleIf: ["config.read"] },
+      { label: "Products", to: "/admin/products", icon: Layers, visibleIf: ["config.read"] },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      { label: "Payouts", to: "/admin/payouts", icon: DollarSign, visibleIf: ["users.read"] },
+    ],
+  },
+  {
+    label: "Admin Team",
+    items: [
+      { label: "Invite Admin", to: "/admin/create-admin", icon: UserPlus, visibleIf: ["users.read"] },
     ],
   },
   {
