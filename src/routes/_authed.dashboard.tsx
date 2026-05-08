@@ -28,6 +28,8 @@ import { ListRow } from "@/components/app/list-row";
 import { SectionHeader } from "@/components/app/section-header";
 import { StatePill, JOB_STATES, IBG_STATES, ONBOARDING_STATES } from "@/components/app/state-pill";
 import { fmtDate, relTime } from "@/lib/mock/queries";
+import { ActivationBanner } from "@/components/app/activation-banner";
+import { useActivationGate } from "@/lib/membership";
 
 export const Route = createFileRoute("/_authed/dashboard")({
   head: () => ({ meta: [{ title: "Home — Renewably UK" }] }),
@@ -185,20 +187,25 @@ function OperatorDash() {
 
 function AccessDash() {
   const data = useStore();
+  const { isBlocked, isReadOnly } = useActivationGate();
   const recent = data.ibgs.filter((i) => i.state === "issued").slice(0, 5);
 
   const tiles: Tile[] = [
-    { label: "Issue an IBG", to: "/ibg/new", icon: FileBadge, tone: "green" },
+    { label: "Issue an IBG", to: "/ibg/new", icon: FileBadge, tone: "green", disabled: isBlocked, badge: isBlocked ? "Locked" : undefined },
     { label: "My IBGs", to: "/ibg/history", icon: Database, tone: "blue" },
     { label: "Templates", to: "/ibg/repository", icon: BookOpen, tone: "purple" },
-    { label: "Pricing", to: "/pricing", icon: Sparkles, tone: "amber" },
+    { label: "Membership", to: "/membership", icon: CreditCard, tone: "amber" },
     { label: "Account", to: "/settings/profile", icon: Settings, tone: "neutral" },
-    { label: "Help", to: "/settings/profile", icon: BookOpen, tone: "teal" },
+    { label: "Help", to: "/tickets", icon: BookOpen, tone: "teal" },
   ];
 
   return (
     <>
+      <ActivationBanner />
       <TileRow tiles={tiles} />
+      {isReadOnly && (
+        <div className="-mt-4 mb-2 px-2 text-[12px] text-ink-muted">Read-only mode — actions disabled.</div>
+      )}
 
       <SectionHeader title="Recent IBGs" to="/ibg/history" />
       <div className="space-y-0.5">
@@ -253,6 +260,7 @@ function OperateDash() {
 
   return (
     <>
+      <ActivationBanner />
       <TileRow tiles={tiles} />
 
       <SectionHeader title="Jobs needing attention" to="/jobs" />

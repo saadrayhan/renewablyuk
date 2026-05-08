@@ -312,6 +312,16 @@
    Component-agnostic motion rules applied across the app. */
 
 @layer components {
+  .input {
+    width: 100%;
+    background: transparent;
+    font-size: 14px;
+    color: var(--foreground);
+    outline: none;
+    border: 0;
+  }
+  .input::placeholder { color: var(--ink-muted, #94a3b8); }
+
   /* Pressable feedback. Only enable on devices that actually point. */
   @media (hover: hover) and (pointer: fine) {
     .press {

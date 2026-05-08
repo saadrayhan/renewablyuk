@@ -32,7 +32,7 @@ function CertificatesPage() {
       <div className="flex items-end justify-between gap-4">
         <PageHeader eyebrow="COMPLIANCE" title="Certificates" />
         <Link
-          to="/ibg/new"
+          to="/certificates/new"
           className="press inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
         >
           <Plus className="size-4" /> New certificate

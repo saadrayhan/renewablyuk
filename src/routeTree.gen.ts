@@ -52,6 +52,7 @@ import { Route as AuthedFundingMatchRouteImport } from './routes/_authed.funding
 import { Route as AuthedFundingIdRouteImport } from './routes/_authed.funding.$id'
 import { Route as AuthedCustomersNewRouteImport } from './routes/_authed.customers.new'
 import { Route as AuthedCustomersIdRouteImport } from './routes/_authed.customers.$id'
+import { Route as AuthedCertificatesNewRouteImport } from './routes/_authed.certificates.new'
 import { Route as AuthedAdminUsersRouteImport } from './routes/_authed.admin.users'
 import { Route as AuthedAdminTicketsRouteImport } from './routes/_authed.admin.tickets'
 import { Route as AuthedAdminTemplatesRouteImport } from './routes/_authed.admin.templates'
@@ -311,6 +312,11 @@ const AuthedCustomersIdRoute = AuthedCustomersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthedCustomersRoute,
 } as any)
+const AuthedCertificatesNewRoute = AuthedCertificatesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthedCertificatesRoute,
+} as any)
 const AuthedAdminUsersRoute = AuthedAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -534,7 +540,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
-  '/certificates': typeof AuthedCertificatesRoute
+  '/certificates': typeof AuthedCertificatesRouteWithChildren
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
   '/documents': typeof AuthedDocumentsRoute
@@ -578,6 +584,7 @@ export interface FileRoutesByFullPath {
   '/admin/templates': typeof AuthedAdminTemplatesRoute
   '/admin/tickets': typeof AuthedAdminTicketsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
+  '/certificates/new': typeof AuthedCertificatesNewRoute
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
   '/funding/$id': typeof AuthedFundingIdRouteWithChildren
@@ -619,7 +626,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
-  '/certificates': typeof AuthedCertificatesRoute
+  '/certificates': typeof AuthedCertificatesRouteWithChildren
   '/customers': typeof AuthedCustomersRouteWithChildren
   '/dashboard': typeof AuthedDashboardRoute
   '/documents': typeof AuthedDocumentsRoute
@@ -663,6 +670,7 @@ export interface FileRoutesByTo {
   '/admin/templates': typeof AuthedAdminTemplatesRoute
   '/admin/tickets': typeof AuthedAdminTicketsRoute
   '/admin/users': typeof AuthedAdminUsersRouteWithChildren
+  '/certificates/new': typeof AuthedCertificatesNewRoute
   '/customers/$id': typeof AuthedCustomersIdRoute
   '/customers/new': typeof AuthedCustomersNewRoute
   '/funding/$id': typeof AuthedFundingIdRouteWithChildren
@@ -706,7 +714,7 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verify': typeof VerifyRoute
-  '/_authed/certificates': typeof AuthedCertificatesRoute
+  '/_authed/certificates': typeof AuthedCertificatesRouteWithChildren
   '/_authed/customers': typeof AuthedCustomersRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/documents': typeof AuthedDocumentsRoute
@@ -750,6 +758,7 @@ export interface FileRoutesById {
   '/_authed/admin/templates': typeof AuthedAdminTemplatesRoute
   '/_authed/admin/tickets': typeof AuthedAdminTicketsRoute
   '/_authed/admin/users': typeof AuthedAdminUsersRouteWithChildren
+  '/_authed/certificates/new': typeof AuthedCertificatesNewRoute
   '/_authed/customers/$id': typeof AuthedCustomersIdRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
   '/_authed/funding/$id': typeof AuthedFundingIdRouteWithChildren
@@ -837,6 +846,7 @@ export interface FileRouteTypes {
     | '/admin/templates'
     | '/admin/tickets'
     | '/admin/users'
+    | '/certificates/new'
     | '/customers/$id'
     | '/customers/new'
     | '/funding/$id'
@@ -922,6 +932,7 @@ export interface FileRouteTypes {
     | '/admin/templates'
     | '/admin/tickets'
     | '/admin/users'
+    | '/certificates/new'
     | '/customers/$id'
     | '/customers/new'
     | '/funding/$id'
@@ -1008,6 +1019,7 @@ export interface FileRouteTypes {
     | '/_authed/admin/templates'
     | '/_authed/admin/tickets'
     | '/_authed/admin/users'
+    | '/_authed/certificates/new'
     | '/_authed/customers/$id'
     | '/_authed/customers/new'
     | '/_authed/funding/$id'
@@ -1357,6 +1369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedCustomersIdRouteImport
       parentRoute: typeof AuthedCustomersRoute
     }
+    '/_authed/certificates/new': {
+      id: '/_authed/certificates/new'
+      path: '/new'
+      fullPath: '/certificates/new'
+      preLoaderRoute: typeof AuthedCertificatesNewRouteImport
+      parentRoute: typeof AuthedCertificatesRoute
+    }
     '/_authed/admin/users': {
       id: '/_authed/admin/users'
       path: '/admin/users'
@@ -1647,6 +1666,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthedCertificatesRouteChildren {
+  AuthedCertificatesNewRoute: typeof AuthedCertificatesNewRoute
+}
+
+const AuthedCertificatesRouteChildren: AuthedCertificatesRouteChildren = {
+  AuthedCertificatesNewRoute: AuthedCertificatesNewRoute,
+}
+
+const AuthedCertificatesRouteWithChildren =
+  AuthedCertificatesRoute._addFileChildren(AuthedCertificatesRouteChildren)
+
 interface AuthedCustomersRouteChildren {
   AuthedCustomersIdRoute: typeof AuthedCustomersIdRoute
   AuthedCustomersNewRoute: typeof AuthedCustomersNewRoute
@@ -1863,7 +1893,7 @@ const AuthedIbgIdRouteWithChildren = AuthedIbgIdRoute._addFileChildren(
 )
 
 interface AuthedRouteChildren {
-  AuthedCertificatesRoute: typeof AuthedCertificatesRoute
+  AuthedCertificatesRoute: typeof AuthedCertificatesRouteWithChildren
   AuthedCustomersRoute: typeof AuthedCustomersRouteWithChildren
   AuthedDashboardRoute: typeof AuthedDashboardRoute
   AuthedDocumentsRoute: typeof AuthedDocumentsRoute
@@ -1914,7 +1944,7 @@ interface AuthedRouteChildren {
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedCertificatesRoute: AuthedCertificatesRoute,
+  AuthedCertificatesRoute: AuthedCertificatesRouteWithChildren,
   AuthedCustomersRoute: AuthedCustomersRouteWithChildren,
   AuthedDashboardRoute: AuthedDashboardRoute,
   AuthedDocumentsRoute: AuthedDocumentsRoute,
