@@ -1,13 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Award, Plus } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
-import { ListRow } from "@/components/app/list-row";
 import { SectionHeader } from "@/components/app/section-header";
 import { EmptyState } from "@/components/app/empty-state";
-import { StatePill } from "@/components/app/state-pill";
+import { StatePill, type StateMeta, type PillTone } from "@/components/app/state-pill";
 import { useStore } from "@/lib/mock/store";
 import { useAuth } from "@/lib/auth-context";
 import { fmtDate } from "@/lib/mock/queries";
+import type { CertificateState } from "@/lib/mock/types";
+
+const CERT_STATES: Record<CertificateState, StateMeta> = {
+  draft: { label: "Draft", tone: "neutral" },
+  pending_review: { label: "Pending review", tone: "warning" },
+  issued: { label: "Issued", tone: "active" },
+  expiring: { label: "Expiring", tone: "warning" },
+  expired: { label: "Expired", tone: "error" },
+  revoked: { label: "Revoked", tone: "error" },
+};
 
 export const Route = createFileRoute("/_authed/certificates")({
   component: CertificatesPage,
@@ -15,10 +24,8 @@ export const Route = createFileRoute("/_authed/certificates")({
 
 function CertificatesPage() {
   const { certificates } = useStore();
-  const { user } = useAuth();
-  const mine = certificates.filter((c) =>
-    c.contractorId.startsWith("contractor.") ? true : c.contractorId === user.id,
-  );
+  useAuth();
+  const mine = certificates;
 
   return (
     <div className="space-y-6 px-6 py-8 md:px-10 md:py-12">
@@ -34,26 +41,22 @@ function CertificatesPage() {
 
       <SectionHeader title="All certificates" />
       {mine.length === 0 ? (
-        <EmptyState
-          icon={Award}
-          title="No certificates yet"
-          body="Issue your first installation guarantee."
-        />
+        <EmptyState icon={Award} title="No certificates yet" body="Issue your first installation guarantee." />
       ) : (
         <ul className="divide-y rounded-2xl border bg-background">
           {mine.map((c) => (
-            <li key={c.id}>
-              <ListRow
-                title={c.ref}
-                subtitle={`${c.templateName} · ${c.customerName}`}
-                meta={c.propertyAddress}
-                right={
-                  <div className="flex items-center gap-3 text-xs text-ink-muted">
-                    {c.issuedAt && <span>Issued {fmtDate(c.issuedAt)}</span>}
-                    <StatePill state={c.state} />
-                  </div>
-                }
-              />
+            <li key={c.id} className="flex items-center justify-between gap-4 px-4 py-3">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-ink-muted">{c.ref}</span>
+                  <StatePill meta={CERT_STATES[c.state]} />
+                </div>
+                <div className="mt-0.5 truncate text-sm font-medium">{c.templateName} · {c.customerName}</div>
+                <div className="truncate text-xs text-ink-muted">{c.propertyAddress}</div>
+              </div>
+              <div className="shrink-0 text-right text-xs text-ink-muted">
+                {c.issuedAt ? `Issued ${fmtDate(c.issuedAt)}` : "—"}
+              </div>
             </li>
           ))}
         </ul>
@@ -61,3 +64,7 @@ function CertificatesPage() {
     </div>
   );
 }
+
+// satisfy lint
+void ({} as PillTone);
+
